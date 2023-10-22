@@ -1,0 +1,1441 @@
+definitions:
+  api.CasbinInReceiveReq:
+    properties:
+      group_id:
+        description: 组id
+        type: string
+      ids:
+        items:
+          type: integer
+        type: array
+    required:
+    - group_id
+    type: object
+  api.GetGroupAssIdReq:
+    properties:
+      id:
+        type: integer
+      page:
+        description: 页码
+        type: integer
+      page_size:
+        description: 每页大小
+        type: integer
+    required:
+    - id
+    type: object
+  api.GetGroupReq:
+    properties:
+      name:
+        type: string
+      page:
+        description: 页码
+        type: integer
+      page_size:
+        description: 每页大小
+        type: integer
+    type: object
+  api.GetHostAssProject:
+    properties:
+      id:
+        type: integer
+      page:
+        description: 页码
+        type: integer
+      page_size:
+        description: 每页大小
+        type: integer
+    required:
+    - id
+    type: object
+  api.GetHostAssReq:
+    properties:
+      page:
+        description: 页码
+        type: integer
+      page_size:
+        description: 每页大小
+        type: integer
+      project_id:
+        type: integer
+    required:
+    - project_id
+    type: object
+  api.GetHostReq:
+    properties:
+      ip:
+        description: 查询IP则输入IP，v4或v6都可以
+        type: string
+      page_info:
+        $ref: '#/definitions/api.PageInfo'
+    type: object
+  api.GetProjectReq:
+    properties:
+      name:
+        type: string
+      page:
+        description: 页码
+        type: integer
+      page_size:
+        description: 每页大小
+        type: integer
+    required:
+    - name
+    type: object
+  api.GetRecordReq:
+    properties:
+      page:
+        description: 页码
+        type: integer
+      page_size:
+        description: 每页大小
+        type: integer
+      username:
+        type: string
+    type: object
+  api.IdsReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    required:
+    - ids
+    type: object
+  api.PageInfo:
+    properties:
+      page:
+        description: 页码
+        type: integer
+      page_size:
+        description: 每页大小
+        type: integer
+    type: object
+  api.UpdateHostAssProjectReq:
+    properties:
+      hid:
+        type: integer
+      pid:
+        items:
+          type: integer
+        type: array
+    required:
+    - hid
+    type: object
+  api.UpdateMenuAssReq:
+    properties:
+      group_id:
+        items:
+          type: integer
+        type: array
+      menu_id:
+        type: integer
+    required:
+    - group_id
+    - menu_id
+    type: object
+  api.UpdateProjectAssHostReq:
+    properties:
+      hid:
+        items:
+          type: integer
+        type: array
+      pid:
+        type: integer
+    required:
+    - hid
+    type: object
+  api.UpdateUserAssReq:
+    properties:
+      group_id:
+        type: integer
+      user_id:
+        items:
+          type: integer
+        type: array
+    required:
+    - group_id
+    - user_id
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/api/delApi:
+    delete:
+      description: 删除API
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - collectionFormat: csv
+        in: formData
+        items:
+          type: integer
+        name: ids
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 删除API
+      tags:
+      - Api相关
+  /api/v1/api/fresh:
+    get:
+      description: 刷新casbin缓存
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 刷新casbin缓存
+      tags:
+      - Api相关
+  /api/v1/api/getApiList:
+    post:
+      description: 获取Api列表 可分页
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 页码
+        in: formData
+        name: page
+        type: integer
+      - description: 每页大小
+        in: formData
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取Api列表
+      tags:
+      - Api相关
+  /api/v1/api/getCasbinList:
+    get:
+      description: 获取用户已有的API权限列表
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 组ID
+        in: query
+        name: gid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取用户已有的API权限列表
+      tags:
+      - Api相关
+  /api/v1/api/updateApi:
+    post:
+      description: 新增或者修改Api
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: api组
+        in: formData
+        name: apiGroup
+        required: true
+        type: string
+      - description: api中文描述
+        in: formData
+        name: description
+        type: string
+      - description: 修改才需要传，没有传算新增
+        in: formData
+        name: id
+        type: integer
+      - description: 方法:创建/更新POST(默认)|查看GET|删除DELETE
+        in: formData
+        name: method
+        required: true
+        type: string
+      - description: api路径
+        in: formData
+        name: path
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 新增或者修改Api
+      tags:
+      - Api相关
+  /api/v1/api/updateCasbin:
+    post:
+      description: 为用户分配API权限
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 为用户分配API权限的请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.CasbinInReceiveReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 为用户分配API权限
+      tags:
+      - Api相关
+  /api/v1/group/association:
+    put:
+      description: 关联用户，关联成功data返回组和关联用户信息
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 输入组ID和对应用户IDs
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateUserAssReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 关联用户
+      tags:
+      - 用户组相关
+  /api/v1/group/getGroups:
+    get:
+      description: 返回指定用户组/不传Name返回所有用户组
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 输入组名，不输入则全部返回
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/api.GetGroupReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取用户组
+      tags:
+      - 用户组相关
+  /api/v1/group/getProjectAss:
+    post:
+      description: 返回组关联的项目
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 传参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.GetGroupAssIdReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取组关联项目
+      tags:
+      - 用户组相关
+  /api/v1/group/getUserAss:
+    post:
+      description: 返回组关联的用户
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 传参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.GetGroupAssIdReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取组关联用户
+      tags:
+      - 用户组相关
+  /api/v1/group/update:
+    post:
+      description: 新增不用传ID，修改才传ID
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 修改才需要传，没有传算新增
+        in: formData
+        name: id
+        type: integer
+      - in: formData
+        name: mark
+        type: string
+      - in: formData
+        name: name
+        required: true
+        type: string
+      - description: 工作室不用传，项目组传工作室的ID
+        in: formData
+        name: parent_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 新增/修改用户组信息
+      tags:
+      - 用户组相关
+  /api/v1/host/association:
+    put:
+      description: 项目ID[多选]
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 关联传入参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateHostAssProjectReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 关联项目
+      tags:
+      - 服务器相关
+  /api/v1/host/delete:
+    delete:
+      description: 传服务器ID
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 需删除的host ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 删除服务器
+      tags:
+      - 服务器相关
+  /api/v1/host/getHost:
+    post:
+      description: 全部查询不传Ip
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 获取host的参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.GetHostReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 查询服务器
+      tags:
+      - 服务器相关
+  /api/v1/host/getProject:
+    get:
+      description: 返回项目切片
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 传参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.GetHostAssProject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 查询服务器对应项目
+      tags:
+      - 服务器相关
+  /api/v1/host/update:
+    post:
+      description: 返回新增/修改的指定服务器
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加
+        in: formData
+        name: billing
+        required: true
+        type: integer
+      - in: formData
+        name: cloud
+        required: true
+        type: string
+      - description: 四核输入4
+        in: formData
+        name: cores
+        required: true
+        type: integer
+      - description: 磁盘单位为G
+        in: formData
+        name: data_disk
+        required: true
+        type: integer
+      - in: formData
+        name: id
+        type: integer
+      - in: formData
+        name: iops
+        required: true
+        type: integer
+      - in: formData
+        name: ipv4
+        required: true
+        type: string
+      - in: formData
+        name: ipv6
+        type: string
+      - in: formData
+        name: mbps
+        required: true
+        type: integer
+      - description: 内存单位为G
+        in: formData
+        name: mem
+        required: true
+        type: integer
+      - in: formData
+        name: password
+        required: true
+        type: string
+      - in: formData
+        name: system
+        required: true
+        type: string
+      - description: 磁盘单位为G
+        in: formData
+        name: system_disk
+        required: true
+        type: integer
+      - description: 1 单服机器, 2 中央服机器, 3 CDN机器, 4 业务服机器  ...后续有需要再加
+        in: formData
+        name: type
+        required: true
+        type: integer
+      - description: 所在地
+        in: formData
+        name: zone
+        required: true
+        type: string
+      - description: 时区，如东八区填8
+        in: formData
+        name: zone_time
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 新增/修改服务器
+      tags:
+      - 服务器相关
+  /api/v1/login:
+    post:
+      description: 用户名长度不少于3位，密码不少于6位
+      parameters:
+      - in: formData
+        maxLength: 20
+        minLength: 8
+        name: password
+        required: true
+        type: string
+      - in: formData
+        maxLength: 30
+        minLength: 5
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{"status":200",msg":"登录成功"}}'
+          schema:
+            type: ""
+        "400":
+          description: '{"data":{}, "meta":{"status":400,"msg":"错误信息"}}'
+          schema:
+            type: string
+      summary: 用户登录
+      tags:
+      - 用户相关
+  /api/v1/menu/association:
+    put:
+      description: 关联用户组，关联成功data返回组和关联用户信息
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 输入菜单ID和对应用户组IDs
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateMenuAssReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 关联用户组
+      tags:
+      - 菜单相关
+  /api/v1/menu/getMenus:
+    get:
+      description: 返回指定菜单和关联的用户组切片
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 输入菜单ID，获取菜单和关联用户组,不输入返回所有菜单及关联用户组
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取菜单及对应用户组信息
+      tags:
+      - 菜单相关
+  /api/v1/menu/update:
+    post:
+      description: 新增不用传ID，修改才传ID
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 创建人
+        in: formData
+        name: author
+        type: string
+      - description: 组件
+        in: formData
+        name: component
+        type: string
+      - description: 菜单图标
+        in: formData
+        name: icon
+        type: string
+      - description: 修改才需要传，没有传算新增
+        in: formData
+        name: id
+        type: integer
+      - description: 前端标志
+        in: formData
+        name: mark
+        type: string
+      - in: formData
+        name: name
+        type: string
+      - description: 对应主菜单的ID
+        in: formData
+        name: parent_id
+        type: integer
+      - description: 排序标记
+        in: formData
+        name: sort
+        type: integer
+      - description: 前端展示菜单名
+        in: formData
+        name: title
+        type: string
+      - description: 前端类型
+        in: formData
+        name: type
+        type: string
+      - description: 前端路由
+        in: formData
+        name: url
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 新增/修改菜单信息
+      tags:
+      - 菜单相关
+  /api/v1/ping:
+    get:
+      description: 无设置权限，返回"Hello world!~~(无权限版)"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Hello world!~~(无权限版)"}'
+          schema:
+            type: ""
+      summary: 测试Gin能否正常访问
+      tags:
+      - 测试相关
+  /api/v1/ping2:
+    get:
+      description: 有设置权限，返回"Hello world!~~(有权限版)"
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Hello world!~~(有权限版)"}'
+          schema:
+            type: ""
+      summary: 测试Gin通过认证能否正常访问
+      tags:
+      - 测试相关
+  /api/v1/project/association:
+    put:
+      description: 服务器ID[多选]
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 关联传入参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateProjectAssHostReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 关联服务器
+      tags:
+      - 项目相关
+  /api/v1/project/getHost:
+    post:
+      description: 返回服务器切片
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 获取关联host的参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.GetHostAssReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取项目对应的服务器
+      tags:
+      - 项目相关
+  /api/v1/project/getProject:
+    post:
+      description: 返回指定项目
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 输入项目ID，获取项目,不输入返回所有项目
+        in: body
+        name: data
+        schema:
+          $ref: '#/definitions/api.GetProjectReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取项目
+      tags:
+      - 项目相关
+  /api/v1/project/getSelfProject:
+    get:
+      description: 返回自身所属项目
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取自身所属项目
+      tags:
+      - 项目相关
+  /api/v1/project/update:
+    post:
+      description: 返回新增/修改的指定项目
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: group_id
+        required: true
+        type: integer
+      - description: 修改才需要传，没有传算新增
+        in: formData
+        name: id
+        type: integer
+      - in: formData
+        name: name
+        required: true
+        type: string
+      - in: formData
+        name: status
+        required: true
+        type: integer
+      - in: formData
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 新增/修改项目
+      tags:
+      - 项目相关
+  /api/v1/user/actLog:
+    post:
+      description: 获取用户操作记录，不包含get
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 用户username
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.GetRecordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{用户记录},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取用户操作记录
+      tags:
+      - 用户相关
+  /api/v1/user/delete:
+    delete:
+      description: 删除用户
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 用户IDs
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 删除用户
+      tags:
+      - 用户相关
+  /api/v1/user/getAssGroup:
+    get:
+      description: 返回用户关联的组
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 用户的ID
+        in: query
+        name: uid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取关联组
+      tags:
+      - 用户相关
+  /api/v1/user/getSelfAssGroup:
+    get:
+      description: 返回用户本身关联的组
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取用户本身关联的组
+      tags:
+      - 用户相关
+  /api/v1/user/getSelfInfo:
+    get:
+      description: 获取用户个人信息
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 用户个人信息
+      tags:
+      - 用户相关
+  /api/v1/user/keyFile:
+    post:
+      description: '是私钥不要提交公钥！私钥如: id_rsa'
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 私钥文件上传
+        in: formData
+        name: keyFile
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{用户记录},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 提交自身私钥文件
+      tags:
+      - 用户相关
+  /api/v1/user/keyStr:
+    post:
+      description: '是私钥字符串不要提交公钥文件！私钥如: id_rsa的内容'
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 私钥文本内容上传
+        in: formData
+        name: keyStr
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{用户记录},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 提交自身私钥字符串
+      tags:
+      - 用户相关
+  /api/v1/user/logout:
+    put:
+      description: 登出 - 把JWT拉入黑名单
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{"status":200",msg":"登出成功"}}'
+          schema:
+            type: ""
+        "400":
+          description: '{"data":{}, "meta":{"status":400,"msg":"错误信息"}}'
+          schema:
+            type: string
+      summary: 登出
+      tags:
+      - 用户相关
+  /api/v1/user/password:
+    patch:
+      description: 修改用户密码
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: id
+        required: true
+        type: integer
+      - description: 要求密码长度不小于8不大于20
+        in: formData
+        maxLength: 20
+        minLength: 8
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 修改用户密码
+      tags:
+      - 用户相关
+  /api/v1/user/search:
+    post:
+      description: 获取用户列表
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 页码
+        in: formData
+        name: page
+        type: integer
+      - description: 每页大小
+        in: formData
+        name: page_size
+        type: integer
+      - description: 用户名称(可选)
+        in: formData
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success","Data":"User信息","Page":"页码","PageSize":"单页条数","Total":"总条数"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取用户列表
+      tags:
+      - 用户相关
+  /api/v1/user/selfPassword:
+    patch:
+      description: 修改用户自己的密码
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 需要修改的密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 修改用户自己的密码
+      tags:
+      - 用户相关
+  /api/v1/user/status:
+    patch:
+      description: status参数：恢复用户传1，禁用用户传2
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: id
+        required: true
+        type: integer
+      - in: formData
+        name: status
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 修改用户状态
+      tags:
+      - 用户相关
+  /api/v1/user/update:
+    post:
+      description: 新增不用传用户ID，修改才传用户ID
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: email
+        required: true
+        type: string
+      - in: formData
+        name: expiration
+        required: true
+        type: integer
+      - description: 修改才需要传，没有传算新增
+        in: formData
+        name: id
+        type: integer
+      - description: 管理员传1，不然不用传
+        in: formData
+        name: is_admin
+        type: integer
+      - in: formData
+        name: mobile
+        required: true
+        type: string
+      - in: formData
+        name: name
+        required: true
+        type: string
+      - in: formData
+        maxLength: 30
+        minLength: 5
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 新增/修改用户信息
+      tags:
+      - 用户相关
+swagger: "2.0"
