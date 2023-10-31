@@ -77,13 +77,17 @@ func UpdateMenuAss(c *gin.Context) {
 // @Summary 获取用户组对应菜单信息
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param id query uint false "用户组ID，获取菜单和关联用户组,不输入返回所有菜单"
+// @Param data query api.IdReq false "用户组ID，获取菜单和关联用户组,不输入返回所有菜单"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/menu/getMenus [get]
 func GetMenuList(c *gin.Context) {
-	gidStr := c.Query("id")
-	menu, err := service.Menu().GetMenuList(&gidStr)
+	var gid api.IdReq
+	if err := c.ShouldBind(&gid); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	menu, err := service.Menu().GetMenuList(gid.Id)
 	if err != nil {
 		logger.Log().Error("Menu", "获取菜单对应用户组", err)
 		c.JSON(500, api.Err("获取菜单对应用户组失败", err))
@@ -91,6 +95,36 @@ func GetMenuList(c *gin.Context) {
 	}
 	c.JSON(200, api.Response{
 		Data: menu,
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
+// DeleteMenu
+// @Tags 菜单相关
+// @title 删除菜单
+// @description 删除成功返回success
+// @Summary 删除菜单
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data body api.IdsReq true "菜单ID"
+// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/menu/delete [delete]
+func DeleteMenu(c *gin.Context) {
+	var mid api.IdsReq
+	if err := c.ShouldBind(&mid); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	err := service.Menu().DeleteMenu(mid.Ids)
+	if err != nil {
+		logger.Log().Error("Menu", "删除菜单", err)
+		c.JSON(500, api.Err("删除菜单失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
 		Meta: api.Meta{
 			Msg: "Success",
 		},

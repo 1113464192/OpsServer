@@ -71,6 +71,29 @@ func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInf
 	}
 }
 
+func (s *ProjectService) DeleteProject(ids []uint) (err error) {
+	for _, i := range ids {
+		if !utils2.CheckIdExists(&model.Project{}, &i) {
+			return errors.New("项目不存在")
+		}
+	}
+	var project []model.Project
+	tx := model.DB.Begin()
+	if err = tx.Find(&project, ids).Error; err != nil {
+		return errors.New("查询项目信息失败")
+	}
+	if err = tx.Model(&project).Association("Hosts").Clear(); err != nil {
+		tx.Rollback()
+		return errors.New("清除表信息 项目与服务器关联 失败")
+	}
+	if err = tx.Where("id in (?)", ids).Delete(&model.Project{}).Error; err != nil {
+		tx.Rollback()
+		return errors.New("删除项目失败")
+	}
+	tx.Commit()
+	return err
+}
+
 // 项目关联服务器
 func (s *ProjectService) UpdateHostAss(params *api.UpdateProjectAssHostReq) (err error) {
 	var project model.Project
@@ -182,7 +205,7 @@ func (s *ProjectService) GetHostAss(params *api.GetHostAssReq) (hostInfo any, to
 	return result, total, err
 }
 
-// 返回结果
+// 返回项目JSON结果
 func (s *ProjectService) GetResults(projectInfo any) (result []api.ProjectRes, err error) {
 	var res api.ProjectRes
 	if projects, ok := projectInfo.(*[]model.Project); ok {

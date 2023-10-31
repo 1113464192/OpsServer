@@ -4,6 +4,52 @@
         "contact": {}
     },
     "paths": {
+        "/api/v1/api/casbinList": {
+            "get": {
+                "description": "获取用户已有的API权限列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Api相关"
+                ],
+                "summary": "获取用户已有的API权限列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 登录返回的用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "组ID",
+                        "name": "gid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/api/delApi": {
             "delete": {
                 "description": "删除API",
@@ -23,14 +69,13 @@
                         "required": true
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "csv",
-                        "name": "ids",
-                        "in": "formData",
-                        "required": true
+                        "description": "id",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -113,48 +158,6 @@
                         "description": "每页大小",
                         "name": "page_size",
                         "in": "formData"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "type": ""
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/api/getCasbinList": {
-            "get": {
-                "description": "获取用户已有的API权限列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api相关"
-                ],
-                "summary": "获取用户已有的API权限列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 登录返回的用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "组ID",
-                        "name": "gid",
-                        "in": "query",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -329,6 +332,50 @@
                 }
             }
         },
+        "/api/v1/group/delete": {
+            "delete": {
+                "description": "删除成功返回sucess",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "删除用户组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "要删除的组ID",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/group/getGroups": {
             "get": {
                 "description": "返回指定用户组/不传Name返回所有用户组",
@@ -348,13 +395,21 @@
                         "required": true
                     },
                     {
-                        "description": "输入组名，不输入则全部返回",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.GetGroupReq"
-                        }
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -374,7 +429,7 @@
             }
         },
         "/api/v1/group/getProjectAss": {
-            "post": {
+            "get": {
                 "description": "返回组关联的项目",
                 "produces": [
                     "application/json"
@@ -392,13 +447,22 @@
                         "required": true
                     },
                     {
-                        "description": "传参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.GetGroupAssIdReq"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -418,7 +482,7 @@
             }
         },
         "/api/v1/group/getUserAss": {
-            "post": {
+            "get": {
                 "description": "返回组关联的用户",
                 "produces": [
                     "application/json"
@@ -436,13 +500,22 @@
                         "required": true
                     },
                     {
-                        "description": "传参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.GetGroupAssIdReq"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -519,6 +592,144 @@
                 }
             }
         },
+        "/api/v1/host/Host": {
+            "get": {
+                "description": "全部查询不传Ip",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务器相关"
+                ],
+                "summary": "查询服务器",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "查询IP则输入IP，v4或v6都可以",
+                        "name": "ip",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/host/Project": {
+            "get": {
+                "description": "返回项目切片",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务器相关"
+                ],
+                "summary": "查询服务器对应项目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/host/assDomain": {
+            "put": {
+                "description": "服务器ID[多选]",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务器相关"
+                ],
+                "summary": "域名关联服务器",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "关联传入参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateDomainAssHostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/host/association": {
             "put": {
                 "description": "项目ID[多选]",
@@ -563,104 +774,16 @@
                 }
             }
         },
-        "/api/v1/host/delete": {
-            "delete": {
-                "description": "传服务器ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "服务器相关"
-                ],
-                "summary": "删除服务器",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "需删除的host ID",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "type": ""
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/host/getHost": {
-            "post": {
-                "description": "全部查询不传Ip",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "服务器相关"
-                ],
-                "summary": "查询服务器",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "获取host的参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.GetHostReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "type": ""
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/host/getProject": {
+        "/api/v1/host/domainAssHost": {
             "get": {
-                "description": "返回项目切片",
+                "description": "返回服务器切片",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "服务器相关"
                 ],
-                "summary": "查询服务器对应项目",
+                "summary": "查询域名对应服务器",
                 "parameters": [
                     {
                         "type": "string",
@@ -670,13 +793,22 @@
                         "required": true
                     },
                     {
-                        "description": "传参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.GetHostAssProject"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -782,6 +914,12 @@
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "name": "port",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
                         "type": "string",
                         "name": "system",
                         "in": "formData",
@@ -803,6 +941,12 @@
                     },
                     {
                         "type": "string",
+                        "name": "user",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "所在地",
                         "name": "zone",
                         "in": "formData",
@@ -814,6 +958,52 @@
                         "name": "zone_time",
                         "in": "formData",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/host/updateDomain": {
+            "post": {
+                "description": "返回新增或修改的指定域名",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务器相关"
+                ],
+                "summary": "新增/修改域名",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "domain",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -920,16 +1110,60 @@
                 }
             }
         },
-        "/api/v1/menu/getMenus": {
-            "get": {
-                "description": "返回指定菜单和关联的用户组切片",
+        "/api/v1/menu/delete": {
+            "delete": {
+                "description": "删除成功返回success",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "菜单相关"
                 ],
-                "summary": "获取菜单及对应用户组信息",
+                "summary": "删除菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "菜单ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/menu/getMenus": {
+            "get": {
+                "description": "返回关联的菜单",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单相关"
+                ],
+                "summary": "获取用户组对应菜单信息",
                 "parameters": [
                     {
                         "type": "string",
@@ -940,9 +1174,9 @@
                     },
                     {
                         "type": "integer",
-                        "description": "输入菜单ID，获取菜单和关联用户组,不输入返回所有菜单及关联用户组",
                         "name": "id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1155,7 +1389,7 @@
             }
         },
         "/api/v1/project/getHost": {
-            "post": {
+            "get": {
                 "description": "返回服务器切片",
                 "produces": [
                     "application/json"
@@ -1173,13 +1407,22 @@
                         "required": true
                     },
                     {
-                        "description": "获取关联host的参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.GetHostAssReq"
-                        }
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "project_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1199,7 +1442,7 @@
             }
         },
         "/api/v1/project/getProject": {
-            "post": {
+            "get": {
                 "description": "返回指定项目",
                 "produces": [
                     "application/json"
@@ -1217,12 +1460,22 @@
                         "required": true
                     },
                     {
-                        "description": "输入项目ID，获取项目,不输入返回所有项目",
-                        "name": "data",
-                        "in": "body",
-                        "schema": {
-                            "$ref": "#/definitions/api.GetProjectReq"
-                        }
+                        "type": "string",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1258,6 +1511,18 @@
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1278,14 +1543,14 @@
         },
         "/api/v1/project/update": {
             "post": {
-                "description": "返回新增/修改的指定项目",
+                "description": "返回success",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "项目相关"
                 ],
-                "summary": "新增/修改项目",
+                "summary": "删除项目",
                 "parameters": [
                     {
                         "type": "string",
@@ -1295,33 +1560,91 @@
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "group_id",
-                        "in": "formData",
-                        "required": true
+                        "description": "删除project所需参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
                     },
-                    {
-                        "type": "integer",
-                        "description": "修改才需要传，没有传算新增",
-                        "name": "id",
-                        "in": "formData"
-                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/association": {
+            "put": {
+                "description": "服务器ID[多选]",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务相关"
+                ],
+                "summary": "关联服务器",
+                "parameters": [
                     {
                         "type": "string",
-                        "name": "name",
-                        "in": "formData",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "status",
-                        "in": "formData",
-                        "required": true
+                        "description": "关联传入参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateTemplateAssHostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
                     },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/conditionSet": {
+            "get": {
+                "description": "可不选或多选,有需要再让运维从代码中添加功能",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务相关"
+                ],
+                "summary": "可输入条件集合",
+                "parameters": [
                     {
-                        "type": "integer",
-                        "name": "user_id",
-                        "in": "formData",
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -1341,16 +1664,16 @@
                 }
             }
         },
-        "/api/v1/user/actLog": {
-            "post": {
-                "description": "获取用户操作记录，不包含get",
+        "/api/v1/task/deleteTemplate": {
+            "delete": {
+                "description": "删除的任务模板",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "用户相关"
+                    "任务相关"
                 ],
-                "summary": "获取用户操作记录",
+                "summary": "删除任务模板",
                 "parameters": [
                     {
                         "type": "string",
@@ -1360,18 +1683,127 @@
                         "required": true
                     },
                     {
-                        "description": "用户username",
+                        "description": "所需参数",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.GetRecordReq"
+                            "$ref": "#/definitions/api.IdsReq"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"data\":{用户记录},\"meta\":{msg\":\"Success\"}}",
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/getTemplate": {
+            "get": {
+                "description": "传ID(Task)返回模板内容/只传项目ID返回包含任务类型/传任务类型和项目ID返回包含模板名",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务相关"
+                ],
+                "summary": "获取任务模板",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "传Task的ID查询，则无需填其它参数，返回Task的所有内容",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "传Pid不传typename，返回对应Type的Name及其ID和 及Type包含的Task的Name和ID",
+                        "name": "pid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "需要精确到类型, 则传项目ID和类型名",
+                        "name": "type_name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/template": {
+            "post": {
+                "description": "运营点击发出工单/运维审批最后确认 都可以修改",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务相关"
+                ],
+                "summary": "新增/修改任务模板",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "更新taskTem所需参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateTaskTemplateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{返回新增/修改的项目任务模板},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
                             "type": ""
                         }
@@ -1429,6 +1861,58 @@
                 }
             }
         },
+        "/api/v1/user/getActLog": {
+            "get": {
+                "description": "获取用户操作记录，不包含get",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关"
+                ],
+                "summary": "获取用户操作记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{用户记录},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/getAssGroup": {
             "get": {
                 "description": "返回用户关联的组",
@@ -1449,8 +1933,7 @@
                     },
                     {
                         "type": "integer",
-                        "description": "用户的ID",
-                        "name": "uid",
+                        "name": "id",
                         "in": "query",
                         "required": true
                     }
@@ -1565,6 +2048,13 @@
                         "name": "keyFile",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "私钥通行证密码上传",
+                        "name": "KeyPasswd",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1605,6 +2095,13 @@
                         "type": "string",
                         "description": "私钥文本内容上传",
                         "name": "keyStr",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "私钥通行证密码上传",
+                        "name": "KeyPasswd",
                         "in": "formData",
                         "required": true
                     }
@@ -1711,7 +2208,7 @@
             }
         },
         "/api/v1/user/search": {
-            "post": {
+            "get": {
                 "description": "获取用户列表",
                 "produces": [
                     "application/json"
@@ -1744,7 +2241,7 @@
                         "type": "string",
                         "description": "用户名称(可选)",
                         "name": "username",
-                        "in": "formData"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1951,126 +2448,6 @@
                 }
             }
         },
-        "api.GetGroupAssIdReq": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "page": {
-                    "description": "页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页大小",
-                    "type": "integer"
-                }
-            }
-        },
-        "api.GetGroupReq": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "page": {
-                    "description": "页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页大小",
-                    "type": "integer"
-                }
-            }
-        },
-        "api.GetHostAssProject": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "page": {
-                    "description": "页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页大小",
-                    "type": "integer"
-                }
-            }
-        },
-        "api.GetHostAssReq": {
-            "type": "object",
-            "required": [
-                "project_id"
-            ],
-            "properties": {
-                "page": {
-                    "description": "页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页大小",
-                    "type": "integer"
-                },
-                "project_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "api.GetHostReq": {
-            "type": "object",
-            "properties": {
-                "ip": {
-                    "description": "查询IP则输入IP，v4或v6都可以",
-                    "type": "string"
-                },
-                "page_info": {
-                    "$ref": "#/definitions/api.PageInfo"
-                }
-            }
-        },
-        "api.GetProjectReq": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "page": {
-                    "description": "页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页大小",
-                    "type": "integer"
-                }
-            }
-        },
-        "api.GetRecordReq": {
-            "type": "object",
-            "properties": {
-                "page": {
-                    "description": "页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页大小",
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
         "api.IdsReq": {
             "type": "object",
             "required": [
@@ -2095,6 +2472,23 @@
                 "page_size": {
                     "description": "每页大小",
                     "type": "integer"
+                }
+            }
+        },
+        "api.UpdateDomainAssHostReq": {
+            "type": "object",
+            "required": [
+                "did"
+            ],
+            "properties": {
+                "did": {
+                    "type": "integer"
+                },
+                "hids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -2146,6 +2540,80 @@
                     }
                 },
                 "pid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.UpdateTaskTemplateReq": {
+            "type": "object",
+            "required": [
+                "condition",
+                "pid",
+                "task",
+                "task_name",
+                "type_name"
+            ],
+            "properties": {
+                "args": {
+                    "description": "任意变量, 如: path=/data/a_b_c",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "comment": {
+                    "description": "模板备注",
+                    "type": "string"
+                },
+                "condition": {
+                    "description": "mem=5就是单服最少5G，还有iowait/idle/load",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "description": "修改才需要传，没有传算新增",
+                    "type": "integer"
+                },
+                "pid": {
+                    "description": "对应项目ID",
+                    "type": "integer"
+                },
+                "port_rule": {
+                    "description": "端口规则, 如: 10000 + flag % 1000",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "task": {
+                    "description": "任务内容，规定用Shell",
+                    "type": "string"
+                },
+                "task_name": {
+                    "description": "模板名",
+                    "type": "string"
+                },
+                "type_name": {
+                    "description": "模板类型名",
+                    "type": "string"
+                }
+            }
+        },
+        "api.UpdateTemplateAssHostReq": {
+            "type": "object",
+            "required": [
+                "hid"
+            ],
+            "properties": {
+                "hid": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "tid": {
                     "type": "integer"
                 }
             }

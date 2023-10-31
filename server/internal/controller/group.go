@@ -71,6 +71,38 @@ func UpdateUserAss(c *gin.Context) {
 	})
 }
 
+// DeleteUserGroup
+// @Tags 用户组相关
+// @title 删除用户组
+// @description 删除成功返回sucess
+// @Summary 删除用户组
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param ids body api.IdsReq true "要删除的组ID"
+// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/group/delete [delete]
+func DeleteUserGroup(c *gin.Context) {
+	var ids api.IdsReq
+	if err := c.ShouldBind(&ids); err != nil {
+		c.JSON(500, err)
+		return
+	}
+
+	err := service.Group().DeleteUserGroup(ids.Ids)
+	if err != nil {
+		logger.Log().Error("Group", "删除用户组", err)
+		c.JSON(500, api.Err("删除用户组失败", err))
+		return
+	}
+
+	c.JSON(200, api.Response{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
 // GetGroup
 // @Tags 用户组相关
 // @title 获取用户组
@@ -78,7 +110,7 @@ func UpdateUserAss(c *gin.Context) {
 // @Summary 获取用户组
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param id body api.GetGroupReq true "输入组名，不输入则全部返回"
+// @Param id query api.GetGroupReq true "输入组名，不输入则全部返回"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/getGroups [get]
@@ -112,10 +144,10 @@ func GetGroup(c *gin.Context) {
 // @Summary 获取组关联用户
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.GetGroupAssIdReq true "传参数"
+// @Param data query api.GetGroupAssIdReq true "传参数"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/group/getUserAss [post]
+// @Router /api/v1/group/getUserAss [get]
 func GetAssUser(c *gin.Context) {
 	var groupReq api.GetGroupAssIdReq
 	if err := c.ShouldBind(&groupReq); err != nil {
@@ -146,10 +178,10 @@ func GetAssUser(c *gin.Context) {
 // @Summary 获取组关联项目
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.GetGroupAssIdReq true "传参数"
+// @Param data query api.GetGroupAssIdReq true "传参数"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/group/getProjectAss [post]
+// @Router /api/v1/group/getProjectAss [get]
 func GetAssProject(c *gin.Context) {
 	var groupReq api.GetGroupAssIdReq
 	if err := c.ShouldBind(&groupReq); err != nil {

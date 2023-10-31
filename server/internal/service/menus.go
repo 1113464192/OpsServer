@@ -118,15 +118,9 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 }
 
 // 获取菜单对应用户组
-// 后续优化公共关联方法
-func (s *MenuService) GetMenuList(groupIdStr *string) (menu *[]model.Menus, err error) {
+func (s *MenuService) GetMenuList(gid uint) (menu *[]model.Menus, err error) {
 	var group []model.UserGroup
-	if *groupIdStr != "" {
-		var gid uint
-		gid, err = utils.StringToUint(groupIdStr)
-		if err != nil {
-			return nil, err
-		}
+	if gid != 0 {
 		if err := model.DB.Model(&group).Association("Menus").Find(&menu, gid); err != nil {
 			return menu, err
 		}
@@ -137,4 +131,28 @@ func (s *MenuService) GetMenuList(groupIdStr *string) (menu *[]model.Menus, err 
 		}
 		return menu, err
 	}
+}
+
+func (s *MenuService) DeleteMenu(ids []uint) (err error) {
+	for _, i := range ids {
+		if !utils2.CheckIdExists(&model.UserGroup{}, &i) {
+			return errors.New("菜单不存在")
+		}
+	}
+	var menu []model.Menus
+	tx := model.DB.Begin()
+	if err = tx.Find(&menu, ids).Error; err != nil {
+		return errors.New("查询菜单信息失败")
+	}
+	if err = tx.Model(&menu).Association("UserGroup").Clear(); err != nil {
+		tx.Rollback()
+		return errors.New("清除表信息 菜单与用户组关联 失败")
+	}
+
+	if err = tx.Where("id in (?)", ids).Delete(&model.Menus{}).Error; err != nil {
+		tx.Rollback()
+		return errors.New("删除菜单失败")
+	}
+	tx.Commit()
+	return err
 }

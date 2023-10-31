@@ -113,6 +113,34 @@ func (s *GroupService) UpdateUserAss(params *api.UpdateUserAssReq) (err error) {
 	return err
 }
 
+// 删除用户组
+func (s *GroupService) DeleteUserGroup(ids []uint) (err error) {
+	for _, i := range ids {
+		if !utils2.CheckIdExists(&model.UserGroup{}, &i) {
+			return errors.New("用户组不存在")
+		}
+	}
+	var group []model.UserGroup
+	tx := model.DB.Begin()
+	if err = tx.Find(&group, ids).Error; err != nil {
+		return errors.New("查询用户组信息失败")
+	}
+	if err = tx.Model(&group).Association("Users").Clear(); err != nil {
+		tx.Rollback()
+		return errors.New("清除表信息 用户组与用户关联 失败")
+	}
+	if err = tx.Model(&group).Association("Menus").Clear(); err != nil {
+		tx.Rollback()
+		return errors.New("清除表信息 用户组与菜单关联 失败")
+	}
+	if err = tx.Where("id in (?)", ids).Delete(&model.User{}).Error; err != nil {
+		tx.Rollback()
+		return errors.New("删除用户失败")
+	}
+	tx.Commit()
+	return err
+}
+
 // 获取用户组
 func (s *GroupService) GetGroupList(params *api.GetGroupReq) (groupObj any, total int64, err error) {
 	var group []model.UserGroup

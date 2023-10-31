@@ -40,6 +40,36 @@ func UpdateProject(c *gin.Context) {
 	})
 }
 
+// DeleteProject
+// @Tags 项目相关
+// @title 删除项目
+// @description 返回success
+// @Summary 删除项目
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data body api.IdsReq true "删除project所需参数"
+// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/project/update [post]
+func DeleteProject(c *gin.Context) {
+	var projectReq api.IdsReq
+	if err := c.ShouldBind(&projectReq); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	err := service.Project().DeleteProject(projectReq.Ids)
+	if err != nil {
+		logger.Log().Error("Project", "删除项目", err)
+		c.JSON(500, api.Err("删除项目失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
 // UpdateHostAss
 // @Tags 项目相关
 // @title 关联服务器
@@ -77,10 +107,10 @@ func UpdateHostAss(c *gin.Context) {
 // @Summary 获取项目
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.GetProjectReq false "输入项目ID，获取项目,不输入返回所有项目"
+// @Param data query api.GetProjectReq false "输入项目ID，获取项目,不输入返回所有项目"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/getProject [post]
+// @Router /api/v1/project/getProject [get]
 func GetProject(c *gin.Context) {
 	var projectReq api.GetProjectReq
 	if err := c.ShouldBind(&projectReq); err != nil {
@@ -154,10 +184,10 @@ func GetSelfProjectList(c *gin.Context) {
 // @Summary 获取项目对应的服务器
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.GetHostAssReq true "获取关联host的参数"
+// @Param data query api.GetHostAssReq true "获取关联host的参数"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/getHost [post]
+// @Router /api/v1/project/getHost [get]
 func GetHostAss(c *gin.Context) {
 	var projectReq api.GetHostAssReq
 	if err := c.ShouldBind(&projectReq); err != nil {

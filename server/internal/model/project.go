@@ -1,12 +1,13 @@
 package model
 
 type Project struct {
-	Global    `gorm:"embedded"`
-	Name      string    `json:"name" gorm:"type:varchar(30);index;comment:项目名"`
-	Status    uint      `json:"status" gorm:"comment:状态 1 正常 2 停摆"`
-	UserId    uint      `json:"user_id" gorm:"comment:负责人用户ID;index"`
-	GroupId   uint      `json:"group_id" gorm:"comment:关联组ID;index"`
-	Hosts     []Host    `gorm:"many2many:project_host"`
-	User      User      `gorm:"foreignKey:UserId"`
-	UserGroup UserGroup `gorm:"foreignKey:GroupId"`
+	Global       `gorm:"embedded"`
+	Name         string         `json:"name" gorm:"type:varchar(30);index;comment:项目名"`
+	Status       uint           `json:"status" gorm:"comment:状态 1 正常 2 停摆"`
+	UserId       uint           `json:"user_id" gorm:"comment:负责人用户ID;index"`
+	GroupId      uint           `json:"group_id" gorm:"comment:关联组ID;index"`
+	User         User           `gorm:"foreignKey:UserId"`
+	UserGroup    UserGroup      `gorm:"foreignKey:GroupId"`
+	TaskTemplate []TaskTemplate `gorm:"foreignKey:Pid;references:ID"`
+	Hosts        []Host         `gorm:"many2many:project_host"`
 }

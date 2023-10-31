@@ -4,7 +4,9 @@ type UpdateHostReq struct {
 	ID          uint   `form:"id" json:"id"`
 	Ipv4        string `form:"ipv4" json:"ipv4" binding:"required"`
 	Ipv6        string `form:"ipv6" json:"ipv6"`
+	User        string `form:"user" json:"user" binding:"required"`
 	Password    string `form:"password" json:"password" binding:"required"`
+	Port        uint16 `form:"port" json:"port" binding:"required"`
 	Zone        string `form:"zone" json:"zone" binding:"required"`           // 所在地
 	ZoneTime    uint8  `form:"zone_time" json:"zone_time" binding:"required"` // 时区，如东八区填8
 	BillingType uint8  `form:"billing" json:"billing" binding:"required"`     // 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加
@@ -34,15 +36,26 @@ type GetHostReq struct {
 	PageInfo `form:"page_info" json:"page_info"`
 }
 
-type GetHostAssProject struct {
+type GetHostAssProjectReq struct {
 	Id uint `json:"id" form:"id" binding:"required"`
 	PageInfo
+}
+
+type UpdateDomainReq struct {
+	Id    uint   `json:"id" form:"id"`
+	Value string `json:"domain" form:"domain" binding:"required"`
+}
+
+type UpdateDomainAssHostReq struct {
+	Did  uint   `form:"did" json:"did" binding:"required"`
+	Hids []uint `form:"hids" json:"hids"`
 }
 
 type HostRes struct {
 	ID             uint
 	Ipv4           string
 	Ipv6           string
+	Port           uint16
 	Zone           string
 	ZoneTime       uint8
 	BillingType    uint8

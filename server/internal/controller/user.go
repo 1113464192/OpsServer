@@ -7,7 +7,6 @@ import (
 	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/utils"
 	"fqhWeb/pkg/utils/jwt"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -116,11 +115,11 @@ func UpdateUser(c *gin.Context) {
 // @Summary 获取用户列表
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.PageInfo.PageInfo true "页码，单页数量"
-// @Param username formData string false "用户名称(可选)"
+// @Param data formData api.PageInfo true "页码，单页数量"
+// @Param username query string false "用户名称(可选)"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success","Data":"User信息","Page":"页码","PageSize":"单页条数","Total":"总条数"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/search [post]
+// @Router /api/v1/user/search [get]
 func GetUserList(c *gin.Context) {
 	var pageParam api.PageInfo
 	if err := c.ShouldBind(&pageParam); err != nil {
@@ -230,7 +229,6 @@ func UpdatePasswd(c *gin.Context) {
 func UpdateSelfPasswd(c *gin.Context) {
 	var passwd api.PasswordReq
 	var err error
-
 	cClaims, _ := c.Get("claims")
 	claims, ok := cClaims.(*jwt.CustomClaims)
 	if !ok {
@@ -337,13 +335,17 @@ func GetSelfInfo(c *gin.Context) {
 // @Summary 获取关联组
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param uid query uint true "用户的ID"
+// @Param data query api.IdReq true "用户的ID"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/getAssGroup [get]
 func GetAssGroup(c *gin.Context) {
-	idStr := c.Query("uid")
-	groupInfo, err := service.User().GetAssGroup(&idStr)
+	var id api.IdReq
+	if err := c.ShouldBind(&id); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	groupInfo, err := service.User().GetAssGroup(id.Id)
 	if err != nil {
 		logger.Log().Error("User", "获取用户关联组信息失败", err)
 		c.JSON(500, api.Err("获取用户个人信息失败", err))
@@ -376,8 +378,8 @@ func GetSelfAssGroup(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	idStr := strconv.FormatUint(uint64(claims.User.ID), 10)
-	groupInfo, err := service.User().GetAssGroup(&idStr)
+	id := claims.User.ID
+	groupInfo, err := service.User().GetAssGroup(id)
 	if err != nil {
 		logger.Log().Error("User", "获取用户关联组信息失败", err)
 		c.JSON(500, api.Err("获取用户个人信息失败", err))
@@ -399,10 +401,10 @@ func GetSelfAssGroup(c *gin.Context) {
 // @Summary 获取用户操作记录
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.GetRecordReq true "用户username"
+// @Param data query api.GetRecordReq true "用户username"
 // @Success 200 {} string "{"data":{用户记录},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/actLog [post]
+// @Router /api/v1/user/getActLog [get]
 func GetRecordList(c *gin.Context) {
 	var param api.GetRecordReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -435,6 +437,7 @@ func GetRecordList(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param keyFile formData file true "私钥文件上传"
+// @Param KeyPasswd formData string true "私钥通行证密码上传"
 // @Success 200 {} string "{"data":{用户记录},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/keyFile [post]
@@ -444,6 +447,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 		c.JSON(500, api.Err("上传失败", err))
 		return
 	}
+	keyPasswd := c.PostForm("KeyPasswd")
 	cClaims, _ := c.Get("claims")
 	claims, ok := cClaims.(*jwt.CustomClaims)
 	if !ok {
@@ -451,7 +455,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	err = service.User().UpdateKeyFileContext(file, claims.User.ID)
+	err = service.User().UpdateKeyFileContext(file, keyPasswd, claims.User.ID)
 	if err != nil {
 		logger.Log().Error("User", "上传文件写入个人密钥失败", err)
 		c.JSON(500, api.Err("上传文件写入个人密钥失败", err))
@@ -473,11 +477,13 @@ func UpdateKeyFileContext(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param keyStr formData string true "私钥文本内容上传"
+// @Param KeyPasswd formData string true "私钥通行证密码上传"
 // @Success 200 {} string "{"data":{用户记录},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/keyStr [post]
 func UpdateKeyContext(c *gin.Context) {
 	keyStr := c.PostForm("keyStr")
+	keyPasswd := c.PostForm("KeyPasswd")
 	cClaims, _ := c.Get("claims")
 	claims, ok := cClaims.(*jwt.CustomClaims)
 	if !ok {
@@ -485,7 +491,7 @@ func UpdateKeyContext(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	err := service.User().UpdateKeyContext(keyStr, claims.User.ID)
+	err := service.User().UpdateKeyContext(keyStr, keyPasswd, claims.User.ID)
 	if err != nil {
 		logger.Log().Error("User", "私钥字符串写入个人密钥失败", err)
 		c.JSON(500, api.Err("私钥字符串写入个人密钥失败", err))

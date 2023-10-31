@@ -11,88 +11,6 @@ definitions:
     required:
     - group_id
     type: object
-  api.GetGroupAssIdReq:
-    properties:
-      id:
-        type: integer
-      page:
-        description: 页码
-        type: integer
-      page_size:
-        description: 每页大小
-        type: integer
-    required:
-    - id
-    type: object
-  api.GetGroupReq:
-    properties:
-      name:
-        type: string
-      page:
-        description: 页码
-        type: integer
-      page_size:
-        description: 每页大小
-        type: integer
-    type: object
-  api.GetHostAssProject:
-    properties:
-      id:
-        type: integer
-      page:
-        description: 页码
-        type: integer
-      page_size:
-        description: 每页大小
-        type: integer
-    required:
-    - id
-    type: object
-  api.GetHostAssReq:
-    properties:
-      page:
-        description: 页码
-        type: integer
-      page_size:
-        description: 每页大小
-        type: integer
-      project_id:
-        type: integer
-    required:
-    - project_id
-    type: object
-  api.GetHostReq:
-    properties:
-      ip:
-        description: 查询IP则输入IP，v4或v6都可以
-        type: string
-      page_info:
-        $ref: '#/definitions/api.PageInfo'
-    type: object
-  api.GetProjectReq:
-    properties:
-      name:
-        type: string
-      page:
-        description: 页码
-        type: integer
-      page_size:
-        description: 每页大小
-        type: integer
-    required:
-    - name
-    type: object
-  api.GetRecordReq:
-    properties:
-      page:
-        description: 页码
-        type: integer
-      page_size:
-        description: 每页大小
-        type: integer
-      username:
-        type: string
-    type: object
   api.IdsReq:
     properties:
       ids:
@@ -110,6 +28,17 @@ definitions:
       page_size:
         description: 每页大小
         type: integer
+    type: object
+  api.UpdateDomainAssHostReq:
+    properties:
+      did:
+        type: integer
+      hids:
+        items:
+          type: integer
+        type: array
+    required:
+    - did
     type: object
   api.UpdateHostAssProjectReq:
     properties:
@@ -145,6 +74,59 @@ definitions:
     required:
     - hid
     type: object
+  api.UpdateTaskTemplateReq:
+    properties:
+      args:
+        description: '任意变量, 如: path=/data/a_b_c'
+        items:
+          type: string
+        type: array
+      comment:
+        description: 模板备注
+        type: string
+      condition:
+        description: mem=5就是单服最少5G，还有iowait/idle/load
+        items:
+          type: string
+        type: array
+      id:
+        description: 修改才需要传，没有传算新增
+        type: integer
+      pid:
+        description: 对应项目ID
+        type: integer
+      port_rule:
+        description: '端口规则, 如: 10000 + flag % 1000'
+        items:
+          type: string
+        type: array
+      task:
+        description: 任务内容，规定用Shell
+        type: string
+      task_name:
+        description: 模板名
+        type: string
+      type_name:
+        description: 模板类型名
+        type: string
+    required:
+    - condition
+    - pid
+    - task
+    - task_name
+    - type_name
+    type: object
+  api.UpdateTemplateAssHostReq:
+    properties:
+      hid:
+        items:
+          type: integer
+        type: array
+      tid:
+        type: integer
+    required:
+    - hid
+    type: object
   api.UpdateUserAssReq:
     properties:
       group_id:
@@ -160,6 +142,37 @@ definitions:
 info:
   contact: {}
 paths:
+  /api/v1/api/casbinList:
+    get:
+      description: 获取用户已有的API权限列表
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - collectionFormat: csv
+        description: 组ID
+        in: query
+        items:
+          type: integer
+        name: gid
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取用户已有的API权限列表
+      tags:
+      - Api相关
   /api/v1/api/delApi:
     delete:
       description: 删除API
@@ -169,13 +182,12 @@ paths:
         name: Authorization
         required: true
         type: string
-      - collectionFormat: csv
-        in: formData
-        items:
-          type: integer
-        name: ids
+      - description: id
+        in: body
+        name: data
         required: true
-        type: array
+        schema:
+          $ref: '#/definitions/api.IdsReq'
       produces:
       - application/json
       responses:
@@ -242,34 +254,6 @@ paths:
           schema:
             type: string
       summary: 获取Api列表
-      tags:
-      - Api相关
-  /api/v1/api/getCasbinList:
-    get:
-      description: 获取用户已有的API权限列表
-      parameters:
-      - description: 格式为：Bearer 登录返回的用户令牌
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: 组ID
-        in: query
-        name: gid
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"data":{},"meta":{msg":"Success"}}'
-          schema:
-            type: ""
-        "500":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            type: string
-      summary: 获取用户已有的API权限列表
       tags:
       - Api相关
   /api/v1/api/updateApi:
@@ -376,6 +360,35 @@ paths:
       summary: 关联用户
       tags:
       - 用户组相关
+  /api/v1/group/delete:
+    delete:
+      description: 删除成功返回sucess
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 要删除的组ID
+        in: body
+        name: ids
+        required: true
+        schema:
+          $ref: '#/definitions/api.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 删除用户组
+      tags:
+      - 用户组相关
   /api/v1/group/getGroups:
     get:
       description: 返回指定用户组/不传Name返回所有用户组
@@ -385,12 +398,17 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 输入组名，不输入则全部返回
-        in: body
-        name: id
-        required: true
-        schema:
-          $ref: '#/definitions/api.GetGroupReq'
+      - in: query
+        name: name
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -406,7 +424,7 @@ paths:
       tags:
       - 用户组相关
   /api/v1/group/getProjectAss:
-    post:
+    get:
       description: 返回组关联的项目
       parameters:
       - description: 格式为：Bearer 用户令牌
@@ -414,12 +432,18 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 传参数
-        in: body
-        name: data
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/api.GetGroupAssIdReq'
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -435,7 +459,7 @@ paths:
       tags:
       - 用户组相关
   /api/v1/group/getUserAss:
-    post:
+    get:
       description: 返回组关联的用户
       parameters:
       - description: 格式为：Bearer 用户令牌
@@ -443,12 +467,18 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 传参数
-        in: body
-        name: data
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/api.GetGroupAssIdReq'
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -501,6 +531,97 @@ paths:
       summary: 新增/修改用户组信息
       tags:
       - 用户组相关
+  /api/v1/host/Host:
+    get:
+      description: 全部查询不传Ip
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 查询IP则输入IP，v4或v6都可以
+        in: query
+        name: ip
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 查询服务器
+      tags:
+      - 服务器相关
+  /api/v1/host/Project:
+    get:
+      description: 返回项目切片
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: id
+        required: true
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 查询服务器对应项目
+      tags:
+      - 服务器相关
+  /api/v1/host/assDomain:
+    put:
+      description: 服务器ID[多选]
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 关联传入参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateDomainAssHostReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 域名关联服务器
+      tags:
+      - 服务器相关
   /api/v1/host/association:
     put:
       description: 项目ID[多选]
@@ -530,21 +651,27 @@ paths:
       summary: 关联项目
       tags:
       - 服务器相关
-  /api/v1/host/delete:
-    delete:
-      description: 传服务器ID
+  /api/v1/host/domainAssHost:
+    get:
+      description: 返回服务器切片
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
         name: Authorization
         required: true
         type: string
-      - description: 需删除的host ID
-        in: body
+      - in: query
         name: id
         required: true
-        schema:
-          type: integer
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -556,65 +683,7 @@ paths:
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
             type: string
-      summary: 删除服务器
-      tags:
-      - 服务器相关
-  /api/v1/host/getHost:
-    post:
-      description: 全部查询不传Ip
-      parameters:
-      - description: 格式为：Bearer 用户令牌
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: 获取host的参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/api.GetHostReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"data":{},"meta":{msg":"Success"}}'
-          schema:
-            type: ""
-        "500":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            type: string
-      summary: 查询服务器
-      tags:
-      - 服务器相关
-  /api/v1/host/getProject:
-    get:
-      description: 返回项目切片
-      parameters:
-      - description: 格式为：Bearer 用户令牌
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: 传参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/api.GetHostAssProject'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"data":{},"meta":{msg":"Success"}}'
-          schema:
-            type: ""
-        "500":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            type: string
-      summary: 查询服务器对应项目
+      summary: 查询域名对应服务器
       tags:
       - 服务器相关
   /api/v1/host/update:
@@ -673,6 +742,10 @@ paths:
         required: true
         type: string
       - in: formData
+        name: port
+        required: true
+        type: integer
+      - in: formData
         name: system
         required: true
         type: string
@@ -686,6 +759,10 @@ paths:
         name: type
         required: true
         type: integer
+      - in: formData
+        name: user
+        required: true
+        type: string
       - description: 所在地
         in: formData
         name: zone
@@ -708,6 +785,36 @@ paths:
           schema:
             type: string
       summary: 新增/修改服务器
+      tags:
+      - 服务器相关
+  /api/v1/host/updateDomain:
+    post:
+      description: 返回新增或修改的指定域名
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: domain
+        required: true
+        type: string
+      - in: formData
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 新增/修改域名
       tags:
       - 服务器相关
   /api/v1/login:
@@ -769,18 +876,47 @@ paths:
       summary: 关联用户组
       tags:
       - 菜单相关
-  /api/v1/menu/getMenus:
-    get:
-      description: 返回指定菜单和关联的用户组切片
+  /api/v1/menu/delete:
+    delete:
+      description: 删除成功返回success
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
         name: Authorization
         required: true
         type: string
-      - description: 输入菜单ID，获取菜单和关联用户组,不输入返回所有菜单及关联用户组
-        in: query
+      - description: 菜单ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 删除菜单
+      tags:
+      - 菜单相关
+  /api/v1/menu/getMenus:
+    get:
+      description: 返回关联的菜单
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
         name: id
+        required: true
         type: integer
       produces:
       - application/json
@@ -793,7 +929,7 @@ paths:
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
             type: string
-      summary: 获取菜单及对应用户组信息
+      summary: 获取用户组对应菜单信息
       tags:
       - 菜单相关
   /api/v1/menu/update:
@@ -924,7 +1060,7 @@ paths:
       tags:
       - 项目相关
   /api/v1/project/getHost:
-    post:
+    get:
       description: 返回服务器切片
       parameters:
       - description: 格式为：Bearer 用户令牌
@@ -932,12 +1068,18 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 获取关联host的参数
-        in: body
-        name: data
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: project_id
         required: true
-        schema:
-          $ref: '#/definitions/api.GetHostAssReq'
+        type: integer
       produces:
       - application/json
       responses:
@@ -953,7 +1095,7 @@ paths:
       tags:
       - 项目相关
   /api/v1/project/getProject:
-    post:
+    get:
       description: 返回指定项目
       parameters:
       - description: 格式为：Bearer 用户令牌
@@ -961,11 +1103,18 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 输入项目ID，获取项目,不输入返回所有项目
-        in: body
-        name: data
-        schema:
-          $ref: '#/definitions/api.GetProjectReq'
+      - in: query
+        name: name
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -989,6 +1138,14 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: 页码
+        in: formData
+        name: page
+        type: integer
+      - description: 每页大小
+        in: formData
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -1005,33 +1162,19 @@ paths:
       - 项目相关
   /api/v1/project/update:
     post:
-      description: 返回新增/修改的指定项目
+      description: 返回success
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
         name: Authorization
         required: true
         type: string
-      - in: formData
-        name: group_id
+      - description: 删除project所需参数
+        in: body
+        name: data
         required: true
-        type: integer
-      - description: 修改才需要传，没有传算新增
-        in: formData
-        name: id
-        type: integer
-      - in: formData
-        name: name
-        required: true
-        type: string
-      - in: formData
-        name: status
-        required: true
-        type: integer
-      - in: formData
-        name: user_id
-        required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/api.IdsReq'
       produces:
       - application/json
       responses:
@@ -1043,38 +1186,162 @@ paths:
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
             type: string
-      summary: 新增/修改项目
+      summary: 删除项目
       tags:
       - 项目相关
-  /api/v1/user/actLog:
-    post:
-      description: 获取用户操作记录，不包含get
+  /api/v1/task/association:
+    put:
+      description: 服务器ID[多选]
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
         name: Authorization
         required: true
         type: string
-      - description: 用户username
+      - description: 关联传入参数
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api.GetRecordReq'
+          $ref: '#/definitions/api.UpdateTemplateAssHostReq'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"data":{用户记录},"meta":{msg":"Success"}}'
+          description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
             type: ""
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
             type: string
-      summary: 获取用户操作记录
+      summary: 关联服务器
       tags:
-      - 用户相关
+      - 任务相关
+  /api/v1/task/conditionSet:
+    get:
+      description: 可不选或多选,有需要再让运维从代码中添加功能
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 可输入条件集合
+      tags:
+      - 任务相关
+  /api/v1/task/deleteTemplate:
+    delete:
+      description: 删除的任务模板
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 所需参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 删除任务模板
+      tags:
+      - 任务相关
+  /api/v1/task/getTemplate:
+    get:
+      description: 传ID(Task)返回模板内容/只传项目ID返回包含任务类型/传任务类型和项目ID返回包含模板名
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 传Task的ID查询，则无需填其它参数，返回Task的所有内容
+        in: query
+        name: id
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
+      - description: 传Pid不传typename，返回对应Type的Name及其ID和 及Type包含的Task的Name和ID
+        in: query
+        name: pid
+        type: integer
+      - description: 需要精确到类型, 则传项目ID和类型名
+        in: query
+        name: type_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取任务模板
+      tags:
+      - 任务相关
+  /api/v1/task/template:
+    post:
+      description: 运营点击发出工单/运维审批最后确认 都可以修改
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 更新taskTem所需参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateTaskTemplateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{返回新增/修改的项目任务模板},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 新增/修改任务模板
+      tags:
+      - 任务相关
   /api/v1/user/delete:
     delete:
       description: 删除用户
@@ -1104,6 +1371,40 @@ paths:
       summary: 删除用户
       tags:
       - 用户相关
+  /api/v1/user/getActLog:
+    get:
+      description: 获取用户操作记录，不包含get
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{用户记录},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 获取用户操作记录
+      tags:
+      - 用户相关
   /api/v1/user/getAssGroup:
     get:
       description: 返回用户关联的组
@@ -1113,9 +1414,8 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 用户的ID
-        in: query
-        name: uid
+      - in: query
+        name: id
         required: true
         type: integer
       produces:
@@ -1192,6 +1492,11 @@ paths:
         name: keyFile
         required: true
         type: file
+      - description: 私钥通行证密码上传
+        in: formData
+        name: KeyPasswd
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1218,6 +1523,11 @@ paths:
       - description: 私钥文本内容上传
         in: formData
         name: keyStr
+        required: true
+        type: string
+      - description: 私钥通行证密码上传
+        in: formData
+        name: KeyPasswd
         required: true
         type: string
       produces:
@@ -1292,7 +1602,7 @@ paths:
       tags:
       - 用户相关
   /api/v1/user/search:
-    post:
+    get:
       description: 获取用户列表
       parameters:
       - description: 格式为：Bearer 用户令牌
@@ -1309,7 +1619,7 @@ paths:
         name: page_size
         type: integer
       - description: 用户名称(可选)
-        in: formData
+        in: query
         name: username
         type: string
       produces:

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -151,4 +152,39 @@ func StringToUint(idStr *string) (id uint, err error) {
 	}
 	id = uint(oldId)
 	return id, err
+}
+
+func ConvertToJson(params []string) (res string, err error) {
+	var extraByte []byte
+	var extra = make(map[int]string)
+	if len(params) > 0 {
+		for i, v := range params {
+			extra[i] = v
+		}
+	}
+	extraByte, err = json.Marshal(extra)
+	if err != nil {
+		return "", err
+	}
+	return string(extraByte), err
+}
+
+// 传x=y切片
+func ConvertToJsonPair(params []string) (res string, err error) {
+	data := make(map[string][]string)
+	for _, param := range params {
+		pair := strings.SplitN(param, "=", -1)
+		if len(pair) != 2 {
+			return "", fmt.Errorf("invalid key-value pair: %s", param)
+		}
+		key := pair[0]
+		value := pair[1]
+		data[key] = append(data[key], value)
+	}
+	var jsonData []byte
+	jsonData, err = json.Marshal(data)
+	if err != nil {
+		return "", fmt.Errorf("%s: %v", "转换json报错", err)
+	}
+	return string(jsonData), err
 }

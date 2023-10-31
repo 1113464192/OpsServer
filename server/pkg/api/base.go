@@ -81,3 +81,8 @@ type PageResult struct {
 type IdsReq struct {
 	Ids []uint `json:"ids" form:"ids" binding:"required"`
 }
+
+// IdReq ID单选选请求格式
+type IdReq struct {
+	Id uint `json:"id" form:"id" binding:"required"`
+}

@@ -19,10 +19,11 @@ func main() {
 			&model.User{},
 			&model.UserGroup{},
 			&model.Menus{},
-			&model.Project{},
 			&model.JwtBlacklist{},
 			&model.Api{},
 			&model.ActRecord{},
+			&model.TaskTemplate{},
+			&model.Domain{},
 			&model.Project{},
 			&model.Host{},
 		)

@@ -83,7 +83,7 @@ func UpdateApi(c *gin.Context) {
 // @Summary 删除API
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
-// @Param     data  formData      api.IdsReq   true  "id"
+// @Param     data  body      api.IdsReq   true  "id"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/api/delApi [delete]
@@ -140,7 +140,7 @@ func FreshCasbin(c *gin.Context) {
 // @Param gid query []uint true "组ID"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router    /api/v1/api/getCasbinList [post]
+// @Router    /api/v1/api/casbinList [get]
 func GetCasbinList(c *gin.Context) {
 	idStr := c.Query("gid")
 	paths, err := service.CasbinServiceApp().GetPolicyPathByGroupId(idStr)

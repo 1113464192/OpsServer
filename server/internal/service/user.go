@@ -128,10 +128,20 @@ func (s *UserService) DeleteUser(ids []uint) (err error) {
 			return errors.New("用户不存在")
 		}
 	}
-	err = model.DB.Where("id in (?)", ids).Delete(&[]model.User{}).Error
-	if err != nil {
+	var user []model.User
+	tx := model.DB.Begin()
+	if err = tx.Find(&user, ids).Error; err != nil {
+		return errors.New("查询用户信息失败")
+	}
+	if err = tx.Model(&user).Association("UserGroups").Clear(); err != nil {
+		tx.Rollback()
+		return errors.New("清除表信息 用户与用户组关联 失败")
+	}
+	if err = tx.Where("id in (?)", ids).Delete(&model.User{}).Error; err != nil {
+		tx.Rollback()
 		return errors.New("删除用户失败")
 	}
+	tx.Commit()
 	return err
 }
 
@@ -174,11 +184,9 @@ func (s *UserService) GetSelfInfo(id *uint) (userInfo any, err error) {
 }
 
 // 获取用户关联组信息
-func (s *UserService) GetAssGroup(idStr *string) (groupInfo any, err error) {
+func (s *UserService) GetAssGroup(id uint) (groupInfo any, err error) {
 	var user model.User
 	var group []model.UserGroup
-	var id uint
-	id, err = utils.StringToUint(idStr)
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +244,7 @@ func (s *UserService) Login(u *model.User) (userInfo *api.AuthLoginRes, err erro
 }
 
 // 通过文件更新私钥
-func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, id uint) error {
+func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, keyPasswd string, id uint) error {
 	fileP, err := file.Open()
 	if err != nil {
 		return err
@@ -253,14 +261,22 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, id uint) 
 	if err != nil {
 		return errors.New("私钥写入数据库失败")
 	}
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", keyPasswd).Error
+	if err != nil {
+		return errors.New("通行证密码写入数据库失败")
+	}
 	return nil
 }
 
 // 通过字符串更新私钥内容
-func (s *UserService) UpdateKeyContext(str string, id uint) error {
-	err := model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", str).Error
+func (s *UserService) UpdateKeyContext(key string, keyPasswd string, id uint) (err error) {
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", key).Error
 	if err != nil {
 		return errors.New("私钥字符串写入数据库失败")
+	}
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", keyPasswd).Error
+	if err != nil {
+		return errors.New("通行证密码写入数据库失败")
 	}
 	return nil
 }

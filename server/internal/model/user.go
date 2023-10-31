@@ -14,6 +14,7 @@ type User struct {
 	Expiration uint64         `json:"expiration"`
 	IsAdmin    uint8          `json:"is_admin" gorm:"default:0"`
 	PriKey     sql.NullString `json:"pri_key" gorm:"type:text;comment: 用户私钥，不传为NULL"`
+	KeyPasswd  sql.NullString `json:"key_passwd" gorm:"type:text;comment: 用户私钥通行密码，不传为NULL"`
 	UserGroups []UserGroup    `json:"user_group" gorm:"many2many:permit_users;comment: 管理用户填1"`
 	Project    []Project      `gorm:"foreignKey:UserId;references:ID"`
 }
