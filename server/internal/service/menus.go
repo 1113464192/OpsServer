@@ -81,7 +81,7 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 	var menu model.Menus
 	var groups []model.UserGroup
 	// 默认添加管理组
-	if !utils.IsContain(params.GroupIDs, 1) {
+	if !utils.IsSliceContain(params.GroupIDs, 1) {
 		params.GroupIDs = append(params.GroupIDs, 1)
 	}
 	var noExistId []uint

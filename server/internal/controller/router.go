@@ -104,11 +104,11 @@ func NewRoute() *gin.Engine {
 			taskRoute.DELETE("deleteTemplate", DeleteTaskTemplate)
 			taskRoute.GET("conditionSet", GetConditionSet)
 		}
-		// -----------远程操作相关-----------
-		sshRoute := v1.Group("ssh")
+		// -----------运维操作相关-----------
+		opsRoute := v1.Group("ops")
 		{
-			sshRoute.GET("getTemplate", GetTemplateParam)
-			sshRoute.POST("")
+			opsRoute.GET("getTemplate", GetTemplateParam)
+			opsRoute.POST("")
 		}
 	}
 	return r

@@ -51,7 +51,8 @@ func Database() {
 			TablePrefix:   "fqh_",
 			SingularTable: true,
 		},
-		Logger: newLogger,
+		Logger:          newLogger,
+		CreateBatchSize: configs.Conf.Mysql.CreateBatchSize,
 		NowFunc: func() time.Time {
 			tmp := time.Now().Local().Format("2006-01-02 15:04:05")
 			now, _ := time.ParseInLocation("2006-01-02 15:04:05", tmp, time.Local)

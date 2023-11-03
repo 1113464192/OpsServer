@@ -40,3 +40,25 @@ type UpdateTemplateAssHostReq struct {
 	Tid  uint   `form:"tid" json:"tid"`
 	Hids []uint `form:"hid" json:"hid" binding:"required"`
 }
+
+type RunTaskAsyncReq struct {
+	TaskName string
+	// TemplateId uint
+	HostIp     []string `json:"host_ip"`
+	Username   []string `json:"username"`
+	SSHPort    []string `json:"ssh_port"`
+	Password   []string `json:"password"` // IP对应没有也要传空字符串
+	Key        []byte   `json:"key"`
+	Passphrase []byte   `json:"passphrase"`
+}
+
+type GetTaskSSHResultRes struct {
+	SSHTaskId  uint
+	TaskName   string
+	TemplateId uint
+	OperatorId uint
+	Auditor    []uint
+	HostIps    []string
+	Status     uint8 // 状态(0: 待审核 1: 执行成功 2: 执行失败 3: 已驳回 5: 已确认)
+	Response
+}

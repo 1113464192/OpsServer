@@ -6,71 +6,115 @@ import (
 	"fmt"
 	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
+	"regexp"
+	"strconv"
 	"strings"
+
+	"github.com/Knetic/govaluate"
 )
 
-type SshService struct {
+type OpsService struct {
 }
 
 var (
-	insSSH = &SshService{}
+	insOps = &OpsService{}
 )
 
-func SSH() *SshService {
-	return insSSH
+func Ops() *OpsService {
+	return insOps
 }
 
-func (s *SshService) GetFlag(task *model.TaskTemplate) (err error) {
-	var args []map[string]string
-	if err = json.Unmarshal([]byte(task.Args), &args); err != nil {
-		return errors.New("参数字段进行json解析失败")
+func (s *OpsService) GetFlag(param string) (flags []int, err error) {
+	var args map[string][]string
+	if err = json.Unmarshal([]byte(param), &args); err != nil {
+		return flags, errors.New("参数字段进行json解析失败")
+	}
+	re := regexp.MustCompile(`\d+`)
+	if len(args["path"]) != 0 {
+		for _, path := range args["path"] {
+			matches := re.FindAllString(path, -1)
+			if len(matches) != 1 {
+				fmt.Errorf("从path取出的int不止一个: %v", matches)
+			}
+			match := matches[0]
+			flag, err := strconv.Atoi(match)
+			if err != nil {
+				errors.New(match + " 字符串转换整数失败")
+			}
+			flags = append(flags, flag)
+		}
 	}
 
+	return flags, err
 }
 
-func (s *SshService) filterPortRuleHost(host *[]model.Host, task *model.TaskTemplate) (err error) {
-	var portRule []map[int]string
+func (s *OpsService) filterPortRuleHost(host *[]model.Host, task *model.TaskTemplate) (err error) {
+	var portRule map[int]string
 	if err = json.Unmarshal([]byte(task.PortRule), &portRule); err != nil {
 		return errors.New("端口规则进行json解析失败")
 	}
-
+	flags, err := s.GetFlag(task.Args)
+	if err != nil {
+		return err
+	}
+	for _, flag := range flags {
+		for _, rule := range portRule {
+			if !strings.Contains(rule, "flag") {
+				return errors.New(rule + " 不包含 flag 字符串")
+			}
+			expr, err := govaluate.NewEvaluableExpression(rule)
+			if err != nil {
+				return fmt.Errorf("创建表达式解析器报错: %v", err)
+			}
+			vars := map[string]interface{}{
+				"flag": flag,
+			}
+			port, err := expr.Evaluate(vars)
+			if err != nil {
+				return fmt.Errorf("表达式计算报错:", err)
+			}
+			// 遍历前面进行条件筛选和内存排序的机器
+			// 将端口进行是否占用判断
+			fmt.Println(port)
+			// 如占用，下顺下一个IP，并且筛选完成后IP内存+条件内存
+			// 都没排到直接返回报错
+		}
+	}
 }
 
-func (s *SshService) filterConditionHost(host *[]model.Host, task *model.TaskTemplate) (err error) {
-	var condition []map[string]string
+func (s *OpsService) filterConditionHost(host *[]model.Host, task *model.TaskTemplate) (err error) {
+	var condition map[string][]string
 	if err = json.Unmarshal([]byte(task.Condition), &condition); err != nil {
 		return errors.New("筛选机器条件规则进行json解析失败")
 	}
 	var fields []string
 	// 为了使用不定长参数的解包方法，所以要设置为interface{}
 	var values []any
-	for _, c := range condition {
-		for key, value := range c {
-			switch key {
-			case "mem":
-				fields = append(fields, "curr_mem > ?")
-				values = append(values, value)
-			case "data_disk":
-				fields = append(fields, "curr_data_disk > ?")
-				values = append(values, value)
-			case "iowait":
-				fields = append(fields, "curr_iowait < ?")
-				values = append(values, value)
-			case "idle":
-				fields = append(fields, "curr_idle > ?")
-				values = append(values, value)
-			case "load":
-				fields = append(fields, "curr_load < ?")
-				values = append(values, value)
-			default:
-				return fmt.Errorf("%s 不属于ConditionSet中的任何一个", key)
-			}
+	for key, value := range condition {
+		switch key {
+		case "mem":
+			fields = append(fields, "curr_mem > ?")
+			values = append(values, value[0])
+		case "data_disk":
+			fields = append(fields, "curr_data_disk > ?")
+			values = append(values, value[0])
+		case "iowait":
+			fields = append(fields, "curr_iowait < ?")
+			values = append(values, value[0])
+		case "idle":
+			fields = append(fields, "curr_idle > ?")
+			values = append(values, value[0])
+		case "load":
+			fields = append(fields, "curr_load < ?")
+			values = append(values, value[0])
+		default:
+			return fmt.Errorf("%s 不属于ConditionSet中的任何一个", key)
 		}
 	}
 	// 使用单个查询筛选符合条件的主机
 	if len(fields) > 0 {
 		conditions := strings.Join(fields, " AND ")
-		if err = model.DB.Where(conditions, values...).Find(host).Error; err != nil {
+		if err = model.DB.Where(conditions, values...).Order("curr_mem").Find(host).Error; err != nil {
 			return fmt.Errorf("%s%v", "筛选符合条件的主机操作报错: ", err)
 		}
 	}
@@ -106,7 +150,7 @@ func (s *SshService) filterConditionHost(host *[]model.Host, task *model.TaskTem
 	// return err
 }
 
-func (s *SshService) GetTemplateParam(param api.GetTemplateParamReq) (resParam *api.RunCmdtemRes, err error) {
+func (s *OpsService) GetTemplateParam(param api.GetTemplateParamReq) (resParam *api.RunCmdtemRes, err error) {
 	var task model.TaskTemplate
 	var user model.User
 	if err = model.DB.First(&task, param.Tid).Error; err != nil {
@@ -118,21 +162,21 @@ func (s *SshService) GetTemplateParam(param api.GetTemplateParamReq) (resParam *
 	var host []model.Host
 	if task.Condition != "" {
 		if err = s.filterConditionHost(&host, &task); err != nil {
-			return nil, errors.New("筛选符合条件的主机失败")
+			return nil, fmt.Errorf("筛选符合条件的主机失败: %v", err)
 		}
 	}
 	if task.PortRule != "" {
 		if task.Args == "" {
-			return nil, errors.New("有端口规则请传flag或path, 否则无标识判断")
+			return nil, errors.New("有端口规则请传path, 否则无标识判断")
 		}
 		if err = s.filterPortRuleHost(&host, &task); err != nil {
-			return nil, errors.New("筛选符合端口空余的主机失败")
+			return nil, fmt.Errorf("筛选符合端口空余的主机失败: %v", err)
 		}
 
 	}
 	resParam.Cmd = task.Task
-	resParam.Key = []byte(user.PriKey.String)
-	resParam.KeyPasswd = []byte(user.KeyPasswd.String)
+	resParam.Key = user.PriKey
+	resParam.KeyPasswd = user.KeyPasswd
 }
 
 // func (s *Service) RunCmd(params *ClientConfigService, cmd string) {

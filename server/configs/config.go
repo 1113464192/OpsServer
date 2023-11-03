@@ -1,17 +1,23 @@
 package configs
 
 type Config struct {
-	Mysql  Mysql  `json:"mysql"`
-	Logger Logger `json:"logger"`
-	System System `json:"system"`
+	Mysql       Mysql       `json:"mysql"`
+	Logger      Logger      `json:"logger"`
+	System      System      `json:"system"`
+	Concurrency Concurrency `json:"concurrency"`
 }
 
 type Mysql struct {
-	Conf string
+	Conf            string
+	CreateBatchSize int
 }
 
 type Logger struct {
 	Level string
+}
+
+type Concurrency struct {
+	Number int64
 }
 
 type System struct {

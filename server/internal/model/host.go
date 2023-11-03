@@ -7,8 +7,8 @@ type Host struct {
 	Ipv4           sql.NullString `gorm:"type: varchar(30);index;comment: 如: 11.129.212.42"`
 	Ipv6           sql.NullString `gorm:"type: varchar(100);comment: 如: 241d:c000:2022:601c:0:91aa:274c:e7ac/64"`
 	User           string         `gorm:"type: varchar(20)"`
-	Password       string         `gorm:"type: varchar(60);comment: 服务器密码加密后的字符串，一般机器都会禁止密码登录"`
-	Port           uint16         `gorm:"comment: SSH端口"`
+	Password       []byte         `gorm:"type: blob;comment: 服务器密码加密后的字符串，一般机器都会禁止密码登录"`
+	Port           string         `gorm:"type: varchar(10);comment: SSH端口"`
 	Zone           string         `gorm:"type: varchar(100);comment: 服务器所在地区"`
 	ZoneTime       uint8          `gorm:"comment: 时区"`
 	BillingType    uint8          `gorm:"comment: 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加"`

@@ -82,12 +82,12 @@ func CommonLog(service string, msg string) bool {
 	return true
 }
 
-func IsContain(slice interface{}, value interface{}) bool {
+// 是否包含
+func IsSliceContain(slice interface{}, value interface{}) bool {
 	sliceValue := reflect.ValueOf(slice)
 	if sliceValue.Kind() != reflect.Slice {
 		return false
 	}
-
 	for i := 0; i < sliceValue.Len(); i++ {
 		item := sliceValue.Index(i).Interface()
 		if reflect.DeepEqual(item, value) {
@@ -96,6 +96,21 @@ func IsContain(slice interface{}, value interface{}) bool {
 	}
 
 	return false
+}
+
+// 环境变量提取整数
+func GetEnvInt(key string, fallback int) int {
+	ret := fallback
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		return ret
+	}
+	if t, err := strconv.Atoi(value); err != nil { //nolint:gosec
+		return ret
+	} else {
+		ret = t
+	}
+	return ret
 }
 
 // 匹配手机号

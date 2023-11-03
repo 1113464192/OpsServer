@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fqhWeb/internal/consts"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -256,12 +257,13 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, keyPasswd
 		return err
 	}
 
-	fileContent := string(fileBytes)
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", fileContent).Error
+	data := utils.XorEncrypt(fileBytes, consts.XorKey)
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error
 	if err != nil {
 		return errors.New("私钥写入数据库失败")
 	}
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", keyPasswd).Error
+	data = utils.XorEncrypt([]byte(keyPasswd), consts.XorKey)
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", data).Error
 	if err != nil {
 		return errors.New("通行证密码写入数据库失败")
 	}
@@ -270,11 +272,13 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, keyPasswd
 
 // 通过字符串更新私钥内容
 func (s *UserService) UpdateKeyContext(key string, keyPasswd string, id uint) (err error) {
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", key).Error
+	data := utils.XorEncrypt([]byte(key), consts.XorKey)
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error
 	if err != nil {
 		return errors.New("私钥字符串写入数据库失败")
 	}
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", keyPasswd).Error
+	data = utils.XorEncrypt([]byte(keyPasswd), consts.XorKey)
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", data).Error
 	if err != nil {
 		return errors.New("通行证密码写入数据库失败")
 	}

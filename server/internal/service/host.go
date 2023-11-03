@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"fqhWeb/internal/consts"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -43,12 +44,8 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		if params.Ipv6 != "" {
 			host.Ipv6 = sql.NullString{String: params.Ipv6, Valid: true}
 		}
-		host.Password, err = utils.GenerateFromPassword(params.Password)
-		if err != nil {
-			return host, errors.New("服务器密码bcrypt加密失败")
-		}
 		host.User = params.User
-		host.Password = params.Password
+		host.Password = utils.XorEncrypt([]byte(params.Password), consts.XorKey)
 		host.Port = params.Port
 		host.Zone = params.Zone
 		host.ZoneTime = params.ZoneTime
@@ -81,7 +78,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		host = &model.Host{
 			Ipv4:        sql.NullString{String: params.Ipv4, Valid: true},
 			User:        params.User,
-			Password:    params.Password,
+			Password:    utils.XorEncrypt([]byte(params.Password), consts.XorKey),
 			Port:        params.Port,
 			Zone:        params.Zone,
 			ZoneTime:    params.ZoneTime,

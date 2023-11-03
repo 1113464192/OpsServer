@@ -1,8 +1,16 @@
 mysql:
   conf: "root:fqh123456@tcp(192.168.18.65:20001)/fqhWeb?charset=utf8&parseTime=True&loc=Local"
+  # 设置Mysql的批处理大小
+  createBatchSize: 1000
 
 logger:
   level: "Debug"
+
+# 允许多少个任务同时执行，设置为0则无并发上限
+concurrency:
+  number: 5000
+
+
 
 system:
   # mode: "product"
