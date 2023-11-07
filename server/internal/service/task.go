@@ -46,7 +46,6 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 		if !utils2.CheckIdExists(&task, &params.ID) {
 			return task, errors.New("不存在")
 		}
-		fmt.Println("\n"+"3333", params)
 		if err := model.DB.Model(&task).Where("id = ?", params.ID).First(&task).Error; err != nil {
 			return task, errors.New("任务模板数据库查询失败: " + err.Error())
 		}
@@ -74,7 +73,6 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 			Args:      argsJson,
 		}
 		if err = model.DB.Create(&task).Error; err != nil {
-			fmt.Println(err)
 			return task, errors.New("创建项目任务模板失败")
 		}
 	}

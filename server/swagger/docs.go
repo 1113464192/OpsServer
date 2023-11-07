@@ -919,13 +919,16 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
                         "name": "password",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "port",
                         "in": "formData",
                         "required": true
@@ -1596,6 +1599,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/ssh/testSSH": {
+            "post": {
+                "description": "传入SSH命令所需参数",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SSH相关"
+                ],
+                "summary": "测试SSH命令执行",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "传入所需id",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.TestSSHReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/task/association": {
             "put": {
                 "description": "服务器ID[多选]",
@@ -1649,7 +1696,7 @@ const docTemplate = `{
                 "tags": [
                     "任务相关"
                 ],
-                "summary": "可输入条件集合",
+                "summary": "获取可输入条件集合",
                 "parameters": [
                     {
                         "type": "string",
@@ -2482,6 +2529,20 @@ const docTemplate = `{
                 },
                 "page_size": {
                     "description": "每页大小",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.TestSSHReq": {
+            "type": "object",
+            "properties": {
+                "host_id": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "user_id": {
                     "type": "integer"
                 }
             }

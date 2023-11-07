@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"fqhWeb/internal/consts"
 	"fqhWeb/pkg/api"
+	"fqhWeb/pkg/utils"
 	"net"
 	"os"
+	"time"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
@@ -48,13 +50,19 @@ func AuthWithAgent() (ssh.AuthMethod, error) {
 func SSHNewClient(config *api.SSHClientConfigReq) (client *ssh.Client, err error) {
 	clientConfig := &ssh.ClientConfig{
 		User:            config.Username,
-		Timeout:         consts.SSHTimeout,
+		Timeout:         consts.SSHTimeout * time.Second,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), // 忽略public key的安全验证
 	}
 
+	if config.SSHPort == "0" {
+		config.SSHPort = "22"
+	}
+
 	// 1. private key bytes
+	key := utils.XorDecrypt(config.Key, consts.XorKey)
+	passPhrase := utils.XorDecrypt(config.Passphrase, consts.XorKey)
 	if config.Key != nil {
-		if auth, err := AuthWithPrivateKeyBytes(config.Key, config.Passphrase); err == nil {
+		if auth, err := AuthWithPrivateKeyBytes(key, passPhrase); err == nil {
 			clientConfig.Auth = append(clientConfig.Auth, auth)
 		}
 	}
@@ -69,7 +77,7 @@ func SSHNewClient(config *api.SSHClientConfigReq) (client *ssh.Client, err error
 	if clientConfig.Auth == nil {
 		return nil, errors.New("未能生成clientConfig.Auth")
 	}
-	client, err = ssh.Dial("tcp", config.HostIp+":"+config.SSHPort, clientConfig)
+	client, err = ssh.Dial("tcp", net.JoinHostPort(config.HostIp, config.SSHPort), clientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("生成ssh.Client失败: %v", err)
 	}

@@ -29,6 +29,15 @@ definitions:
         description: 每页大小
         type: integer
     type: object
+  api.TestSSHReq:
+    properties:
+      host_id:
+        items:
+          type: integer
+        type: array
+      user_id:
+        type: integer
+    type: object
   api.UpdateDomainAssHostReq:
     properties:
       did:
@@ -737,14 +746,16 @@ paths:
         name: mem
         required: true
         type: integer
-      - in: formData
+      - collectionFormat: csv
+        in: formData
+        items:
+          type: integer
         name: password
-        required: true
-        type: string
+        type: array
       - in: formData
         name: port
         required: true
-        type: integer
+        type: string
       - in: formData
         name: system
         required: true
@@ -1189,6 +1200,35 @@ paths:
       summary: 删除项目
       tags:
       - 项目相关
+  /api/v1/ssh/testSSH:
+    post:
+      description: 传入SSH命令所需参数
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 传入所需id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.TestSSHReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 测试SSH命令执行
+      tags:
+      - SSH相关
   /api/v1/task/association:
     put:
       description: 服务器ID[多选]
@@ -1238,7 +1278,7 @@ paths:
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
             type: string
-      summary: 可输入条件集合
+      summary: 获取可输入条件集合
       tags:
       - 任务相关
   /api/v1/task/deleteTemplate:

@@ -104,6 +104,11 @@ func NewRoute() *gin.Engine {
 			taskRoute.DELETE("deleteTemplate", DeleteTaskTemplate)
 			taskRoute.GET("conditionSet", GetConditionSet)
 		}
+		// -----------SSH操作相关-----------
+		sshRoute := v1.Group("ssh")
+		{
+			sshRoute.POST("testSSH", TestSSH)
+		}
 		// -----------运维操作相关-----------
 		opsRoute := v1.Group("ops")
 		{

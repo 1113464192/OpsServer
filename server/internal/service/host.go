@@ -10,6 +10,8 @@ import (
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/utils"
 	"fqhWeb/pkg/utils2"
+	"strconv"
+	"strings"
 )
 
 type HostService struct {
@@ -50,6 +52,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		host.Zone = params.Zone
 		host.ZoneTime = params.ZoneTime
 		host.BillingType = params.BillingType
+		host.Cost = params.Cost
 		host.Cloud = params.Cloud
 		host.System = params.System
 		host.Type = params.Type
@@ -83,6 +86,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 			Zone:        params.Zone,
 			ZoneTime:    params.ZoneTime,
 			BillingType: params.BillingType,
+			Cost:        params.Cost,
 			Cloud:       params.Cloud,
 			System:      params.System,
 			Type:        params.Type,
@@ -345,6 +349,143 @@ func (s *HostService) UpdateDomainAss(params *api.UpdateDomainAssHostReq) (err e
 	return err
 }
 
+func (s *HostService) GetHostCurrData(param *api.RunSSHCmdAsyncReq) (*api.HostInfoRes, error) {
+	systemDiskShell := `df -Th | awk '{if ($NF=="/")print$(NF-2)}' | grep -Eo "[0-9]+"`
+	dataDiskShell := `df -Th | awk '{if ($NF=="/data")print$(NF-2)}' | grep -Eo "[0-9]+"`
+	memShell := `free -m | awk '/Mem/{print $NF}'`
+	iowaitShell := `iostat | awk '/avg-cpu:/ {getline; print $(NF-2)}'`
+	idleShell := `iostat | awk '/avg-cpu:/ {getline; print $(NF)}'`
+	loadShell := `uptime | awk -F"[, ]+" '{print $(NF-1)}'`
+	// cmdShell := `systemDisk=$(df -Th | awk '{if ($NF=="/")print$(NF-2)}' | grep -Eo "[0-9]+")
+	// 			 dataDisk=$(df -Th | awk '{if ($NF=="/data")print$(NF-2)}' | grep -Eo "[0-9]+")
+	// 			 mem=$(free -m | awk '/Mem/{print $NF}')
+	// 			 iowait=$(iostat | awk '/avg-cpu:/ {getline; print $(NF-2)}')
+	// 			 idle=$(iostat | awk '/avg-cpu:/ {getline; print $(NF)}')
+	// 			 load=$(uptime | awk -F"[, ]+" '{print $(NF-1)}')
+	// 			 echo "$systemDisk $dataDisk $mem $iowait $idle $load" | awk '{print $1,$2,$3,$4,$5,$6}'`
+
+	var hostInfo api.HostInfoRes
+	var err error
+
+	// output, err := SSH().RunSSHCmdAsync(param, cmdShell)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	systemDiskRes, err := SSH().RunSSHCmdAsync(param, systemDiskShell)
+	if err != nil {
+		return nil, err
+	}
+	for i := range *systemDiskRes {
+		(*systemDiskRes)[i].Response = strings.TrimSpace((*systemDiskRes)[i].Response)
+	}
+	hostInfo.CurrSystemDisk = systemDiskRes
+	dataDiskRes, err := SSH().RunSSHCmdAsync(param, dataDiskShell)
+	if err != nil {
+		return nil, err
+	}
+	for i := range *dataDiskRes {
+		(*dataDiskRes)[i].Response = strings.TrimSpace((*dataDiskRes)[i].Response)
+	}
+	hostInfo.CurrDataDisk = dataDiskRes
+
+	memRes, err := SSH().RunSSHCmdAsync(param, memShell)
+	if err != nil {
+		return nil, err
+	}
+	for i := range *memRes {
+		(*memRes)[i].Response = strings.TrimSpace((*memRes)[i].Response)
+	}
+	hostInfo.CurrMem = memRes
+
+	iowaitRes, err := SSH().RunSSHCmdAsync(param, iowaitShell)
+	if err != nil {
+		return nil, err
+	}
+	for i := range *iowaitRes {
+		(*iowaitRes)[i].Response = strings.TrimSpace((*iowaitRes)[i].Response)
+	}
+	hostInfo.CurrIowait = iowaitRes
+
+	idleRes, err := SSH().RunSSHCmdAsync(param, idleShell)
+	if err != nil {
+		return nil, err
+	}
+	for i := range *idleRes {
+		(*idleRes)[i].Response = strings.TrimSpace((*idleRes)[i].Response)
+	}
+	hostInfo.CurrIdle = idleRes
+
+	loadRes, err := SSH().RunSSHCmdAsync(param, loadShell)
+	if err != nil {
+		return nil, err
+	}
+	for i := range *loadRes {
+		(*loadRes)[i].Response = strings.TrimSpace((*loadRes)[i].Response)
+	}
+	hostInfo.CurrLoad = loadRes
+
+	return &hostInfo, err
+}
+
+func (s *HostService) WritieToDatabase(data *api.HostInfoRes) error {
+	var host model.Host
+	tx := model.DB.Begin()
+	fmt.Println(data)
+	// 如果status是false，则全部填0
+	// for _, hostRes := range *data.CurrSystemDisk {
+	for i := 0; i < len(*data.CurrSystemDisk); i++ {
+		if !(*data.CurrSystemDisk)[i].Status {
+			(*data.CurrSystemDisk)[i].Response = "-1"
+		}
+		currSystemDisk, err := strconv.ParseFloat((*data.CurrSystemDisk)[i].Response, 32)
+		if err != nil {
+			return fmt.Errorf("字符串转换浮点数错误: %v", err)
+		}
+		if !(*data.CurrDataDisk)[i].Status {
+			(*data.CurrDataDisk)[i].Response = "-1"
+		}
+		currDataDisk, err := strconv.ParseFloat((*data.CurrDataDisk)[i].Response, 32)
+		if err != nil {
+			return fmt.Errorf("字符串转换浮点数错误: %v", err)
+		}
+		if !(*data.CurrMem)[i].Status {
+			(*data.CurrMem)[i].Response = "-1"
+		}
+		currMem, err := strconv.ParseFloat((*data.CurrMem)[i].Response, 32)
+		if err != nil {
+			return fmt.Errorf("字符串转换浮点数错误: %v", err)
+		}
+		if !(*data.CurrIdle)[i].Status {
+			(*data.CurrIdle)[i].Response = "-1"
+		}
+		currIdle, err := strconv.ParseFloat((*data.CurrIdle)[i].Response, 32)
+		if err != nil {
+			return fmt.Errorf("字符串转换浮点数错误: %v", err)
+		}
+		if !(*data.CurrIowait)[i].Status {
+			(*data.CurrIowait)[i].Response = "-1"
+		}
+		currIowait, err := strconv.ParseFloat((*data.CurrIowait)[i].Response, 32)
+		if err != nil {
+			return fmt.Errorf("字符串转换浮点数错误: %v", err)
+		}
+		if !(*data.CurrLoad)[i].Status {
+			(*data.CurrLoad)[i].Response = "-1"
+		}
+		currLoad, err := strconv.ParseFloat((*data.CurrLoad)[i].Response, 32)
+		if err != nil {
+			return fmt.Errorf("字符串转换浮点数错误: %v", err)
+		}
+		if err = tx.Model(&host).Where("ipv4 = ?", (*data.CurrSystemDisk)[i].HostIp).Updates(model.Host{CurrSystemDisk: float32(currSystemDisk), CurrDataDisk: float32(currDataDisk), CurrMem: float32(currMem), CurrIowait: float32(currIowait), CurrIdle: float32(currIdle), CurrLoad: float32(currLoad)}).Error; err != nil {
+			tx.Rollback()
+			return fmt.Errorf("更新当前服务器状态到数据库失败: %v", err)
+		}
+	}
+	tx.Commit()
+	return nil
+}
+
 // 返回结果
 func (s *HostService) GetResults(hostInfo any) (result []api.HostRes, err error) {
 	var res api.HostRes
@@ -358,6 +499,7 @@ func (s *HostService) GetResults(hostInfo any) (result []api.HostRes, err error)
 				Zone:           host.Zone,
 				ZoneTime:       host.ZoneTime,
 				BillingType:    host.BillingType,
+				Cost:           host.Cost,
 				Cloud:          host.Cloud,
 				System:         host.System,
 				Type:           host.Type,
@@ -387,6 +529,7 @@ func (s *HostService) GetResults(hostInfo any) (result []api.HostRes, err error)
 			Zone:           host.Zone,
 			ZoneTime:       host.ZoneTime,
 			BillingType:    host.BillingType,
+			Cost:           host.Cost,
 			Cloud:          host.Cloud,
 			System:         host.System,
 			Type:           host.Type,

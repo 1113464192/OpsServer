@@ -26,6 +26,7 @@ func main() {
 			&model.Domain{},
 			&model.Project{},
 			&model.Host{},
+			&model.TaskRecord{},
 		)
 	}
 
