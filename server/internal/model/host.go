@@ -21,7 +21,7 @@ type Host struct {
 	Cores          uint16
 	SystemDisk     uint32 `gorm:"comment: 系统盘, 单位为G"`
 	DataDisk       uint32 `gorm:"comment: 数据盘, 单位为G"`
-	Mem            uint32 `gorm:"comment: 单位为G"`
+	Mem            uint64 `gorm:"comment: 单位为M"`
 	CurrSystemDisk float32
 	CurrDataDisk   float32
 	CurrMem        float32

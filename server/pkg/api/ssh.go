@@ -1,5 +1,10 @@
 package api
 
+type TestSSHReq struct {
+	HostId []uint `form:"host_id" json:"host_id"`
+	UserId uint   `form:"user_id" json:"user_id"`
+}
+
 type RunSSHCmdAsyncReq struct {
 	HostIp     []string          `json:"host_ip"`
 	Username   []string          `json:"username"`
@@ -7,11 +12,6 @@ type RunSSHCmdAsyncReq struct {
 	Password   map[string]string `json:"password"`
 	Key        []byte            `json:"key"`
 	Passphrase []byte            `json:"passphrase"`
-}
-
-type TestSSHReq struct {
-	HostId []uint `form:"host_id" json:"host_id"`
-	UserId uint   `form:"user_id" json:"user_id"`
 }
 
 type SSHClientConfigReq struct {

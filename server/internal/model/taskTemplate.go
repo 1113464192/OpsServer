@@ -5,7 +5,8 @@ type TaskTemplate struct {
 	// Status   uint     `json:"status" gorm:"comment: 状态(0: 审核中 1: 执行成功 2: 执行失败 3: 已驳回)"`
 	TypeName  string  `json:"type_name" gorm:"type:varchar(10);comment: 类型名称, 最长10字符"`
 	TaskName  string  `json:"task_name" gorm:"type:varchar(30);comment: 用户执行任务名"`
-	Task      string  `json:"task" gorm:"type:longtext;comment: 用户执行任务内容,限Shell语言"`
+	Task      string  `json:"task" gorm:"type:longtext;comment: 用户执行任务内容,限Shell语言, 变量参数格式:{{ .Var }}"`
+	ConfigTem string  `json:"config_tem" gorm:"type:longtext;comment: 配置文件模板, 变量参数格式:{{ .Var }}"`
 	Comment   string  `json:"comment" gorm:"type:varchar(50);comment: 任务备注, 限长50"`
 	Pid       uint    `json:"pid" gorm:"index;comment: 项目ID"`
 	Condition string  `json:"condition" gorm:"type:text;comment:如: mem=5 代表1个服最少占用5G"`

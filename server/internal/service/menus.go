@@ -117,12 +117,15 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 	return menu, err
 }
 
-// 获取菜单对应用户组
+// 获取用户组对应菜单
 func (s *MenuService) GetMenuList(gid uint) (menu *[]model.Menus, err error) {
 	var group []model.UserGroup
 	if gid != 0 {
-		if err := model.DB.Model(&group).Association("Menus").Find(&menu, gid); err != nil {
-			return menu, err
+		if err = model.DB.First(&group, gid).Error; err != nil {
+			return menu, fmt.Errorf("查找gid的用户组失败: %v", err)
+		}
+		if err = model.DB.Model(&group).Association("Menus").Find(&menu); err != nil {
+			return menu, fmt.Errorf("查找用户组关联的菜单失败: %v", err)
 		}
 		return menu, err
 	} else {

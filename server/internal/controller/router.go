@@ -112,7 +112,7 @@ func NewRoute() *gin.Engine {
 		// -----------运维操作相关-----------
 		opsRoute := v1.Group("ops")
 		{
-			opsRoute.GET("getTemplate", GetTemplateParam)
+			opsRoute.GET("getExecParam", GetExecParam)
 			opsRoute.POST("")
 		}
 	}

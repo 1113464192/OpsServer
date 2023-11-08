@@ -27,7 +27,7 @@ func CronWrittenHostInfo() {
 	}
 	for _, host := range hosts {
 		sshParam.HostIp = append(sshParam.HostIp, host.Ipv4.String)
-		sshParam.Username = append(sshParam.HostIp, host.User)
+		sshParam.Username = append(sshParam.Username, host.User)
 		sshParam.SSHPort = append(sshParam.SSHPort, host.Port)
 	}
 	hostInfo, err := service.Host().GetHostCurrData(&sshParam)

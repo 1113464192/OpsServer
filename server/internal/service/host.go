@@ -61,7 +61,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		host.DataDisk = params.DataDisk
 		host.Iops = params.Iops
 		host.Mbps = params.Mbps
-		host.Mem = params.Mem
+		host.Mem = uint64(params.Mem) * uint64(1024)
 		// 只支持从代码中获取
 		// host.CurrDisk = params.CurrDisk
 		// host.CurrMem = params.CurrMem
@@ -95,7 +95,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 			DataDisk:    params.DataDisk,
 			Iops:        params.Iops,
 			Mbps:        params.Mbps,
-			Mem:         params.Mem,
+			Mem:         uint64(params.Mem) * 1024,
 			// CurrDisk:    params.CurrDisk,
 			// CurrMem:     params.CurrMem,
 			// CurrIowait:  params.CurrIowait,
@@ -394,7 +394,14 @@ func (s *HostService) GetHostCurrData(param *api.RunSSHCmdAsyncReq) (*api.HostIn
 		return nil, err
 	}
 	for i := range *memRes {
-		(*memRes)[i].Response = strings.TrimSpace((*memRes)[i].Response)
+		memDataStr := strings.TrimSpace((*memRes)[i].Response)
+		memData, err := strconv.Atoi(memDataStr)
+		if err != nil {
+			return nil, fmt.Errorf(" 字符串转换整数失败: %v", err)
+		}
+		// 将内存除以 1024，并转换为以 "G" 为单位的大小
+		memSize := float64(memData) / float64(1024)
+		(*memRes)[i].Response = strconv.FormatFloat(memSize, 'f', 2, 32)
 	}
 	hostInfo.CurrMem = memRes
 
@@ -508,7 +515,7 @@ func (s *HostService) GetResults(hostInfo any) (result []api.HostRes, err error)
 				DataDisk:       host.DataDisk,
 				Iops:           host.Iops,
 				Mbps:           host.Mbps,
-				Mem:            host.Mem,
+				Mem:            uint32(host.Mem) / uint32(1024),
 				CurrSystemDisk: host.CurrSystemDisk,
 				CurrDataDisk:   host.CurrDataDisk,
 				CurrMem:        host.CurrMem,
@@ -538,7 +545,7 @@ func (s *HostService) GetResults(hostInfo any) (result []api.HostRes, err error)
 			DataDisk:       host.DataDisk,
 			Iops:           host.Iops,
 			Mbps:           host.Mbps,
-			Mem:            host.Mem,
+			Mem:            uint32(host.Mem) / uint32(1024),
 			CurrSystemDisk: host.CurrSystemDisk,
 			CurrDataDisk:   host.CurrDataDisk,
 			CurrMem:        host.CurrMem,

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fqhWeb/internal/service"
+	"fqhWeb/internal/service/ops"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
 
@@ -10,22 +10,22 @@ import (
 
 // GetTemplateParam
 // @Tags Ops相关
-// @title 提取任务模板内容参数
+// @title 提取任务模板内容执行时的参数
 // @description 传入模板id，返回ssh执行所需参数
-// @Summary 提取任务模板内容参数
+// @Summary 提取任务模板内容执行时的参数
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetTemplateParamReq true "传入所需id"
+// @Param data query api.GetExecParamReq true "传入所需id"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/getTemplate [get]
-func GetTemplateParam(c *gin.Context) {
-	var param api.GetTemplateParamReq
+// @Router /api/v1/ops/getExecParam [get]
+func GetExecParam(c *gin.Context) {
+	var param api.GetExecParamReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	params, err := service.Ops().GetTemplateParam(param)
+	params, err := ops.Ops().GetExecParam(param)
 	if err != nil {
 		logger.Log().Error("Task", "获取ssh执行参数", err)
 		c.JSON(500, api.Err("获取ssh执行参数失败", err))

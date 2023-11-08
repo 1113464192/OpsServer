@@ -5,6 +5,7 @@ type TaskTemRes struct {
 	TypeName  string
 	TaskName  string
 	Task      string
+	ConfigTem string
 	Comment   string
 	Pid       uint
 	Condition string
@@ -21,7 +22,8 @@ type UpdateTaskTemplateReq struct {
 	ID        uint     `form:"id" json:"id"`                                  // 修改才需要传，没有传算新增
 	TypeName  string   `form:"type_name" json:"type_name" binding:"required"` // 模板类型名
 	TaskName  string   `form:"task_name" json:"task_name" binding:"required"` // 模板名
-	Task      string   `form:"task" json:"task" binding:"required"`           // 任务内容，规定用Shell
+	Task      string   `form:"task" json:"task" binding:"required"`           // 用户执行任务内容,限Shell语言, 变量参数格式:{{ .Var }}
+	ConfigTem string   `form:"config_tem" json:"config_tem"`                  // 配置文件模板, 变量格式:{{ .Var }}
 	Condition []string `json:"condition" form:"condition" binding:"required"` // mem=5就是单服最少5G，还有iowait/idle/load
 	Comment   string   `form:"comment" json:"comment"`                        // 模板备注
 	Pid       uint     `form:"pid" json:"pid" binding:"required"`             // 对应项目ID
