@@ -877,6 +877,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "number",
+                        "description": "下次续费金额, 人民币为单位",
+                        "name": "cost",
+                        "in": "formData"
+                    },
+                    {
                         "type": "integer",
                         "description": "磁盘单位为G",
                         "name": "data_disk",
@@ -1309,6 +1315,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/ops/getExecParam": {
+            "get": {
+                "description": "传入模板id，返回ssh执行所需参数",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ops相关"
+                ],
+                "summary": "提取任务模板内容执行时的参数",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "tid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "uid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/ping": {
             "get": {
                 "description": "无设置权限，返回\"Hello world!~~(无权限版)\"",
@@ -1645,7 +1696,7 @@ const docTemplate = `{
         },
         "/api/v1/task/association": {
             "put": {
-                "description": "服务器ID[多选]",
+                "description": "服务器ID[多选](如果直接使用对应项目关联主机则无需关联主机)",
                 "produces": [
                     "application/json"
                 ],
@@ -1662,7 +1713,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "关联传入参数",
+                        "description": "关联传入参数(如果直接使用对应项目关联主机则无需关联主机)",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1689,7 +1740,7 @@ const docTemplate = `{
         },
         "/api/v1/task/conditionSet": {
             "get": {
-                "description": "可不选或多选,有需要再让运维从代码中添加功能",
+                "description": "可不选或多选,有需要再让运维从代码中添加功能(opsservice也要添加)",
                 "produces": [
                     "application/json"
                 ],
@@ -2644,6 +2695,10 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "config_tem": {
+                    "description": "配置文件模板, 变量格式:双大括号间隔空格包含.var",
+                    "type": "string"
+                },
                 "id": {
                     "description": "修改才需要传，没有传算新增",
                     "type": "integer"
@@ -2660,7 +2715,7 @@ const docTemplate = `{
                     }
                 },
                 "task": {
-                    "description": "任务内容，规定用Shell",
+                    "description": "用户执行任务内容,限Shell语言, 变量参数格式:双大括号间隔空格包含.var",
                     "type": "string"
                 },
                 "task_name": {

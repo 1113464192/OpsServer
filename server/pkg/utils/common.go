@@ -14,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Knetic/govaluate"
 )
 
 func GetRootPath() string {
@@ -167,6 +169,81 @@ func StringToUint(idStr *string) (id uint, err error) {
 	}
 	id = uint(oldId)
 	return id, err
+}
+
+func IntSliceToStringSlice(intSlice []int) []string {
+	stringSlice := make([]string, len(intSlice))
+	for i, v := range intSlice {
+		stringSlice[i] = strconv.Itoa(v)
+	}
+	return stringSlice
+}
+
+func Float64SliceToStringSlice(floatSlice []float64) []string {
+	stringSlice := make([]string, len(floatSlice))
+	for i, v := range floatSlice {
+		stringSlice[i] = strconv.FormatFloat(v, 'f', -1, 64)
+	}
+	return stringSlice
+}
+
+// 有最大对应取最大，否则只取[0]
+func SplitStringMap(originalMap map[string][]string) []map[string]string {
+	maxLength := 0
+	for _, values := range originalMap {
+		if len(values) > maxLength {
+			maxLength = len(values)
+		}
+	}
+
+	// 创建一个切片用于存储拆分后的map
+	splitMaps := make([]map[string]string, maxLength)
+
+	// 遍历原始map
+	for key, values := range originalMap {
+		for i := 0; i < maxLength; i++ {
+			// 如果值的长度大于i，则将值拆分到对应的map中；否则将空字符串放入map中
+			if maxLength == len(values) {
+				if splitMaps[i] == nil {
+					splitMaps[i] = make(map[string]string)
+				}
+				splitMaps[i][key] = values[i]
+			} else {
+				if splitMaps[i] == nil {
+					splitMaps[i] = make(map[string]string)
+				}
+				splitMaps[i][key] = values[0]
+			}
+		}
+	}
+
+	return splitMaps
+}
+
+// 用flag map类型, 做表达式中flag字符串的变量替换，生成结果为float64 slice类型
+func GenerateExprResult(rule map[int]string, flag any) ([]float64, error) {
+	var resultList []float64
+	for _, rule := range rule {
+		// 判断规则是否规范
+		if !strings.Contains(rule, "flag") {
+			return nil, errors.New(rule + " 不包含 flag 字符串")
+		}
+		// 创建规则表达式
+		expr, err := govaluate.NewEvaluableExpression(rule)
+		if err != nil {
+			return nil, fmt.Errorf("创建表达式解析器报错: %v", err)
+		}
+		vars := map[string]any{
+			"flag": flag,
+		}
+		// 获取出float64
+		num, err := expr.Evaluate(vars)
+		if err != nil {
+			return nil, fmt.Errorf("表达式计算报错: %v", err)
+		}
+		resultList = append(resultList, num.(float64))
+	}
+	return resultList, nil
 }
 
 func ConvertToJson(params []string) (res string, err error) {

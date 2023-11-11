@@ -113,7 +113,7 @@ func NewRoute() *gin.Engine {
 		opsRoute := v1.Group("ops")
 		{
 			opsRoute.GET("getExecParam", GetExecParam)
-			opsRoute.POST("")
+			// opsRoute.POST("")
 		}
 	}
 	return r

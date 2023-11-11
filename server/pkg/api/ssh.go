@@ -12,6 +12,7 @@ type RunSSHCmdAsyncReq struct {
 	Password   map[string]string `json:"password"`
 	Key        []byte            `json:"key"`
 	Passphrase []byte            `json:"passphrase"`
+	Cmd        []string          `json:"cmd"`
 }
 
 type SSHClientConfigReq struct {
@@ -21,10 +22,18 @@ type SSHClientConfigReq struct {
 	Password   string `json:"password"`
 	Key        []byte `json:"key"`
 	Passphrase []byte `json:"passphrase"`
+	Cmd        string `json:"cmd"`
 }
 
 type SftpReq struct {
-	DestFile string `json:"dest_file"`
+	HostIp      []string          `json:"host_ip"`
+	Username    []string          `json:"username"`
+	SSHPort     []string          `json:"ssh_port"`
+	Password    map[string]string `json:"password"`
+	Key         []byte            `json:"key"`
+	Passphrase  []byte            `json:"passphrase"`
+	Path        []string          `json:"path"`
+	FileContent []string          `json:"file_content"`
 }
 
 // 返回更改

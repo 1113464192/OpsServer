@@ -110,7 +110,7 @@ func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj 
 		// 如果传了类型名和项目ID
 		// 返回模板名+模板ID切片
 	} else if params.Pid != 0 && params.TypeName != "" {
-		db = db.Where("pid = ? AND TypeName = ?", params.Pid, params.TypeName)
+		db = db.Where("pid = ? AND type_name = ?", params.Pid, params.TypeName)
 		searchReq.Condition = db
 		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 			return nil, 0, err
@@ -135,7 +135,9 @@ func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj 
 		}
 		var result []string
 		for _, record := range task {
-			result = append(result, record.TypeName)
+			if !utils.IsSliceContain(result, record) {
+				result = append(result, record.TypeName)
+			}
 		}
 		return result, total, err
 	}

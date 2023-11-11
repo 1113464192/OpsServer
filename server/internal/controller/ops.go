@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetTemplateParam
+// GetExecParam
 // @Tags Ops相关
 // @title 提取任务模板内容执行时的参数
 // @description 传入模板id，返回ssh执行所需参数
@@ -25,14 +25,17 @@ func GetExecParam(c *gin.Context) {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	params, err := ops.Ops().GetExecParam(param)
+	params, sftpParams, err := ops.Ops().GetExecParam(param)
 	if err != nil {
 		logger.Log().Error("Task", "获取ssh执行参数", err)
-		c.JSON(500, api.Err("获取ssh执行参数失败", err))
+		c.JSON(500, api.Err("获取Ops任务执行参数失败", err))
 		return
 	}
 	c.JSON(200, api.Response{
-		Data: params,
+		Data: map[string]any{
+			"sshReq":  *params,
+			"sftpReq": *sftpParams,
+		},
 		Meta: api.Meta{
 			Msg: "Success",
 		},

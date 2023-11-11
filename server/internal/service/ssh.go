@@ -57,17 +57,19 @@ func (s *SSHServer) TestSSH(param api.TestSSHReq) (*[]api.SSHResultRes, error) {
 		logger.Log().Error("Host", "机器数据采集——数据写入数据库失败", err)
 		return nil, fmt.Errorf("机器数据采集——数据写入数据库失败: %v", err)
 	}
-	result, err = s.RunSSHCmdAsync(sshReq, `ifconfig eth0 | grep inet`)
+	sshReq.Cmd = []string{`ifconfig eth0 | grep inet`}
+	result, err = s.RunSSHCmdAsync(sshReq)
 	if err != nil {
 		return nil, fmt.Errorf("测试执行失败: %v", err)
 	}
 	return result, err
 }
 
-func (s *SSHServer) RunSSHCmdAsync(param *api.RunSSHCmdAsyncReq, cmd string) (*[]api.SSHResultRes, error) {
-	if len(param.HostIp) != len(param.SSHPort) || len(param.HostIp) != len(param.Username) {
-		return nil, errors.New("请检查: IP、端口、用户名这些切片是否一一对应")
+func (s *SSHServer) RunSSHCmdAsync(param *api.RunSSHCmdAsyncReq) (*[]api.SSHResultRes, error) {
+	if err := s.CheckSSHParam(param); err != nil {
+		return nil, err
 	}
+
 	channel := make(chan *api.SSHResultRes, len(param.HostIp))
 	wg := sync.WaitGroup{}
 	var err error
@@ -86,9 +88,12 @@ func (s *SSHServer) RunSSHCmdAsync(param *api.RunSSHCmdAsyncReq, cmd string) (*[
 			Password:   password,
 			Key:        param.Key,
 			Passphrase: param.Passphrase,
+			Cmd:        param.Cmd[0],
 		}
-		go s.RunSSHCmd(sshParam, cmd, channel, &wg)
-
+		if len(param.Cmd) > 1 {
+			sshParam.Cmd = param.Cmd[i]
+		}
+		go s.RunSSHCmd(sshParam, channel, &wg)
 	}
 	wg.Wait()
 	close(channel)
@@ -98,7 +103,7 @@ func (s *SSHServer) RunSSHCmdAsync(param *api.RunSSHCmdAsyncReq, cmd string) (*[
 	return &result, err
 }
 
-func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, cmd string, ch chan *api.SSHResultRes, wg *sync.WaitGroup) {
+func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup) {
 	result := &api.SSHResultRes{
 		HostIp: param.HostIp,
 		Status: true,
@@ -124,7 +129,7 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, cmd string, ch chan
 		return
 	}
 	defer session.Close()
-	output, err := session.CombinedOutput(cmd)
+	output, err := session.CombinedOutput(param.Cmd)
 	if err != nil {
 		result.Status = false
 		result.Response = fmt.Sprintf("Failed to execute command: %s %s", string(output), err.Error())
@@ -138,4 +143,37 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, cmd string, ch chan
 	ch <- result
 	wg.Done()
 	configs.Sem.Release(1)
+}
+
+// 检查是否符合执行条件
+func (s *SSHServer) CheckSSHParam(param *api.RunSSHCmdAsyncReq) error {
+	fmt.Println(param.HostIp)
+	fmt.Println(param.Username)
+	fmt.Println(param.SSHPort)
+	fmt.Println(param.Cmd)
+	for _, value := range param.HostIp {
+		if value == "" {
+			// 可能path大于hosts数量
+			return fmt.Errorf("IP切片中有值为空字符串")
+		}
+	}
+	for _, value := range param.SSHPort {
+		if value == "" {
+			return fmt.Errorf("端口切片中有值为空字符串")
+		}
+	}
+	for _, value := range param.Username {
+		if value == "" {
+			return fmt.Errorf("用户切片中有值为空字符串")
+		}
+	}
+	for _, value := range param.Cmd {
+		if value == "" {
+			return fmt.Errorf("CMD切片中有值为空字符串")
+		}
+	}
+	if len(param.HostIp) != len(param.SSHPort) || len(param.HostIp) != len(param.Username) || len(param.Cmd) > 1 && len(param.Cmd) != len(param.HostIp) {
+		return errors.New("请检查: IP、端口、用户名这些切片是否一一对应")
+	}
+	return nil
 }

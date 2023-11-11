@@ -106,11 +106,11 @@ func DeleteTaskTemplate(c *gin.Context) {
 // UpdateTaskAssHost
 // @Tags 任务相关
 // @title 关联服务器
-// @description 服务器ID[多选]
+// @description 服务器ID[多选](如果直接使用对应项目关联主机则无需关联主机)
 // @Summary 关联服务器
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.UpdateTemplateAssHostReq true "关联传入参数"
+// @Param data body api.UpdateTemplateAssHostReq true "关联传入参数(如果直接使用对应项目关联主机则无需关联主机)"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/task/association [put]
@@ -136,7 +136,7 @@ func UpdateTaskAssHost(c *gin.Context) {
 // GetConditionSet
 // @Tags 任务相关
 // @title 获取可输入条件集合
-// @description 可不选或多选,有需要再让运维从代码中添加功能
+// @description 可不选或多选,有需要再让运维从代码中添加功能(opsservice也要添加)
 // @Summary 获取可输入条件集合
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"

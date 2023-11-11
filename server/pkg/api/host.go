@@ -53,12 +53,12 @@ type UpdateDomainAssHostReq struct {
 }
 
 type HostInfoRes struct {
-	CurrSystemDisk *[]SSHResultRes
-	CurrDataDisk   *[]SSHResultRes
-	CurrMem        *[]SSHResultRes
-	CurrIowait     *[]SSHResultRes
-	CurrIdle       *[]SSHResultRes
-	CurrLoad       *[]SSHResultRes
+	CurrSystemDisk []SSHResultRes
+	CurrDataDisk   []SSHResultRes
+	CurrMem        []SSHResultRes
+	CurrIowait     []SSHResultRes
+	CurrIdle       []SSHResultRes
+	CurrLoad       []SSHResultRes
 }
 
 type HostRes struct {

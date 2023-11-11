@@ -98,6 +98,9 @@ definitions:
         items:
           type: string
         type: array
+      config_tem:
+        description: 配置文件模板, 变量格式:双大括号间隔空格包含.var
+        type: string
       id:
         description: 修改才需要传，没有传算新增
         type: integer
@@ -110,7 +113,7 @@ definitions:
           type: string
         type: array
       task:
-        description: 任务内容，规定用Shell
+        description: 用户执行任务内容,限Shell语言, 变量参数格式:双大括号间隔空格包含.var
         type: string
       task_name:
         description: 模板名
@@ -718,6 +721,10 @@ paths:
         name: cores
         required: true
         type: integer
+      - description: 下次续费金额, 人民币为单位
+        in: formData
+        name: cost
+        type: number
       - description: 磁盘单位为G
         in: formData
         name: data_disk
@@ -1009,6 +1016,35 @@ paths:
       summary: 新增/修改菜单信息
       tags:
       - 菜单相关
+  /api/v1/ops/getExecParam:
+    get:
+      description: 传入模板id，返回ssh执行所需参数
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: tid
+        type: integer
+      - in: query
+        name: uid
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 提取任务模板内容执行时的参数
+      tags:
+      - Ops相关
   /api/v1/ping:
     get:
       description: 无设置权限，返回"Hello world!~~(无权限版)"
@@ -1231,14 +1267,14 @@ paths:
       - SSH相关
   /api/v1/task/association:
     put:
-      description: 服务器ID[多选]
+      description: 服务器ID[多选](如果直接使用对应项目关联主机则无需关联主机)
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
         name: Authorization
         required: true
         type: string
-      - description: 关联传入参数
+      - description: 关联传入参数(如果直接使用对应项目关联主机则无需关联主机)
         in: body
         name: data
         required: true
@@ -1260,7 +1296,7 @@ paths:
       - 任务相关
   /api/v1/task/conditionSet:
     get:
-      description: 可不选或多选,有需要再让运维从代码中添加功能
+      description: 可不选或多选,有需要再让运维从代码中添加功能(opsservice也要添加)
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
