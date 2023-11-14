@@ -23,11 +23,7 @@ func (s *ActRecord) RecordCreate(log *model.ActRecord) (err error) {
 	return err
 }
 
-// GetRecordList
-// @description:  获取日志列表
-// @param: param api.GetRecordReq
-// @return: list any, total int64, err error
-func (s *ActRecord) GetRecordList(param *api.GetRecordReq) (list any, total int64, err error) {
+func (s *ActRecord) GetRecordList(param *api.GetPagingByIdReq) (list any, total int64, err error) {
 	var logs []model.ActRecord
 	db := model.DB.Model(&logs).Order("id desc")
 	searchReq := &api.SearchReq{
@@ -35,8 +31,8 @@ func (s *ActRecord) GetRecordList(param *api.GetRecordReq) (list any, total int6
 		Table:     &logs,
 		PageInfo:  param.PageInfo,
 	}
-	if param.Username != "" {
-		db = db.Where("username = ?", param.Username)
+	if param.Id != 0 {
+		db = db.Where("user_id = ?", param.Id)
 		searchReq.Condition = db
 		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 			return nil, 0, err

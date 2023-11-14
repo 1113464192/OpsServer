@@ -170,7 +170,7 @@ func (s *GroupService) GetGroupList(params *api.GetGroupReq) (groupObj any, tota
 }
 
 // 获取用户组对应用户
-func (s *GroupService) GetAssUser(params *api.GetGroupAssIdReq) (userObj any, total int64, err error) {
+func (s *GroupService) GetAssUser(params *api.GetPagingByIdReq) (userObj any, total int64, err error) {
 	var group model.UserGroup
 	if !utils2.CheckIdExists(&group, &params.Id) {
 		return nil, 0, errors.New("组ID不存在")
@@ -194,7 +194,7 @@ func (s *GroupService) GetAssUser(params *api.GetGroupAssIdReq) (userObj any, to
 }
 
 // 获取用户组对应项目
-func (s *GroupService) GetAssProject(params *api.GetGroupAssIdReq) (projectObj any, total int64, err error) {
+func (s *GroupService) GetAssProject(params *api.GetPagingByIdReq) (projectObj any, total int64, err error) {
 	var group model.UserGroup
 	if !utils2.CheckIdExists(&group, &params.Id) {
 		return nil, 0, errors.New("组ID不存在")

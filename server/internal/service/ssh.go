@@ -90,6 +90,7 @@ func (s *SSHServer) RunSSHCmdAsync(param *api.RunSSHCmdAsyncReq) (*[]api.SSHResu
 			Passphrase: param.Passphrase,
 			Cmd:        param.Cmd[0],
 		}
+		// 如果是一个主机一个命令则多条
 		if len(param.Cmd) > 1 {
 			sshParam.Cmd = param.Cmd[i]
 		}

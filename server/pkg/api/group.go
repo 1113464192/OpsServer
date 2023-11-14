@@ -25,8 +25,3 @@ type GetGroupReq struct {
 	Name string `json:"name" form:"name"`
 	PageInfo
 }
-
-type GetGroupAssIdReq struct {
-	Id uint `json:"id" form:"id" binding:"required"`
-	PageInfo
-}

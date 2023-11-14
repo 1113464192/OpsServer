@@ -236,7 +236,7 @@ func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64
 }
 
 // 获取对应关联项目
-func (s *HostService) GetProject(params *api.GetHostAssProjectReq) (projectInfo any, total int64, err error) {
+func (s *HostService) GetProject(params *api.GetPagingByIdReq) (projectInfo any, total int64, err error) {
 	var host model.Host
 	if !utils2.CheckIdExists(&host, &params.Id) {
 		return nil, 0, errors.New("主机ID不存在")
@@ -260,7 +260,7 @@ func (s *HostService) GetProject(params *api.GetHostAssProjectReq) (projectInfo 
 }
 
 // 获取对应关联项目
-func (s *HostService) GetDomainAssHost(params *api.GetHostAssProjectReq) (hostInfo any, total int64, err error) {
+func (s *HostService) GetDomainAssHost(params *api.GetPagingByIdReq) (hostInfo any, total int64, err error) {
 	var domain model.Domain
 	if !utils2.CheckIdExists(&domain, &params.Id) {
 		return nil, 0, errors.New("域名ID不存在")

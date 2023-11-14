@@ -111,25 +111,22 @@ func UpdateUser(c *gin.Context) {
 // GetUserList
 // @Tags 用户相关
 // @title 用户列表
-// @description 获取用户列表
+// @description 获取用户列表(IDs直接取用户无需其他参数，否则需要name和pageinfo)
 // @Summary 获取用户列表
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.PageInfo true "页码，单页数量"
-// @Param username query string false "用户名称(可选)"
+// @Param data query api.GetUserListReq true "所需参数,输入了ids则不再需要输入其他参数"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success","Data":"User信息","Page":"页码","PageSize":"单页条数","Total":"总条数"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/search [get]
 func GetUserList(c *gin.Context) {
-	var pageParam api.PageInfo
-	if err := c.ShouldBind(&pageParam); err != nil {
+	var param api.GetUserListReq
+	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
 
-	nameParam := c.PostForm("username")
-
-	user, total, err := service.User().GetUserList(pageParam, nameParam)
+	user, total, err := service.User().GetUserList(param)
 	if err != nil {
 		logger.Log().Error("User", "获取用户列表", err)
 		c.JSON(500, api.Err("获取失败", nil))
@@ -140,8 +137,8 @@ func GetUserList(c *gin.Context) {
 				Msg: "Success",
 			},
 			Data:     user,
-			Page:     pageParam.Page,
-			PageSize: pageParam.PageSize,
+			Page:     param.Page,
+			PageSize: param.PageSize,
 			Total:    total,
 		})
 	}
@@ -401,12 +398,12 @@ func GetSelfAssGroup(c *gin.Context) {
 // @Summary 获取用户操作记录
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetRecordReq true "用户username"
+// @Param data query api.GetPagingByIdReq true "用户username"
 // @Success 200 {} string "{"data":{用户记录},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/getActLog [get]
 func GetRecordList(c *gin.Context) {
-	var param api.GetRecordReq
+	var param api.GetPagingByIdReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return

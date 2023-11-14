@@ -51,7 +51,7 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 		}
 		task.TypeName = params.TypeName
 		task.TaskName = params.TaskName
-		task.Task = params.Task
+		task.CmdTem = params.CmdTem
 		task.ConfigTem = params.ConfigTem
 		task.Condition = conditionJson
 		task.Comment = params.Comment
@@ -66,7 +66,7 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 		task = model.TaskTemplate{
 			TypeName:  params.TypeName,
 			TaskName:  params.TaskName,
-			Task:      params.Task,
+			CmdTem:    params.CmdTem,
 			ConfigTem: params.ConfigTem,
 			Condition: conditionJson,
 			Comment:   params.Comment,
@@ -235,7 +235,7 @@ func (s *TaskService) GetTemplateResults(taskInfo any) (result []api.TaskTemRes,
 				ID:        task.ID,
 				TypeName:  task.TypeName,
 				TaskName:  task.TaskName,
-				Task:      task.Task,
+				CmdTem:    task.CmdTem,
 				ConfigTem: task.ConfigTem,
 				Comment:   task.Comment,
 				Pid:       task.Pid,
@@ -252,7 +252,7 @@ func (s *TaskService) GetTemplateResults(taskInfo any) (result []api.TaskTemRes,
 			ID:        task.ID,
 			TypeName:  task.TypeName,
 			TaskName:  task.TaskName,
-			Task:      task.Task,
+			CmdTem:    task.CmdTem,
 			ConfigTem: task.ConfigTem,
 			Comment:   task.Comment,
 			Pid:       task.Pid,

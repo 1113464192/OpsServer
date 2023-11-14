@@ -34,9 +34,9 @@ type AuthLoginRes struct {
 	Token    string `json:"token"`
 }
 
-// 获取用户行为记录
-type GetRecordReq struct {
-	Username string `json:"username" form:"username"`
+type GetUserListReq struct {
+	Ids  []uint `json:"ids" form:"ids"`
+	Name string `json:"name" form:"name"`
 	PageInfo
 }
 

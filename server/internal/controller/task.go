@@ -9,7 +9,7 @@ import (
 )
 
 // UpdateTaskTemplate
-// @Tags 任务相关
+// @Tags 模板相关
 // @title 新增/修改任务模板
 // @description 运营点击发出工单/运维审批最后确认 都可以修改
 // @Summary 新增/修改任务模板
@@ -40,7 +40,7 @@ func UpdateTaskTemplate(c *gin.Context) {
 }
 
 // GetProjectTask
-// @Tags 任务相关
+// @Tags 模板相关
 // @title 获取任务模板
 // @description 传ID(Task)返回模板内容/只传项目ID返回包含任务类型/传任务类型和项目ID返回包含模板名
 // @Summary 获取任务模板
@@ -74,7 +74,7 @@ func GetProjectTask(c *gin.Context) {
 }
 
 // DeleteTaskTemplate
-// @Tags 任务相关
+// @Tags 模板相关
 // @title 删除任务模板
 // @description 删除的任务模板
 // @Summary 删除任务模板
@@ -104,7 +104,7 @@ func DeleteTaskTemplate(c *gin.Context) {
 }
 
 // UpdateTaskAssHost
-// @Tags 任务相关
+// @Tags 模板相关
 // @title 关联服务器
 // @description 服务器ID[多选](如果直接使用对应项目关联主机则无需关联主机)
 // @Summary 关联服务器
@@ -134,7 +134,7 @@ func UpdateTaskAssHost(c *gin.Context) {
 }
 
 // GetConditionSet
-// @Tags 任务相关
+// @Tags 模板相关
 // @title 获取可输入条件集合
 // @description 可不选或多选,有需要再让运维从代码中添加功能(opsservice也要添加)
 // @Summary 获取可输入条件集合

@@ -50,7 +50,7 @@ func UpdateProject(c *gin.Context) {
 // @Param data body api.IdsReq true "删除project所需参数"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/update [post]
+// @Router /api/v1/project/delete [delete]
 func DeleteProject(c *gin.Context) {
 	var projectReq api.IdsReq
 	if err := c.ShouldBind(&projectReq); err != nil {

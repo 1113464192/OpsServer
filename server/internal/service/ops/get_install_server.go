@@ -8,7 +8,7 @@ import (
 	"fqhWeb/pkg/api"
 )
 
-func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTemplate, user *model.User, pathCount int, args *map[string][]string) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, err error) {
+func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTemplate, user *model.User, pathCount int, args *map[string][]string, configParam *api.SftpReq) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, err error) {
 	if task.ConfigTem == "" {
 		return nil, nil, errors.New("装服报错: 配置文件模板为空")
 	}
@@ -16,22 +16,19 @@ func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTe
 	if len(*hostList) > pathCount {
 		*hostList = (*hostList)[:pathCount]
 	}
-	// 走端口规则返回符合条件的服务器
+	// 走端口规则返回符合条件的服务器,因此要清空resParam的数据
 	resParam = &api.RunSSHCmdAsyncReq{}
 	resParam.Key = user.PriKey
 	resParam.Passphrase = user.KeyPasswd
 
-	resConfig = new(api.SftpReq)
-	resConfig.Key = user.PriKey
-	resConfig.Passphrase = user.KeyPasswd
 	for _, host := range *hostList {
 		resParam.HostIp = append(resParam.HostIp, host.Ipv4.String)
 		resParam.Username = append(resParam.Username, host.User)
 		resParam.SSHPort = append(resParam.SSHPort, host.Port)
 
-		resConfig.HostIp = append(resConfig.HostIp, host.Ipv4.String)
-		resConfig.Username = append(resConfig.Username, host.User)
-		resConfig.SSHPort = append(resConfig.SSHPort, host.Port)
+		configParam.HostIp = append(configParam.HostIp, host.Ipv4.String)
+		configParam.Username = append(configParam.Username, host.User)
+		configParam.SSHPort = append(configParam.SSHPort, host.Port)
 
 	}
 
@@ -45,11 +42,11 @@ func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTe
 		return nil, nil, fmt.Errorf("cmdTem/configTem 渲染变量失败: %v", err)
 	}
 	resParam.Cmd = cmd
-	resConfig.FileContent = config
-	resConfig.Path = (*args)["path"]
+	configParam.FileContent = config
+	configParam.Path = (*args)["path"]
 
 	if err = service.SSH().CheckSSHParam(resParam); err != nil {
 		return nil, nil, err
 	}
-	return resParam, resConfig, err
+	return resParam, configParam, err
 }

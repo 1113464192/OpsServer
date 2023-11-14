@@ -34,7 +34,7 @@ func (s *OpsService) getFlag(param string, args *map[string][]string) (flags []i
 
 func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][]string) (cmd []string, config []string, err error) {
 	pathCount := len((*args)["path"])
-	cmdTem, err := template.New("cmdTem").Parse(task.Task)
+	cmdTem, err := template.New("cmdTem").Parse(task.CmdTem)
 	if err != nil {
 		return cmd, config, fmt.Errorf("无法解析CMD模板: %v", err)
 	}
@@ -220,13 +220,9 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, task *model.TaskTem
 					num += 1
 				}
 			}
-			fmt.Println("aaaa\n", memSize)
 			if count == num {
 				availHost = append(availHost, *host)
-
-				fmt.Println("bbbb\n", host.CurrMem)
 				host.CurrMem = host.CurrMem - memSize
-				fmt.Println("cccc\n", host.CurrMem)
 				break
 			} else {
 				continue
@@ -234,4 +230,59 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, task *model.TaskTem
 		}
 	}
 	return &availHost, err
+}
+
+func (s *OpsService) writingTaskRecord(resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
+	// sshReq编码JSON
+	sshJson := make(map[string][]string)
+	sshJson["ipv4"] = resParam.HostIp
+	sshJson["sshPort"] = resParam.SSHPort
+	sshJson["username"] = resParam.Username
+	sshJson["cmd"] = resParam.Cmd
+	if resConfig.FileContent != nil {
+		sshJson["config"] = resConfig.FileContent
+		sshJson["configPath"] = resConfig.Path
+	}
+	var data []byte
+	data, err = json.Marshal(sshJson)
+	if err != nil {
+		return nil, fmt.Errorf("map转换json失败: %v", err)
+	}
+
+	taskRecord = &model.TaskRecord{
+		TaskName:   task.TaskName,
+		TemplateId: task.ID,
+		OperatorId: user.ID,
+		SSHJson:    string(data),
+	}
+	tx := model.DB.Begin()
+	if err = tx.Create(taskRecord).Error; err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("TaskRecord存储失败: %v", err)
+	}
+	var auditor model.User
+	if err = tx.Model(&model.User{}).Find(&auditor, auditorIds).Error; err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("查询工单审批用户失败: %v", err)
+	}
+	if err = tx.Model(taskRecord).Association("Auditor").Replace(&auditor); err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("工单任务 关联 审批用户 失败: %v", err)
+	}
+	tx.Commit()
+
+	nonApprover := make(map[string][]uint)
+	nonApprover["ids"] = auditorIds
+
+	data, err = json.Marshal(nonApprover)
+	if err != nil {
+		return nil, fmt.Errorf("map转换json失败: %v", err)
+	}
+	taskRecord.NonApprover = string(data)
+	// 接入微信小程序之类的请求,向第一个审批用户发送
+	// ......
+	fmt.Println("==========首次写入,接入微信小程序之类的请求,向第一个审批用户发送===========")
+	model.DB.Save(&taskRecord)
+
+	return taskRecord, err
 }

@@ -7,7 +7,7 @@ import (
 	"fqhWeb/pkg/api"
 )
 
-func (s *OpsService) getGeneral(hosts *[]model.Host, pathCount int, task *model.TaskTemplate, args *map[string][]string) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, err error) {
+func (s *OpsService) getGeneral(hosts *[]model.Host, task *model.TaskTemplate, args *map[string][]string, sshParam *api.RunSSHCmdAsyncReq, configParam *api.SftpReq) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, err error) {
 	// 不走端口规则，但有path参数，过滤至path总数的可用服务器
 	// if pathCount != 0 {
 	// 	needHosts := (*hosts)[:pathCount]
@@ -27,11 +27,15 @@ func (s *OpsService) getGeneral(hosts *[]model.Host, pathCount int, task *model.
 	// 	}
 	// 	// 不走端口规则返回全部符合条件的服务器
 	// }
-
 	for _, host := range *hosts {
-		resParam.HostIp = append(resParam.HostIp, host.Ipv4.String)
-		resParam.Username = append(resParam.Username, host.User)
-		resParam.SSHPort = append(resParam.SSHPort, host.Port)
+		sshParam.HostIp = append(sshParam.HostIp, host.Ipv4.String)
+		sshParam.Username = append(sshParam.Username, host.User)
+		sshParam.SSHPort = append(sshParam.SSHPort, host.Port)
+		if task.ConfigTem != "" {
+			configParam.HostIp = append(configParam.HostIp, host.Ipv4.String)
+			configParam.Username = append(configParam.Username, host.User)
+			configParam.SSHPort = append(configParam.SSHPort, host.Port)
+		}
 	}
 
 	cmd, config, err := s.templateRender(task, args)
@@ -39,14 +43,14 @@ func (s *OpsService) getGeneral(hosts *[]model.Host, pathCount int, task *model.
 	if err != nil {
 		return nil, nil, fmt.Errorf("cmdTem/configTem 渲染变量失败: %v", err)
 	}
-	resParam.Cmd = cmd
+	sshParam.Cmd = cmd
 	if config != nil {
-		resConfig.FileContent = config
-		resConfig.Path = (*args)["path"]
+		configParam.FileContent = config
+		configParam.Path = (*args)["path"]
 	}
 
-	if err = service.SSH().CheckSSHParam(resParam); err != nil {
+	if err = service.SSH().CheckSSHParam(sshParam); err != nil {
 		return nil, nil, err
 	}
-	return resParam, resConfig, err
+	return sshParam, configParam, err
 }

@@ -460,8 +460,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -513,8 +512,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -665,8 +663,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -806,8 +803,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -1315,16 +1311,16 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ops/getExecParam": {
-            "get": {
-                "description": "传入模板id，返回ssh执行所需参数",
+        "/api/v1/ops/approveTask": {
+            "put": {
+                "description": "传入工单的ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Ops相关"
                 ],
-                "summary": "提取任务模板内容执行时的参数",
+                "summary": "用户审批工单",
                 "parameters": [
                     {
                         "type": "string",
@@ -1332,6 +1328,154 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ops/getExecParam": {
+            "get": {
+                "description": "返回sftp和ssh的执行参数",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ops相关"
+                ],
+                "summary": "提取执行参数",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ops/getTask": {
+            "get": {
+                "description": "传入查询所需参数,输了ID就不用name和页码",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ops相关"
+                ],
+                "summary": "查看任务工单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "task_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "tid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ops/submitTask": {
+            "post": {
+                "description": "传入模板id，返回ssh执行所需参数并自动写入任务工单库",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ops相关"
+                ],
+                "summary": "提交执行工单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "auditorId",
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -1434,6 +1578,50 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/api.UpdateProjectAssHostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/project/delete": {
+            "delete": {
+                "description": "返回success",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "项目相关"
+                ],
+                "summary": "删除项目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除project所需参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
                         }
                     }
                 ],
@@ -1608,14 +1796,14 @@ const docTemplate = `{
         },
         "/api/v1/project/update": {
             "post": {
-                "description": "返回success",
+                "description": "返回新增/修改的指定项目",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "项目相关"
                 ],
-                "summary": "删除项目",
+                "summary": "新增/修改项目",
                 "parameters": [
                     {
                         "type": "string",
@@ -1625,13 +1813,34 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "删除project所需参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.IdsReq"
-                        }
+                        "type": "integer",
+                        "name": "group_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "修改才需要传，没有传算新增",
+                        "name": "id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "status",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "user_id",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1701,7 +1910,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务相关"
+                    "模板相关"
                 ],
                 "summary": "关联服务器",
                 "parameters": [
@@ -1745,7 +1954,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务相关"
+                    "模板相关"
                 ],
                 "summary": "获取可输入条件集合",
                 "parameters": [
@@ -1780,7 +1989,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务相关"
+                    "模板相关"
                 ],
                 "summary": "删除任务模板",
                 "parameters": [
@@ -1824,7 +2033,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务相关"
+                    "模板相关"
                 ],
                 "summary": "获取任务模板",
                 "parameters": [
@@ -1889,7 +2098,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务相关"
+                    "模板相关"
                 ],
                 "summary": "新增/修改任务模板",
                 "parameters": [
@@ -1990,6 +2199,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "页码",
                         "name": "page",
                         "in": "query"
@@ -1998,11 +2212,6 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "每页大小",
                         "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
                         "in": "query"
                     }
                 ],
@@ -2318,7 +2527,7 @@ const docTemplate = `{
         },
         "/api/v1/user/search": {
             "get": {
-                "description": "获取用户列表",
+                "description": "获取用户列表(IDs直接取用户无需其他参数，否则需要name和pageinfo)",
                 "produces": [
                     "application/json"
                 ],
@@ -2335,21 +2544,29 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "页码",
                         "name": "page",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "每页大小",
                         "name": "page_size",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户名称(可选)",
-                        "name": "username",
                         "in": "query"
                     }
                 ],
@@ -2670,9 +2887,9 @@ const docTemplate = `{
         "api.UpdateTaskTemplateReq": {
             "type": "object",
             "required": [
+                "cmd_tem",
                 "condition",
                 "pid",
-                "task",
                 "task_name",
                 "type_name"
             ],
@@ -2683,6 +2900,10 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "cmd_tem": {
+                    "description": "用户执行任务内容,限Shell语言, 变量参数格式:双大括号间隔空格包含.var",
+                    "type": "string"
                 },
                 "comment": {
                     "description": "模板备注",
@@ -2713,10 +2934,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                },
-                "task": {
-                    "description": "用户执行任务内容,限Shell语言, 变量参数格式:双大括号间隔空格包含.var",
-                    "type": "string"
                 },
                 "task_name": {
                     "description": "模板名",

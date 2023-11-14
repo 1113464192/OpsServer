@@ -140,12 +140,12 @@ func GetHost(c *gin.Context) {
 // @Summary 查询服务器对应项目
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetHostAssProjectReq true "传参数"
+// @Param data query api.GetPagingByIdReq true "传参数"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/host/Project [get]
 func GetProjectAss(c *gin.Context) {
-	var hostReq api.GetHostAssProjectReq
+	var hostReq api.GetPagingByIdReq
 	if err := c.ShouldBind(&hostReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -265,12 +265,12 @@ func DeleteDomain(c *gin.Context) {
 // @Summary 查询域名对应服务器
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetHostAssProjectReq true "传参数"
+// @Param data query api.GetPagingByIdReq true "传参数"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/host/domainAssHost [get]
 func GetDomainAssHost(c *gin.Context) {
-	var domainReq api.GetHostAssProjectReq
+	var domainReq api.GetPagingByIdReq
 	if err := c.ShouldBind(&domainReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return

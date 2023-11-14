@@ -86,3 +86,13 @@ type IdsReq struct {
 type IdReq struct {
 	Id uint `json:"id" form:"id" binding:"required"`
 }
+
+type GetPagingByIdReq struct {
+	Id uint `json:"id" form:"id"`
+	PageInfo
+}
+
+type GetPagingByIdsReq struct {
+	Ids []uint `json:"ids" form:"ids"`
+	PageInfo
+}

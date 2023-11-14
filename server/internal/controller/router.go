@@ -54,7 +54,7 @@ func NewRoute() *gin.Engine {
 			userRoute.POST("keyStr", UpdateKeyContext)
 		}
 		// ------------用户组相关--------------
-		// 暂未实现单用户多用户组的权限绑定，只能一个用户对一个工作室，以后有空再构思优化
+		// 暂未实现单用户多用户组的权限绑定，只能一个用户对一个工作室，以后功能齐全再写
 		groupRoute := v1.Group("group")
 		{
 			groupRoute.POST("update", UpdateGroup)
@@ -112,8 +112,11 @@ func NewRoute() *gin.Engine {
 		// -----------运维操作相关-----------
 		opsRoute := v1.Group("ops")
 		{
+			// 工单相关
+			opsRoute.POST("submitTask", SubmitTask)
+			opsRoute.GET("getTask", GetTask)
 			opsRoute.GET("getExecParam", GetExecParam)
-			// opsRoute.POST("")
+			opsRoute.PUT("approveTask", ApproveTask)
 		}
 	}
 	return r

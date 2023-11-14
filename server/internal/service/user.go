@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"fqhWeb/internal/consts"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
@@ -94,24 +95,33 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (userInfo any, err e
 }
 
 // 获取用户切片
-func (s *UserService) GetUserList(params api.PageInfo, username string) (list any, total int64, err error) {
+func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total int64, err error) {
 	var user []model.User
 	db := model.DB.Model(&user)
-	searchReq := &api.SearchReq{
-		Condition: db,
-		Table:     &user,
-		PageInfo:  params,
-	}
-	if username != "" {
-		name := "%" + strings.ToUpper(username) + "%"
-		db = model.DB.Where("UPPER(name) LIKE ?", name)
-		searchReq.Condition = db
-		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
-			return nil, 0, err
+	if params.Ids != nil {
+		if err = db.Where("id IN ?", params.Ids).Count(&total).Error; err != nil {
+			return nil, 0, fmt.Errorf("查询ids总数错误: %v", err)
+		}
+		if err = db.Where("id IN ?", params.Ids).Find(&user).Error; err != nil {
+			return nil, 0, fmt.Errorf("查询ids错误: %v", err)
 		}
 	} else {
-		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
-			return nil, 0, err
+		searchReq := &api.SearchReq{
+			Condition: db,
+			Table:     &user,
+			PageInfo:  params.PageInfo,
+		}
+		if params.Name != "" {
+			name := "%" + strings.ToUpper(params.Name) + "%"
+			db = model.DB.Where("UPPER(name) LIKE ?", name)
+			searchReq.Condition = db
+			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+				return nil, 0, err
+			}
+		} else {
+			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+				return nil, 0, err
+			}
 		}
 	}
 	var result []api.UserRes

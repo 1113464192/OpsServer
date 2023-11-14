@@ -37,11 +37,6 @@ type GetHostReq struct {
 	PageInfo `form:"page_info" json:"page_info"`
 }
 
-type GetHostAssProjectReq struct {
-	Id uint `json:"id" form:"id" binding:"required"`
-	PageInfo
-}
-
 type UpdateDomainReq struct {
 	Id    uint   `json:"id" form:"id"`
 	Value string `json:"domain" form:"domain" binding:"required"`
