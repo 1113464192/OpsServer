@@ -29,6 +29,17 @@ definitions:
         description: 每页大小
         type: integer
     type: object
+  api.SubmitTaskReq:
+    properties:
+      auditorId:
+        items:
+          type: integer
+        type: array
+      tid:
+        type: integer
+      uid:
+        type: integer
+    type: object
   api.TestSSHReq:
     properties:
       host_id:
@@ -930,7 +941,6 @@ paths:
         type: string
       - in: query
         name: id
-        required: true
         type: integer
       produces:
       - application/json
@@ -1039,6 +1049,60 @@ paths:
       summary: 用户审批工单
       tags:
       - Ops相关
+  /api/v1/ops/delete:
+    delete:
+      description: 传入工单的ID
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 工单删除
+      tags:
+      - Ops相关
+  /api/v1/ops/execTask:
+    post:
+      description: 返回执行结果
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            type: ""
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            type: string
+      summary: 工单操作执行
+      tags:
+      - Ops相关
   /api/v1/ops/getExecParam:
     get:
       description: 返回sftp和ssh的执行参数
@@ -1112,18 +1176,12 @@ paths:
         name: Authorization
         required: true
         type: string
-      - collectionFormat: csv
-        in: query
-        items:
-          type: integer
-        name: auditorId
-        type: array
-      - in: query
-        name: tid
-        type: integer
-      - in: query
-        name: uid
-        type: integer
+      - description: '注意Auditor参数: 最先审批的放第一个,因为接入后从第一个到最后一个依次发送信息审批'
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.SubmitTaskReq'
       produces:
       - application/json
       responses:
@@ -1308,11 +1366,11 @@ paths:
         required: true
         type: string
       - description: 页码
-        in: formData
+        in: query
         name: page
         type: integer
       - description: 每页大小
-        in: formData
+        in: query
         name: page_size
         type: integer
       produces:
@@ -1822,12 +1880,9 @@ paths:
         name: Authorization
         required: true
         type: string
-      - collectionFormat: csv
-        in: query
-        items:
-          type: integer
-        name: ids
-        type: array
+      - in: query
+        name: id
+        type: integer
       - in: query
         name: name
         type: string

@@ -141,7 +141,7 @@ func GetProject(c *gin.Context) {
 // @Summary 获取自身所属项目
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.PageInfo true "页码"
+// @Param data query api.PageInfo true "页码"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/project/getSelfProject [get]

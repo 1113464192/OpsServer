@@ -119,14 +119,6 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 // 获取用户组对应菜单
 func (s *MenuService) GetMenuList(gid uint, isAdmin uint8) (menu *[]model.Menus, err error) {
 	var group []model.UserGroup
-	// 防止有人不小心给管理员用户添加了组
-	if isAdmin == 1 {
-		if err := model.DB.Find(&menu).Error; err != nil {
-			return menu, err
-		}
-		return menu, err
-	}
-
 	if gid != 0 {
 		if err = model.DB.First(&group, gid).Error; err != nil {
 			return menu, fmt.Errorf("查找gid的用户组失败: %v", err)
@@ -135,12 +127,14 @@ func (s *MenuService) GetMenuList(gid uint, isAdmin uint8) (menu *[]model.Menus,
 			return menu, fmt.Errorf("查找用户组关联的菜单失败: %v", err)
 		}
 		return menu, err
-	} else {
+	}
+	if isAdmin == 1 {
 		if err := model.DB.Find(&menu).Error; err != nil {
 			return menu, err
 		}
 		return menu, err
 	}
+	return nil, errors.New("如果不是管理员, 请输入菜单ID")
 }
 
 func (s *MenuService) DeleteMenu(ids []uint) (err error) {

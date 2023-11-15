@@ -78,7 +78,7 @@ func UpdateMenuAss(c *gin.Context) {
 // @Summary 获取用户组对应菜单信息
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.IdReq false "用户组ID，获取菜单和关联用户组,不输入返回所有菜单"
+// @Param data query api.GetMenuListReq false "用户组ID，获取菜单和关联用户组,不输入返回所有菜单"
 // @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/menu/getMenus [get]
@@ -89,7 +89,7 @@ func GetMenuList(c *gin.Context) {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
 	}
-	var gid api.IdReq
+	var gid api.GetMenuListReq
 	if err := c.ShouldBind(&gid); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return

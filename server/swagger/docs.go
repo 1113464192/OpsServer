@@ -1191,8 +1191,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1352,6 +1351,88 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/ops/delete": {
+            "delete": {
+                "description": "传入工单的ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ops相关"
+                ],
+                "summary": "工单删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ops/execTask": {
+            "post": {
+                "description": "返回执行结果",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ops相关"
+                ],
+                "summary": "工单操作执行",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "type": ""
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/ops/getExecParam": {
             "get": {
                 "description": "返回sftp和ssh的执行参数",
@@ -1469,23 +1550,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "csv",
-                        "name": "auditorId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "tid",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "uid",
-                        "in": "query"
+                        "description": "注意Auditor参数: 最先审批的放第一个,因为接入后从第一个到最后一个依次发送信息审批",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.SubmitTaskReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -1769,13 +1840,13 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "页码",
                         "name": "page",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "每页大小",
                         "name": "page_size",
-                        "in": "formData"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2544,12 +2615,8 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "csv",
-                        "name": "ids",
+                        "type": "integer",
+                        "name": "id",
                         "in": "query"
                     },
                     {
@@ -2797,6 +2864,23 @@ const docTemplate = `{
                 },
                 "page_size": {
                     "description": "每页大小",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.SubmitTaskReq": {
+            "type": "object",
+            "properties": {
+                "auditorId": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "tid": {
+                    "type": "integer"
+                },
+                "uid": {
                     "type": "integer"
                 }
             }

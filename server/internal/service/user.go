@@ -98,11 +98,11 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (userInfo any, err e
 func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total int64, err error) {
 	var user []model.User
 	db := model.DB.Model(&user)
-	if params.Ids != nil {
-		if err = db.Where("id IN ?", params.Ids).Count(&total).Error; err != nil {
+	if params.Id != 0 {
+		if err = db.Where("id = ?", params.Id).Count(&total).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询ids总数错误: %v", err)
 		}
-		if err = db.Where("id IN ?", params.Ids).Find(&user).Error; err != nil {
+		if err = db.Where("id = ?", params.Id).Find(&user).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询ids错误: %v", err)
 		}
 	} else {
@@ -113,7 +113,7 @@ func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total in
 		}
 		if params.Name != "" {
 			name := "%" + strings.ToUpper(params.Name) + "%"
-			db = model.DB.Where("UPPER(name) LIKE ?", name)
+			db = model.DB.Model(&user).Where("UPPER(name) LIKE ?", name)
 			searchReq.Condition = db
 			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 				return nil, 0, err

@@ -35,7 +35,7 @@ type AuthLoginRes struct {
 }
 
 type GetUserListReq struct {
-	Ids  []uint `json:"ids" form:"ids"`
+	Id   uint   `json:"id" form:"id"`
 	Name string `json:"name" form:"name"`
 	PageInfo
 }

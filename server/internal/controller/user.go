@@ -129,7 +129,7 @@ func GetUserList(c *gin.Context) {
 	user, total, err := service.User().GetUserList(param)
 	if err != nil {
 		logger.Log().Error("User", "获取用户列表", err)
-		c.JSON(500, api.Err("获取失败", nil))
+		c.JSON(500, api.Err("获取失败", err))
 		return
 	} else {
 		c.JSON(200, api.PageResult{
