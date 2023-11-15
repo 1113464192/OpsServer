@@ -1,13 +1,14 @@
 package ops
 
 import (
+	"errors"
 	"fmt"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
 )
 
-func (s *OpsService) getGeneral(hosts *[]model.Host, task *model.TaskTemplate, args *map[string][]string, sshParam *api.RunSSHCmdAsyncReq, configParam *api.SftpReq) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, err error) {
+func (s *OpsService) getGeneral(hosts *[]model.Host, task *model.TaskTemplate, args *map[string][]string, sshParam *api.RunSSHCmdAsyncReq, configParam *api.RunSFTPAsyncReq) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.RunSFTPAsyncReq, err error) {
 	// 不走端口规则，但有path参数，过滤至path总数的可用服务器
 	// if pathCount != 0 {
 	// 	needHosts := (*hosts)[:pathCount]
@@ -28,9 +29,14 @@ func (s *OpsService) getGeneral(hosts *[]model.Host, task *model.TaskTemplate, a
 	// 	// 不走端口规则返回全部符合条件的服务器
 	// }
 	for _, host := range *hosts {
-		sshParam.HostIp = append(sshParam.HostIp, host.Ipv4.String)
-		sshParam.Username = append(sshParam.Username, host.User)
-		sshParam.SSHPort = append(sshParam.SSHPort, host.Port)
+		if task.CmdTem == "" && task.ConfigTem == "" {
+			return nil, nil, errors.New("任务的命令和传输文件内容都为空")
+		}
+		if task.CmdTem != "" {
+			sshParam.HostIp = append(sshParam.HostIp, host.Ipv4.String)
+			sshParam.Username = append(sshParam.Username, host.User)
+			sshParam.SSHPort = append(sshParam.SSHPort, host.Port)
+		}
 		if task.ConfigTem != "" {
 			configParam.HostIp = append(configParam.HostIp, host.Ipv4.String)
 			configParam.Username = append(configParam.Username, host.User)

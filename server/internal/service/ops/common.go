@@ -33,10 +33,16 @@ func (s *OpsService) getFlag(param string, args *map[string][]string) (flags []i
 }
 
 func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][]string) (cmd []string, config []string, err error) {
+	if task.CmdTem == "" && task.ConfigTem == "" {
+		return nil, nil, errors.New("任务的命令和传输文件内容都为空")
+	}
 	pathCount := len((*args)["path"])
-	cmdTem, err := template.New("cmdTem").Parse(task.CmdTem)
-	if err != nil {
-		return cmd, config, fmt.Errorf("无法解析CMD模板: %v", err)
+	var cmdTem *template.Template
+	if task.CmdTem != "" {
+		cmdTem, err = template.New("cmdTem").Parse(task.CmdTem)
+		if err != nil {
+			return cmd, config, fmt.Errorf("无法解析CMD模板: %v", err)
+		}
 	}
 	var configTem *template.Template
 	if pathCount != 0 && task.ConfigTem != "" {
@@ -50,15 +56,17 @@ func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][
 	var bufString string
 	serverInfo := utils.SplitStringMap(*args)
 	for i := 0; i < len(serverInfo); i++ {
-		if err = cmdTem.Execute(&buf, serverInfo[i]); err != nil {
-			return cmd, config, fmt.Errorf("无法渲染cmd模板: %v", err)
+		if task.CmdTem != "" {
+			if err = cmdTem.Execute(&buf, serverInfo[i]); err != nil {
+				return cmd, config, fmt.Errorf("无法渲染cmd模板: %v", err)
+			}
+			bufString = buf.String()
+			if strings.Contains(bufString, "no value") {
+				return cmd, config, fmt.Errorf("cmd模板有变量没有获取对应解析 %s", bufString)
+			}
+			cmd = append(cmd, bufString)
+			buf.Reset()
 		}
-		bufString = buf.String()
-		if strings.Contains(bufString, "no value") {
-			return cmd, config, fmt.Errorf("cmd模板有变量没有获取对应解析 %s", bufString)
-		}
-		cmd = append(cmd, bufString)
-		buf.Reset()
 		if pathCount != 0 && task.ConfigTem != "" {
 			if err = configTem.Execute(&buf, serverInfo[i]); err != nil {
 				return cmd, config, fmt.Errorf("无法渲染config模板: %v", err)
@@ -232,7 +240,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, task *model.TaskTem
 	return &availHost, err
 }
 
-func (s *OpsService) writingTaskRecord(resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
+func (s *OpsService) writingTaskRecord(resParam *api.RunSSHCmdAsyncReq, resConfig *api.RunSFTPAsyncReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
 	// sshReq编码JSON
 	sshJson := make(map[string][]string)
 	sshJson["ipv4"] = resParam.HostIp

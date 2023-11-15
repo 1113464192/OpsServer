@@ -58,7 +58,7 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (userInfo any, err e
 		if err != nil {
 			return nil, errors.New("数据保存失败")
 		}
-		var result []api.UserRes
+		var result *[]api.UserRes
 		result, err = s.GetResults(&user)
 		if err != nil {
 			return nil, err
@@ -85,7 +85,7 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (userInfo any, err e
 		if err = model.DB.Create(&user).Error; err != nil {
 			return user, errors.New("创建用户失败")
 		}
-		var result []api.UserRes
+		var result *[]api.UserRes
 		result, err = s.GetResults(&user)
 		if err != nil {
 			return nil, err
@@ -124,7 +124,7 @@ func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total in
 			}
 		}
 	}
-	var result []api.UserRes
+	var result *[]api.UserRes
 	result, err = s.GetResults(&user)
 	if err != nil {
 		return nil, 0, err
@@ -182,7 +182,7 @@ func (s *UserService) GetSelfInfo(id *uint) (userInfo any, err error) {
 		if err != nil {
 			return user, errors.New("查询用户个人信息失败")
 		}
-		var result []api.UserRes
+		var result *[]api.UserRes
 		result, err = s.GetResults(&user)
 		if err != nil {
 			return nil, err
@@ -296,8 +296,10 @@ func (s *UserService) UpdateKeyContext(key string, keyPasswd string, id uint) (e
 }
 
 // 返回用户结果
-func (s *UserService) GetResults(userInfo any) (result []api.UserRes, err error) {
+func (s *UserService) GetResults(userInfo any) (*[]api.UserRes, error) {
 	var res api.UserRes
+	var result []api.UserRes
+	var err error
 	if users, ok := userInfo.(*[]model.User); ok {
 		for _, user := range *users {
 			res = api.UserRes{
@@ -314,7 +316,7 @@ func (s *UserService) GetResults(userInfo any) (result []api.UserRes, err error)
 			}
 			result = append(result, res)
 		}
-		return result, err
+		return &result, err
 	}
 	if user, ok := userInfo.(*model.User); ok {
 		res = api.UserRes{
@@ -330,7 +332,7 @@ func (s *UserService) GetResults(userInfo any) (result []api.UserRes, err error)
 			IsAdmin:    user.IsAdmin,
 		}
 		result = append(result, res)
-		return result, err
+		return &result, err
 	}
-	return result, errors.New("转换用户结果失败")
+	return &result, errors.New("转换用户结果失败")
 }

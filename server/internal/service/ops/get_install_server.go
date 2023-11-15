@@ -8,7 +8,7 @@ import (
 	"fqhWeb/pkg/api"
 )
 
-func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTemplate, user *model.User, pathCount int, args *map[string][]string, configParam *api.SftpReq) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, err error) {
+func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTemplate, user *model.User, pathCount int, args *map[string][]string, configParam *api.RunSFTPAsyncReq) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.RunSFTPAsyncReq, err error) {
 	if task.ConfigTem == "" {
 		return nil, nil, errors.New("装服报错: 配置文件模板为空")
 	}

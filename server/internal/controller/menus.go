@@ -4,6 +4,7 @@ import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
+	"fqhWeb/pkg/utils/jwt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -82,12 +83,19 @@ func UpdateMenuAss(c *gin.Context) {
 // @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/menu/getMenus [get]
 func GetMenuList(c *gin.Context) {
+	cClaims, _ := c.Get("claims")
+	claims, ok := cClaims.(*jwt.CustomClaims)
+	if !ok {
+		c.JSON(401, api.Err("token携带的claims不合法", nil))
+		c.Abort()
+	}
 	var gid api.IdReq
 	if err := c.ShouldBind(&gid); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	menu, err := service.Menu().GetMenuList(gid.Id)
+	isAdmin := claims.User.IsAdmin
+	menu, err := service.Menu().GetMenuList(gid.Id, isAdmin)
 	if err != nil {
 		logger.Log().Error("Menu", "获取菜单对应用户组", err)
 		c.JSON(500, api.Err("获取菜单对应用户组失败", err))

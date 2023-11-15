@@ -117,6 +117,8 @@ func NewRoute() *gin.Engine {
 			opsRoute.GET("getTask", GetTask)
 			opsRoute.GET("getExecParam", GetExecParam)
 			opsRoute.PUT("approveTask", ApproveTask)
+			opsRoute.DELETE("delete", DeleteTask)
+			opsRoute.POST("execTask", OpsExecTask)
 		}
 	}
 	return r

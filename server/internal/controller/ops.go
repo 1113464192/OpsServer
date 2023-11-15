@@ -99,8 +99,8 @@ func GetExecParam(c *gin.Context) {
 	}
 	c.JSON(200, api.Response{
 		Data: map[string]any{
-			"sshReq":  *resParam,
-			"sftpReq": *resConfig,
+			"sshReq":          *resParam,
+			"RunSFTPAsyncReq": *resConfig,
 		},
 		Meta: api.Meta{
 			Msg: "Success",
@@ -139,6 +139,67 @@ func ApproveTask(c *gin.Context) {
 		return
 	}
 	c.JSON(200, api.Response{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
+// DeleteTask
+// @Tags Ops相关
+// @title 工单删除
+// @description 传入工单的ID
+// @Summary 工单删除
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data formData api.IdReq true "传入工单的ID"
+// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/ops/delete [delete]
+func DeleteTask(c *gin.Context) {
+	var param api.IdReq
+	if err := c.ShouldBind(&param); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	err := ops.Ops().DeleteTask(param.Id)
+	if err != nil {
+		logger.Log().Error("Task", "删除工单", err)
+		c.JSON(500, api.Err("删除工单失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
+// OpsExecTask
+// @Tags Ops相关
+// @title 工单操作执行
+// @description 返回执行结果
+// @Summary 工单操作执行
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data formData api.IdReq true "传入工单的ID"
+// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/ops/execTask [post]
+func OpsExecTask(c *gin.Context) {
+	var param api.IdReq
+	if err := c.ShouldBind(&param); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	data, err := ops.Ops().OpsExecTask(param.Id)
+	if err != nil {
+		logger.Log().Error("Task", "删除工单", err)
+		c.JSON(500, api.Err("删除工单失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Data: data,
 		Meta: api.Meta{
 			Msg: "Success",
 		},

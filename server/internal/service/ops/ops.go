@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"fqhWeb/internal/model"
+	"fqhWeb/internal/service"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/utils"
+	"fqhWeb/pkg/utils2"
 	"strings"
 )
 
@@ -22,7 +24,7 @@ func Ops() *OpsService {
 	return insOps
 }
 
-func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result []api.TaskRecordRes, err error) {
+func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskRecordRes, err error) {
 	var taskRecord *model.TaskRecord
 	var task model.TaskTemplate
 	var user model.User
@@ -33,13 +35,18 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result []api.TaskRecor
 		return nil, errors.New("根据id查询用户失败")
 	}
 
-	var resParam *api.RunSSHCmdAsyncReq
-	var resConfig *api.SftpReq
-	resParam = new(api.RunSSHCmdAsyncReq)
-	resParam.Key = user.PriKey
-	resParam.Passphrase = user.KeyPasswd
+	if task.CmdTem == "" && task.ConfigTem == "" {
+		return nil, errors.New("任务的命令和传输文件内容都为空")
+	}
 
-	resConfig = new(api.SftpReq)
+	var resParam *api.RunSSHCmdAsyncReq
+	var resConfig *api.RunSFTPAsyncReq
+	resParam = new(api.RunSSHCmdAsyncReq)
+	if task.CmdTem != "" {
+		resParam.Key = user.PriKey
+		resParam.Passphrase = user.KeyPasswd
+	}
+	resConfig = new(api.RunSFTPAsyncReq)
 	if task.ConfigTem != "" {
 		resConfig.Key = user.PriKey
 		resConfig.Passphrase = user.KeyPasswd
@@ -122,14 +129,14 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result []api.TaskRecor
 	if err != nil {
 		return nil, fmt.Errorf("写入TaskRecord失败: %v", err)
 	}
-	result, err = s.GetResults(taskRecord)
+	result, err = s.GetResults(&taskRecord)
 	if err != nil {
 		return nil, fmt.Errorf("转换结果输出失败: %v", err)
 	}
 	return result, err
 }
 
-func (s *OpsService) GetTask(param *api.GetTaskReq) (result []api.TaskRecordRes, total int64, err error) {
+func (s *OpsService) GetTask(param *api.GetTaskReq) (result *[]api.TaskRecordRes, total int64, err error) {
 	var task []model.TaskRecord
 	db := model.DB.Model(&task)
 	// id存在返回id对应model
@@ -166,7 +173,7 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result []api.TaskRecordRes,
 			task[i].SSHJson = ""
 		}
 	}
-	result, err = s.GetResults(task)
+	result, err = s.GetResults(&task)
 	if err != nil {
 		return nil, total, fmt.Errorf("转换结果输出失败: %v", err)
 	}
@@ -174,7 +181,7 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result []api.TaskRecordRes,
 
 }
 
-func (s *OpsService) GetExecParam(tid uint) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.SftpReq, err error) {
+func (s *OpsService) GetExecParam(tid uint) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.RunSFTPAsyncReq, err error) {
 	var task model.TaskRecord
 	if err = model.DB.First(&task, tid).Error; err != nil {
 		return nil, nil, fmt.Errorf("查询TaskRecord数据失败: %v", err)
@@ -205,7 +212,7 @@ func (s *OpsService) GetExecParam(tid uint) (resParam *api.RunSSHCmdAsyncReq, re
 	}
 	if config != nil {
 		path := sshJson["configPath"]
-		resConfig = &api.SftpReq{
+		resConfig = &api.RunSFTPAsyncReq{
 			HostIp:      hostIp,
 			Username:    username,
 			SSHPort:     sshPort,
@@ -229,7 +236,11 @@ func (s *OpsService) ApproveTask(tid uint, uid uint) error {
 	if err = json.Unmarshal([]byte(task.NonApprover), &nonApproverJson); err != nil {
 		return errors.New("sshJson进行json解析失败")
 	}
-	nonApprover := utils.DeleteUintSlice(nonApproverJson["ids"], uid)
+	nonApproverSlice := nonApproverJson["ids"]
+	if !utils.IsSliceContain(nonApproverSlice, uid) {
+		return fmt.Errorf("未审批人:%v中 不包含 %v", nonApproverSlice, uid)
+	}
+	nonApprover := utils.DeleteUintSlice(nonApproverSlice, uid)
 	if len(nonApprover) != 0 {
 		// 向下一个审批者发送审批信息
 		fmt.Println("==========向下一个审批者发送审批信息===========")
@@ -243,9 +254,60 @@ func (s *OpsService) ApproveTask(tid uint, uid uint) error {
 	return err
 }
 
+func (s *OpsService) DeleteTask(id uint) (err error) {
+	if !utils2.CheckIdExists(&model.TaskRecord{}, &id) {
+		return errors.New("工单不存在")
+	}
+	var task model.TaskRecord
+	tx := model.DB.Begin()
+	if err = tx.First(&task, id).Error; err != nil {
+		return errors.New("查询工单信息失败")
+	}
+	if err = tx.Model(&task).Association("Auditor").Clear(); err != nil {
+		tx.Rollback()
+		return errors.New("清除表信息 工单与用户关联 失败")
+	}
+	if err = tx.Where("id = ?", id).Delete(&model.TaskRecord{}).Error; err != nil {
+		tx.Rollback()
+		return errors.New("删除工单失败")
+	}
+	tx.Commit()
+	return err
+}
+
+func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error) {
+	var result *[]api.SSHResultRes
+	var err error
+	data := make(map[string][]api.SSHResultRes)
+	resParam, resConfig, err := s.GetExecParam(id)
+	if err != nil {
+		return nil, fmt.Errorf("获取执行参数失败: %v", err)
+	}
+	if resConfig.FileContent != nil {
+		result, err = service.SSH().RunSFTPAsync(resConfig)
+		if err != nil {
+			return nil, fmt.Errorf("测试执行失败: %v", err)
+		}
+		data["ssh"] = *result
+	}
+	if resParam.Cmd != nil {
+		result, err = service.SSH().RunSFTPAsync(resConfig)
+		if err != nil {
+			return nil, fmt.Errorf("测试执行失败: %v", err)
+		}
+		data["sftp"] = *result
+	}
+	if len(data) == 0 {
+		return nil, errors.New("没有获取到任务结果")
+	}
+	return data, err
+}
+
 // 返回工单结果
-func (s *OpsService) GetResults(taskInfo any) (result []api.TaskRecordRes, err error) {
+func (s *OpsService) GetResults(taskInfo any) (*[]api.TaskRecordRes, error) {
 	var res api.TaskRecordRes
+	var result []api.TaskRecordRes
+	var err error
 	if tasks, ok := taskInfo.(*[]model.TaskRecord); ok {
 		for _, task := range *tasks {
 			sshJson := make(map[string][]string)
@@ -294,7 +356,7 @@ func (s *OpsService) GetResults(taskInfo any) (result []api.TaskRecordRes, err e
 			}
 			result = append(result, res)
 		}
-		return result, err
+		return &result, err
 	} else if task, ok := taskInfo.(*model.TaskRecord); ok {
 		sshJson := make(map[string][]string)
 		if err = json.Unmarshal([]byte(task.SSHJson), &sshJson); err != nil {
@@ -341,7 +403,7 @@ func (s *OpsService) GetResults(taskInfo any) (result []api.TaskRecordRes, err e
 			Auditor:     auditorIds,
 		}
 		result = append(result, res)
-		return result, err
+		return &result, err
 	}
-	return result, errors.New("转换taskRecord结果失败")
+	return &result, errors.New("转换taskRecord结果失败")
 }

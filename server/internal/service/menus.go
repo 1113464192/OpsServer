@@ -6,7 +6,6 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils"
 	"fqhWeb/pkg/utils2"
 )
 
@@ -81,9 +80,9 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 	var menu model.Menus
 	var groups []model.UserGroup
 	// 默认添加管理组
-	if !utils.IsSliceContain(params.GroupIDs, 1) {
-		params.GroupIDs = append(params.GroupIDs, 1)
-	}
+	// if !utils.IsSliceContain(params.GroupIDs, 1) {
+	// 	params.GroupIDs = append(params.GroupIDs, 1)
+	// }
 	var noExistId []uint
 
 	// 判断用户组是否都存在
@@ -118,8 +117,16 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 }
 
 // 获取用户组对应菜单
-func (s *MenuService) GetMenuList(gid uint) (menu *[]model.Menus, err error) {
+func (s *MenuService) GetMenuList(gid uint, isAdmin uint8) (menu *[]model.Menus, err error) {
 	var group []model.UserGroup
+	// 防止有人不小心给管理员用户添加了组
+	if isAdmin == 1 {
+		if err := model.DB.Find(&menu).Error; err != nil {
+			return menu, err
+		}
+		return menu, err
+	}
+
 	if gid != 0 {
 		if err = model.DB.First(&group, gid).Error; err != nil {
 			return menu, fmt.Errorf("查找gid的用户组失败: %v", err)

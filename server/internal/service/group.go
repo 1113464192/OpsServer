@@ -42,9 +42,7 @@ func (s *GroupService) UpdateGroup(params *api.UpdateGroupReq) (groupInfo any, e
 
 		group.Name = params.Name
 		group.ParentId = params.ParentId
-		if params.Mark == "" {
-			group.Mark = sql.NullString{String: "", Valid: false}
-		} else {
+		if params.Mark != "" {
 			group.Mark = sql.NullString{String: params.Mark, Valid: true}
 		}
 
@@ -52,7 +50,7 @@ func (s *GroupService) UpdateGroup(params *api.UpdateGroupReq) (groupInfo any, e
 		if err != nil {
 			return group, errors.New("数据保存失败")
 		}
-		var result []api.GroupRes
+		var result *[]api.GroupRes
 		if result, err = s.GetResults(&group); err != nil {
 			return nil, err
 		}
@@ -62,16 +60,14 @@ func (s *GroupService) UpdateGroup(params *api.UpdateGroupReq) (groupInfo any, e
 			Name:     params.Name,
 			ParentId: params.ParentId,
 		}
-		if params.Mark == "" {
-			group.Mark = sql.NullString{String: "", Valid: false}
-		} else {
+		if params.Mark != "" {
 			group.Mark = sql.NullString{String: params.Mark, Valid: true}
 		}
 		if err = model.DB.Create(&group).Error; err != nil {
 			logger.Log().Error("Group", "创建用户组失败", err)
 			return group, errors.New("创建用户组失败")
 		}
-		var result []api.GroupRes
+		var result *[]api.GroupRes
 		if result, err = s.GetResults(&group); err != nil {
 			return nil, err
 		}
@@ -162,7 +158,7 @@ func (s *GroupService) GetGroupList(params *api.GetGroupReq) (groupObj any, tota
 			return nil, 0, err
 		}
 	}
-	var result []api.GroupRes
+	var result *[]api.GroupRes
 	if result, err = s.GetResults(&group); err != nil {
 		return nil, 0, err
 	}
@@ -186,7 +182,7 @@ func (s *GroupService) GetAssUser(params *api.GetPagingByIdReq) (userObj any, to
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err
 	}
-	var result []api.UserRes
+	var result *[]api.UserRes
 	if result, err = User().GetResults(&group.Users); err != nil {
 		return nil, total, err
 	}
@@ -210,7 +206,7 @@ func (s *GroupService) GetAssProject(params *api.GetPagingByIdReq) (projectObj a
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err
 	}
-	var result []api.ProjectRes
+	var result *[]api.ProjectRes
 	if result, err = Project().GetResults(&group.Project); err != nil {
 		return nil, total, err
 	}
@@ -218,8 +214,10 @@ func (s *GroupService) GetAssProject(params *api.GetPagingByIdReq) (projectObj a
 }
 
 // 返回用户组结果
-func (s *GroupService) GetResults(groupInfo any) (result []api.GroupRes, err error) {
+func (s *GroupService) GetResults(groupInfo any) (*[]api.GroupRes, error) {
 	var res api.GroupRes
+	var result []api.GroupRes
+	var err error
 	if groups, ok := groupInfo.(*[]model.UserGroup); ok {
 		for _, group := range *groups {
 			res = api.GroupRes{
@@ -230,7 +228,7 @@ func (s *GroupService) GetResults(groupInfo any) (result []api.GroupRes, err err
 			}
 			result = append(result, res)
 		}
-		return result, err
+		return &result, err
 	}
 	if group, ok := groupInfo.(*model.UserGroup); ok {
 		res = api.GroupRes{
@@ -240,7 +238,7 @@ func (s *GroupService) GetResults(groupInfo any) (result []api.GroupRes, err err
 			Mark:     group.Mark.String,
 		}
 		result = append(result, res)
-		return result, err
+		return &result, err
 	}
-	return result, errors.New("转换组结果失败")
+	return &result, errors.New("转换组结果失败")
 }

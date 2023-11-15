@@ -47,7 +47,7 @@ func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInf
 		if err != nil {
 			return project, errors.New("数据保存失败")
 		}
-		var result []api.ProjectRes
+		var result *[]api.ProjectRes
 		if result, err = s.GetResults(&project); err != nil {
 			return nil, err
 		}
@@ -63,7 +63,7 @@ func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInf
 			logger.Log().Error("project", "创建项目失败", err)
 			return project, errors.New("创建项目失败")
 		}
-		var result []api.ProjectRes
+		var result *[]api.ProjectRes
 		if result, err = s.GetResults(&project); err != nil {
 			return nil, err
 		}
@@ -150,7 +150,7 @@ func (s *ProjectService) GetProject(params *api.GetProjectReq) (projectObj any, 
 			return nil, 0, err
 		}
 	}
-	var result []api.ProjectRes
+	var result *[]api.ProjectRes
 	if result, err = s.GetResults(&project); err != nil {
 		return nil, 0, err
 	}
@@ -174,7 +174,7 @@ func (s *ProjectService) GetSelfProjectList(groupList *[]model.UserGroup, page *
 	if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 		return nil, 0, err
 	}
-	var result []api.ProjectRes
+	var result *[]api.ProjectRes
 	if result, err = s.GetResults(&projectList); err != nil {
 		return nil, total, err
 	}
@@ -198,7 +198,7 @@ func (s *ProjectService) GetHostAss(params *api.GetHostAssReq) (hostInfo any, to
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err
 	}
-	var result []api.HostRes
+	var result *[]api.HostRes
 	if result, err = Host().GetResults(&project.Hosts); err != nil {
 		return nil, total, err
 	}
@@ -206,8 +206,10 @@ func (s *ProjectService) GetHostAss(params *api.GetHostAssReq) (hostInfo any, to
 }
 
 // 返回项目JSON结果
-func (s *ProjectService) GetResults(projectInfo any) (result []api.ProjectRes, err error) {
+func (s *ProjectService) GetResults(projectInfo any) (*[]api.ProjectRes, error) {
 	var res api.ProjectRes
+	var result []api.ProjectRes
+	var err error
 	if projects, ok := projectInfo.(*[]model.Project); ok {
 		for _, project := range *projects {
 			res = api.ProjectRes{
@@ -219,7 +221,7 @@ func (s *ProjectService) GetResults(projectInfo any) (result []api.ProjectRes, e
 			}
 			result = append(result, res)
 		}
-		return result, err
+		return &result, err
 	}
 	if project, ok := projectInfo.(*model.Project); ok {
 		res = api.ProjectRes{
@@ -230,7 +232,7 @@ func (s *ProjectService) GetResults(projectInfo any) (result []api.ProjectRes, e
 			GroupId: project.GroupId,
 		}
 		result = append(result, res)
-		return result, err
+		return &result, err
 	}
-	return result, errors.New("转换项目结果失败")
+	return &result, errors.New("转换项目结果失败")
 }

@@ -72,7 +72,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		if err != nil {
 			return host, errors.New("数据保存失败")
 		}
-		var result []api.HostRes
+		var result *[]api.HostRes
 		if result, err = s.GetResults(host); err != nil {
 			return nil, err
 		}
@@ -108,7 +108,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		if err = model.DB.Create(host).Error; err != nil {
 			return host, errors.New("创建服务器失败")
 		}
-		var result []api.HostRes
+		var result *[]api.HostRes
 		if result, err = s.GetResults(host); err != nil {
 			return nil, err
 		}
@@ -228,7 +228,7 @@ func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64
 			return nil, 0, err
 		}
 	}
-	var result []api.HostRes
+	var result *[]api.HostRes
 	if result, err = s.GetResults(&host); err != nil {
 		return nil, 0, err
 	}
@@ -252,7 +252,7 @@ func (s *HostService) GetProject(params *api.GetPagingByIdReq) (projectInfo any,
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err
 	}
-	var result []api.ProjectRes
+	var result *[]api.ProjectRes
 	if result, err = Project().GetResults(&host.Projects); err != nil {
 		return nil, total, err
 	}
@@ -276,7 +276,7 @@ func (s *HostService) GetDomainAssHost(params *api.GetPagingByIdReq) (hostInfo a
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err
 	}
-	var result []api.HostRes
+	var result *[]api.HostRes
 	if result, err = Host().GetResults(&domain.Hosts); err != nil {
 		return nil, total, err
 	}
@@ -543,8 +543,10 @@ func (s *HostService) WritieToDatabase(data *api.HostInfoRes) error {
 }
 
 // 返回结果
-func (s *HostService) GetResults(hostInfo any) (result []api.HostRes, err error) {
+func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 	var res api.HostRes
+	var result []api.HostRes
+	var err error
 	if hosts, ok := hostInfo.(*[]model.Host); ok {
 		for _, host := range *hosts {
 			res = api.HostRes{
@@ -574,7 +576,7 @@ func (s *HostService) GetResults(hostInfo any) (result []api.HostRes, err error)
 			}
 			result = append(result, res)
 		}
-		return result, err
+		return &result, err
 	}
 	if host, ok := hostInfo.(*model.Host); ok {
 		res = api.HostRes{
@@ -603,7 +605,7 @@ func (s *HostService) GetResults(hostInfo any) (result []api.HostRes, err error)
 			CurrLoad:       host.CurrLoad,
 		}
 		result = append(result, res)
-		return result, err
+		return &result, err
 	}
-	return result, errors.New("转换服务器结果失败")
+	return &result, errors.New("转换服务器结果失败")
 }

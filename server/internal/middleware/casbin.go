@@ -37,17 +37,17 @@ func CasbinHandler() gin.HandlerFunc {
 		var sub string
 		// 遍历用户对应的所有组
 		for _, group := range userGroup {
-			if group.ID == 1 {
-				// 管理员
+			sub = strconv.FormatUint(uint64(group.ID), 10)
+			if claims.User.IsAdmin == 1 {
 				sub = "admin"
-			} else {
-				sub = strconv.FormatUint(uint64(group.ID), 10)
 			}
 			e := casbinService.Casbin()
 			success, _ := e.Enforce(sub, obj, act)
 			if success {
 				sCount += 1
+				break
 			}
+
 		}
 
 		// 判断策略中是否存在

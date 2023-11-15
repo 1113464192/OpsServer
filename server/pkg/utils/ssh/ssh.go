@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"fqhWeb/internal/consts"
-	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/utils"
 	"net"
 	"os"
@@ -47,28 +46,29 @@ func AuthWithAgent() (ssh.AuthMethod, error) {
 	return ssh.PublicKeys(signers...), nil
 }
 
-func SSHNewClient(config *api.SSHClientConfigReq) (client *ssh.Client, err error) {
+// func SSHNewClient(config *api.SSHClientConfigReq) (client *ssh.Client, err error) {
+func SSHNewClient(hostIp string, username string, sshPort string, password string, priKey []byte, passphrase []byte) (client *ssh.Client, err error) {
 	clientConfig := &ssh.ClientConfig{
-		User:            config.Username,
+		User:            username,
 		Timeout:         consts.SSHTimeout * time.Second,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), // 忽略public key的安全验证
 	}
 
-	if config.SSHPort == "0" {
-		config.SSHPort = "22"
+	if sshPort == "" {
+		sshPort = "22"
 	}
 
 	// 1. private key bytes
-	key := utils.XorDecrypt(config.Key, consts.XorKey)
-	passPhrase := utils.XorDecrypt(config.Passphrase, consts.XorKey)
-	if config.Key != nil {
+	key := utils.XorDecrypt(priKey, consts.XorKey)
+	passPhrase := utils.XorDecrypt(passphrase, consts.XorKey)
+	if priKey != nil {
 		if auth, err := AuthWithPrivateKeyBytes(key, passPhrase); err == nil {
 			clientConfig.Auth = append(clientConfig.Auth, auth)
 		}
 	}
 	// 2. 密码方式 放在key之后,这样密钥失败之后可以使用Password方式
-	if config.Password != "" {
-		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(config.Password))
+	if password != "" {
+		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(password))
 	}
 	// 3. agent 模式放在最后,这样当前两者都不能使用时可以采用Agent模式
 	if auth, err := AuthWithAgent(); err == nil {
@@ -77,7 +77,7 @@ func SSHNewClient(config *api.SSHClientConfigReq) (client *ssh.Client, err error
 	if clientConfig.Auth == nil {
 		return nil, errors.New("未能生成clientConfig.Auth")
 	}
-	client, err = ssh.Dial("tcp", net.JoinHostPort(config.HostIp, config.SSHPort), clientConfig)
+	client, err = ssh.Dial("tcp", net.JoinHostPort(hostIp, sshPort), clientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("生成ssh.Client失败: %v", err)
 	}
