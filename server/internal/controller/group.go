@@ -16,8 +16,10 @@ import (
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data formData api.UpdateGroupReq true "创建成功，data返回用户组信息"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/update [post]
 func UpdateGroup(c *gin.Context) {
 	var groupReq api.UpdateGroupReq
@@ -47,8 +49,10 @@ func UpdateGroup(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data body api.UpdateUserAssReq true "输入组ID和对应用户IDs"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/association [put]
 func UpdateUserAss(c *gin.Context) {
 	var assReq api.UpdateUserAssReq
@@ -79,8 +83,10 @@ func UpdateUserAss(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param ids body api.IdsReq true "要删除的组ID"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/delete [delete]
 func DeleteUserGroup(c *gin.Context) {
 	var ids api.IdsReq
@@ -111,8 +117,10 @@ func DeleteUserGroup(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param id query api.GetGroupReq true "输入组名，不输入则全部返回"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/getGroups [get]
 func GetGroup(c *gin.Context) {
 	var groupReq api.GetGroupReq
@@ -145,8 +153,10 @@ func GetGroup(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data query api.GetPagingByIdReq true "传参数"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/getUserAss [get]
 func GetAssUser(c *gin.Context) {
 	var groupReq api.GetPagingByIdReq
@@ -179,8 +189,10 @@ func GetAssUser(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data query api.GetPagingByIdReq true "传参数"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/getProjectAss [get]
 func GetAssProject(c *gin.Context) {
 	var groupReq api.GetPagingByIdReq

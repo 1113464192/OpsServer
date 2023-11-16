@@ -44,7 +44,6 @@ type GetUserListReq struct {
 type UserRes struct {
 	ID         uint
 	Username   string
-	Password   string
 	Name       string
 	Status     uint8
 	Email      string

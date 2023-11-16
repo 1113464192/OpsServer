@@ -20,6 +20,14 @@ definitions:
     required:
     - ids
     type: object
+  api.Meta:
+    properties:
+      error:
+        type: string
+      msg:
+        description: Status int64  `json:"status"`
+        type: string
+    type: object
   api.PageInfo:
     properties:
       page:
@@ -28,6 +36,12 @@ definitions:
       page_size:
         description: 每页大小
         type: integer
+    type: object
+  api.Response:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/api.Meta'
     type: object
   api.SubmitTaskReq:
     properties:
@@ -165,37 +179,6 @@ definitions:
 info:
   contact: {}
 paths:
-  /api/v1/api/casbinList:
-    get:
-      description: 获取用户已有的API权限列表
-      parameters:
-      - description: 格式为：Bearer 登录返回的用户令牌
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - collectionFormat: csv
-        description: 组ID
-        in: query
-        items:
-          type: integer
-        name: gid
-        required: true
-        type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"data":{},"meta":{msg":"Success"}}'
-          schema:
-            type: ""
-        "500":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            type: string
-      summary: 获取用户已有的API权限列表
-      tags:
-      - Api相关
   /api/v1/api/delApi:
     delete:
       description: 删除API
@@ -217,16 +200,24 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 删除API
       tags:
       - Api相关
   /api/v1/api/fresh:
-    get:
+    post:
       description: 刷新casbin缓存
       parameters:
       - description: 格式为：Bearer 登录返回的用户令牌
@@ -240,16 +231,24 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 刷新casbin缓存
       tags:
       - Api相关
   /api/v1/api/getApiList:
-    post:
+    get:
       description: 获取Api列表 可分页
       parameters:
       - description: 格式为：Bearer 登录返回的用户令牌
@@ -258,11 +257,11 @@ paths:
         required: true
         type: string
       - description: 页码
-        in: formData
+        in: query
         name: page
         type: integer
       - description: 每页大小
-        in: formData
+        in: query
         name: page_size
         type: integer
       produces:
@@ -271,12 +270,56 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取Api列表
+      tags:
+      - Api相关
+  /api/v1/api/getCasbinList:
+    get:
+      description: 获取用户已有的API权限列表
+      parameters:
+      - description: 格式为：Bearer 登录返回的用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 组ID
+        in: query
+        name: gid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取用户已有的API权限列表
       tags:
       - Api相关
   /api/v1/api/updateApi:
@@ -317,11 +360,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 新增或者修改Api
       tags:
       - Api相关
@@ -346,11 +397,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 为用户分配API权限
       tags:
       - Api相关
@@ -375,11 +434,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 关联用户
       tags:
       - 用户组相关
@@ -404,11 +471,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 删除用户组
       tags:
       - 用户组相关
@@ -438,11 +513,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取用户组
       tags:
       - 用户组相关
@@ -472,11 +555,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取组关联项目
       tags:
       - 用户组相关
@@ -506,11 +597,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取组关联用户
       tags:
       - 用户组相关
@@ -544,11 +643,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 新增/修改用户组信息
       tags:
       - 用户组相关
@@ -571,11 +678,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 查询服务器
       tags:
       - 服务器相关
@@ -605,11 +720,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 查询服务器对应项目
       tags:
       - 服务器相关
@@ -634,11 +757,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 域名关联服务器
       tags:
       - 服务器相关
@@ -663,11 +794,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 关联项目
       tags:
       - 服务器相关
@@ -697,11 +836,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 查询域名对应服务器
       tags:
       - 服务器相关
@@ -804,11 +951,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 新增/修改服务器
       tags:
       - 服务器相关
@@ -834,11 +989,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 新增/修改域名
       tags:
       - 服务器相关
@@ -862,13 +1025,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"data":{},"meta":{"status":200",msg":"登录成功"}}'
+          description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
-        "400":
-          description: '{"data":{}, "meta":{"status":400,"msg":"错误信息"}}'
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
       summary: 用户登录
       tags:
       - 用户相关
@@ -893,11 +1064,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 关联用户组
       tags:
       - 菜单相关
@@ -922,11 +1101,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 删除菜单
       tags:
       - 菜单相关
@@ -948,11 +1135,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取用户组对应菜单信息
       tags:
       - 菜单相关
@@ -1014,11 +1209,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 新增/修改菜单信息
       tags:
       - 菜单相关
@@ -1041,11 +1244,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 用户审批工单
       tags:
       - Ops相关
@@ -1068,11 +1279,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 工单删除
       tags:
       - Ops相关
@@ -1095,11 +1314,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 工单操作执行
       tags:
       - Ops相关
@@ -1122,11 +1349,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 提取执行参数
       tags:
       - Ops相关
@@ -1159,11 +1394,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 查看任务工单
       tags:
       - Ops相关
@@ -1188,11 +1431,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 提交执行工单
       tags:
       - Ops相关
@@ -1249,11 +1500,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 关联服务器
       tags:
       - 项目相关
@@ -1278,11 +1537,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 删除项目
       tags:
       - 项目相关
@@ -1313,11 +1580,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取项目对应的服务器
       tags:
       - 项目相关
@@ -1348,11 +1623,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取项目
       tags:
       - 项目相关
@@ -1379,11 +1662,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取自身所属项目
       tags:
       - 项目相关
@@ -1422,11 +1713,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 新增/修改项目
       tags:
       - 项目相关
@@ -1451,11 +1750,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 测试SSH命令执行
       tags:
       - SSH相关
@@ -1480,11 +1787,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 关联服务器
       tags:
       - 模板相关
@@ -1503,11 +1818,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取可输入条件集合
       tags:
       - 模板相关
@@ -1532,11 +1855,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 删除任务模板
       tags:
       - 模板相关
@@ -1575,11 +1906,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取任务模板
       tags:
       - 模板相关
@@ -1602,13 +1941,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"data":{返回新增/修改的项目任务模板},"meta":{msg":"Success"}}'
+          description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 新增/修改任务模板
       tags:
       - 模板相关
@@ -1633,11 +1980,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 删除用户
       tags:
       - 用户相关
@@ -1665,13 +2020,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"data":{用户记录},"meta":{msg":"Success"}}'
+          description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取用户操作记录
       tags:
       - 用户相关
@@ -1694,11 +2057,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取关联组
       tags:
       - 用户相关
@@ -1717,11 +2088,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取用户本身关联的组
       tags:
       - 用户相关
@@ -1740,11 +2119,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 用户个人信息
       tags:
       - 用户相关
@@ -1771,13 +2158,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"data":{用户记录},"meta":{msg":"Success"}}'
+          description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 提交自身私钥文件
       tags:
       - 用户相关
@@ -1804,13 +2199,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"data":{用户记录},"meta":{msg":"Success"}}'
+          description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 提交自身私钥字符串
       tags:
       - 用户相关
@@ -1827,13 +2230,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"data":{},"meta":{"status":200",msg":"登出成功"}}'
+          description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
-        "400":
-          description: '{"data":{}, "meta":{"status":400,"msg":"错误信息"}}'
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
       summary: 登出
       tags:
       - 用户相关
@@ -1863,11 +2274,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 修改用户密码
       tags:
       - 用户相关
@@ -1898,13 +2317,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"data":{},"meta":{msg":"Success","Data":"User信息","Page":"页码","PageSize":"单页条数","Total":"总条数"}}'
+          description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 获取用户列表
       tags:
       - 用户相关
@@ -1928,11 +2355,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 修改用户自己的密码
       tags:
       - 用户相关
@@ -1959,11 +2394,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 修改用户状态
       tags:
       - 用户相关
@@ -2012,11 +2455,19 @@ paths:
         "200":
           description: '{"data":{},"meta":{msg":"Success"}}'
           schema:
-            type: ""
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
         "500":
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
-            type: string
+            $ref: '#/definitions/api.Response'
       summary: 新增/修改用户信息
       tags:
       - 用户相关

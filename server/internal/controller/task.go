@@ -16,8 +16,10 @@ import (
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data body api.UpdateTaskTemplateReq true "更新taskTem所需参数"
-// @Success 200 {} string "{"data":{返回新增/修改的项目任务模板},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/task/template [post]
 func UpdateTaskTemplate(c *gin.Context) {
 	var taskReq api.UpdateTaskTemplateReq
@@ -47,8 +49,10 @@ func UpdateTaskTemplate(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data query api.GetProjectTaskReq true "查询taskTem所需参数"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/task/getTemplate [get]
 func GetProjectTask(c *gin.Context) {
 	var taskReq api.GetProjectTaskReq
@@ -81,8 +85,10 @@ func GetProjectTask(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data body api.IdsReq true "所需参数"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/task/deleteTemplate [delete]
 func DeleteTaskTemplate(c *gin.Context) {
 	var taskReq api.IdsReq
@@ -111,8 +117,10 @@ func DeleteTaskTemplate(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data body api.UpdateTemplateAssHostReq true "关联传入参数(如果直接使用对应项目关联主机则无需关联主机)"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/task/association [put]
 func UpdateTaskAssHost(c *gin.Context) {
 	var TaskReq api.UpdateTemplateAssHostReq
@@ -140,8 +148,10 @@ func UpdateTaskAssHost(c *gin.Context) {
 // @Summary 获取可输入条件集合
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/task/conditionSet [get]
 func GetConditionSet(c *gin.Context) {
 	m := map[uint]string{

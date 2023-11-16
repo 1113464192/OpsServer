@@ -25,24 +25,27 @@ func User() *UserService {
 }
 
 // 修改/添加用户
-func (s *UserService) UpdateUser(params *api.UpdateUserReq) (userInfo any, err error) {
+func (s *UserService) UpdateUser(params *api.UpdateUserReq) (any, string, error) {
+	var err error
+	// 判断电话和邮箱是否正确
 	if params.Mobile != "" && !utils.CheckMobile(params.Mobile) {
-		return params.Mobile, errors.New("电话格式错误")
+		return params.Mobile, "", errors.New("电话格式错误")
 	}
 
 	if params.Email != "" && !utils.CheckEmail(params.Email) {
-		return params.Email, errors.New("邮箱格式错误")
+		return params.Email, "", errors.New("邮箱格式错误")
 	}
+
 	var user model.User
 	var count int64
 	if params.ID != 0 {
 		// 修改
 		if !utils2.CheckIdExists(&user, &params.ID) {
-			return nil, errors.New("用户不存在")
+			return nil, "", errors.New("用户不存在")
 		}
 
 		if err := model.DB.Where("id = ?", params.ID).Find(&user).Error; err != nil {
-			return nil, errors.New("用户数据库查询失败")
+			return nil, "", errors.New("用户数据库查询失败")
 		}
 		user.Username = params.Username
 		user.Name = params.Name
@@ -50,24 +53,27 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (userInfo any, err e
 		user.Mobile = params.Mobile
 		user.Email = params.Email
 
+		// 判断username是否和现有用户重复
 		if model.DB.Model(&user).Where("username = ? AND id != ?", params.Username, params.ID).Count(&count); count > 0 {
-			return nil, errors.New("用户名已被使用")
+			return nil, "", errors.New("用户名已被使用")
 		}
 
 		err = model.DB.Save(&user).Error
 		if err != nil {
-			return nil, errors.New("数据保存失败")
+			return nil, "", errors.New("数据保存失败")
 		}
+
+		// 返回过滤后的JSON
 		var result *[]api.UserRes
 		result, err = s.GetResults(&user)
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
-		return result, err
+		return result, "", err
 	} else {
-		model.DB.Model(&user).Where("username = ?", params.Username).Count(&count)
-		if count > 0 {
-			return user, errors.New("账号已经注册")
+		// 判断username是否和现有用户重复
+		if model.DB.Model(&user).Where("username = ?", params.Username).Count(&count); count > 0 {
+			return user, "", errors.New("账号已经注册")
 		}
 		user = model.User{
 			Username:   params.Username,
@@ -77,20 +83,22 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (userInfo any, err e
 			Email:      params.Email,
 			IsAdmin:    params.IsAdmin,
 		}
+		// 生成初始化密码
 		password := utils.RandStringRunes(12)
 		user.Password, err = utils.GenerateFromPassword(password)
 		if err != nil {
-			return user, errors.New("用户密码bcrypt加密失败")
+			return user, "", errors.New("用户密码bcrypt加密失败")
 		}
 		if err = model.DB.Create(&user).Error; err != nil {
-			return user, errors.New("创建用户失败")
+			return user, "", errors.New("创建用户失败")
 		}
 		var result *[]api.UserRes
 		result, err = s.GetResults(&user)
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
-		return result, err
+		// 创建用户时返回初始密码
+		return result, password, err
 	}
 }
 
@@ -98,6 +106,7 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (userInfo any, err e
 func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total int64, err error) {
 	var user []model.User
 	db := model.DB.Model(&user)
+	// 有ID优先ID
 	if params.Id != 0 {
 		if err = db.Where("id = ?", params.Id).Count(&total).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询ids总数错误: %v", err)
@@ -106,11 +115,13 @@ func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total in
 			return nil, 0, fmt.Errorf("查询ids错误: %v", err)
 		}
 	} else {
+		// 分页查询
 		searchReq := &api.SearchReq{
 			Condition: db,
 			Table:     &user,
 			PageInfo:  params.PageInfo,
 		}
+		// 用户名模糊查询
 		if params.Name != "" {
 			name := "%" + strings.ToUpper(params.Name) + "%"
 			db = model.DB.Model(&user).Where("UPPER(name) LIKE ?", name)
@@ -118,12 +129,14 @@ func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total in
 			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 				return nil, 0, err
 			}
+			// 全部返回
 		} else {
 			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 				return nil, 0, err
 			}
 		}
 	}
+	// 过滤结果
 	var result *[]api.UserRes
 	result, err = s.GetResults(&user)
 	if err != nil {
@@ -140,14 +153,18 @@ func (s *UserService) DeleteUser(ids []uint) (err error) {
 		}
 	}
 	var user []model.User
+	// 开启事务
 	tx := model.DB.Begin()
+	// 返回用户对象
 	if err = tx.Find(&user, ids).Error; err != nil {
 		return errors.New("查询用户信息失败")
 	}
+	// 清除和组的关联
 	if err = tx.Model(&user).Association("UserGroups").Clear(); err != nil {
 		tx.Rollback()
 		return errors.New("清除表信息 用户与用户组关联 失败")
 	}
+	// 伪删除用户
 	if err = tx.Where("id in (?)", ids).Delete(&model.User{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除用户失败")
@@ -177,21 +194,18 @@ func (s *UserService) UpdatePasswd(passwd *api.PasswordReq) (err error) {
 // 获取用户个人信息
 func (s *UserService) GetSelfInfo(id *uint) (userInfo any, err error) {
 	var user model.User
-	if utils2.CheckIdExists(&model.User{}, id) {
-		err = model.DB.Where("id in (?)", *id).First(&user).Error
-		if err != nil {
-			return user, errors.New("查询用户个人信息失败")
-		}
-		var result *[]api.UserRes
-		result, err = s.GetResults(&user)
-		if err != nil {
-			return nil, err
-		}
-		return result, err
-	} else {
+	if !utils2.CheckIdExists(&model.User{}, id) {
 		return nil, errors.New("用户不存在")
 	}
-
+	if err = model.DB.Where("id in (?)", *id).First(&user).Error; err != nil {
+		return user, errors.New("查询用户个人信息失败")
+	}
+	var result *[]api.UserRes
+	result, err = s.GetResults(&user)
+	if err != nil {
+		return nil, err
+	}
+	return result, err
 }
 
 // 获取用户关联组信息
@@ -201,19 +215,16 @@ func (s *UserService) GetAssGroup(id uint) (groupInfo any, err error) {
 	if err != nil {
 		return nil, err
 	}
-	if utils2.CheckIdExists(&model.User{}, &id) {
-		if err := model.DB.First(&user, id).Error; err != nil {
-			return user, err
-		}
-		if err := model.DB.Model(&user).Association("UserGroups").Find(&group); err != nil {
-			return user, err
-		}
-
-		return group, err
-	} else {
+	if !utils2.CheckIdExists(&model.User{}, &id) {
 		return nil, errors.New("用户不存在")
 	}
-
+	if err = model.DB.First(&user, id).Error; err != nil {
+		return user, err
+	}
+	if err = model.DB.Model(&user).Association("UserGroups").Find(&group); err != nil {
+		return user, err
+	}
+	return group, err
 }
 
 // 登录
@@ -237,6 +248,7 @@ func (s *UserService) Login(u *model.User) (userInfo *api.AuthLoginRes, err erro
 	if err != nil {
 		return userInfo, err
 	}
+	// 遍历所有组id
 	var groupIds []uint
 	for _, userGroup := range user.UserGroups {
 		groupIds = append(groupIds, userGroup.ID)
@@ -267,11 +279,14 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, keyPasswd
 		return err
 	}
 
+	// 简单xor加密并写入prikey
 	data := utils.XorEncrypt(fileBytes, consts.XorKey)
 	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error
 	if err != nil {
 		return errors.New("私钥写入数据库失败")
 	}
+
+	// 简单xor加密并写入passphrase
 	data = utils.XorEncrypt([]byte(keyPasswd), consts.XorKey)
 	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", data).Error
 	if err != nil {
@@ -306,7 +321,6 @@ func (s *UserService) GetResults(userInfo any) (*[]api.UserRes, error) {
 				ID:         user.ID,
 				Name:       user.Name,
 				Username:   user.Username,
-				Password:   user.Password,
 				Status:     user.Status,
 				Email:      user.Email,
 				Mobile:     user.Mobile,
@@ -323,7 +337,6 @@ func (s *UserService) GetResults(userInfo any) (*[]api.UserRes, error) {
 			ID:         user.ID,
 			Name:       user.Name,
 			Username:   user.Username,
-			Password:   user.Password,
 			Status:     user.Status,
 			Email:      user.Email,
 			Mobile:     user.Mobile,

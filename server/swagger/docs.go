@@ -15,52 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/api/casbinList": {
-            "get": {
-                "description": "获取用户已有的API权限列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api相关"
-                ],
-                "summary": "获取用户已有的API权限列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 登录返回的用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "csv",
-                        "description": "组ID",
-                        "name": "gid",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "type": ""
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/api/delApi": {
             "delete": {
                 "description": "删除API",
@@ -93,20 +47,32 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
             }
         },
         "/api/v1/api/fresh": {
-            "get": {
+            "post": {
                 "description": "刷新casbin缓存",
                 "produces": [
                     "application/json"
@@ -128,20 +94,32 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
             }
         },
         "/api/v1/api/getApiList": {
-            "post": {
+            "get": {
                 "description": "获取Api列表 可分页",
                 "produces": [
                     "application/json"
@@ -162,26 +140,92 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "页码",
                         "name": "page",
-                        "in": "formData"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "每页大小",
                         "name": "page_size",
-                        "in": "formData"
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/api/getCasbinList": {
+            "get": {
+                "description": "获取用户已有的API权限列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Api相关"
+                ],
+                "summary": "获取用户已有的API权限列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 登录返回的用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "组ID",
+                        "name": "gid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -243,13 +287,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -287,13 +343,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -331,13 +399,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -375,13 +455,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -427,13 +519,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -479,13 +583,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -531,13 +647,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -589,13 +717,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -630,13 +770,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -682,13 +834,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -726,13 +890,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -770,13 +946,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -822,13 +1010,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -980,13 +1180,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1026,13 +1238,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1068,15 +1292,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"data\":{},\"meta\":{\"status\":200\",msg\":\"登录成功\"}}",
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
-                    "400": {
-                        "description": "{\"data\":{}, \"meta\":{\"status\":400,\"msg\":\"错误信息\"}}",
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1114,13 +1350,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1158,13 +1406,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1198,13 +1458,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1298,13 +1570,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1339,13 +1623,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1380,13 +1676,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1421,13 +1729,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1462,13 +1782,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1519,13 +1851,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1563,13 +1907,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1656,13 +2012,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1700,13 +2068,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1753,13 +2133,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1806,13 +2198,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1853,13 +2257,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1918,13 +2334,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -1962,13 +2390,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2006,13 +2446,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2041,13 +2493,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2085,13 +2549,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2150,13 +2626,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2192,15 +2680,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"data\":{返回新增/修改的项目任务模板},\"meta\":{msg\":\"Success\"}}",
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2238,13 +2738,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2288,15 +2800,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"data\":{用户记录},\"meta\":{msg\":\"Success\"}}",
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2331,13 +2855,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2366,13 +2902,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2401,13 +2949,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2448,15 +3008,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"data\":{用户记录},\"meta\":{msg\":\"Success\"}}",
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2497,15 +3069,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"data\":{用户记录},\"meta\":{msg\":\"Success\"}}",
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2532,15 +3116,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"data\":{},\"meta\":{\"status\":200\",msg\":\"登出成功\"}}",
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
-                    "400": {
-                        "description": "{\"data\":{}, \"meta\":{\"status\":400,\"msg\":\"错误信息\"}}",
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2584,13 +3180,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2639,15 +3247,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\",\"Data\":\"User信息\",\"Page\":\"页码\",\"PageSize\":\"单页条数\",\"Total\":\"总条数\"}}",
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2683,13 +3303,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2730,13 +3362,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2809,13 +3453,25 @@ const docTemplate = `{
                     "200": {
                         "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
                         "schema": {
-                            "type": ""
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
                         }
                     },
                     "500": {
                         "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.Response"
                         }
                     }
                 }
@@ -2855,6 +3511,18 @@ const docTemplate = `{
                 }
             }
         },
+        "api.Meta": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "msg": {
+                    "description": "Status int64  ` + "`" + `json:\"status\"` + "`" + `",
+                    "type": "string"
+                }
+            }
+        },
         "api.PageInfo": {
             "type": "object",
             "properties": {
@@ -2865,6 +3533,15 @@ const docTemplate = `{
                 "page_size": {
                     "description": "每页大小",
                     "type": "integer"
+                }
+            }
+        },
+        "api.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "meta": {
+                    "$ref": "#/definitions/api.Meta"
                 }
             }
         },

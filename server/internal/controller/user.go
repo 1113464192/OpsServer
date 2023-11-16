@@ -19,8 +19,10 @@ import (
 // @Summary 用户登录
 // @Produce  application/json
 // @Param data formData api.AuthLoginReq true "用户名, 密码"
-// @Success 200 {} string "{"data":{},"meta":{"status":200",msg":"登录成功"}}"
-// @Failure 400 {string} string "{"data":{}, "meta":{"status":400,"msg":"错误信息"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/login [post]
 func UserLogin(c *gin.Context) {
 	var loginReq api.AuthLoginReq
@@ -51,8 +53,10 @@ func UserLogin(c *gin.Context) {
 // @Summary 登出
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Success 200 {} string "{"data":{},"meta":{"status":200",msg":"登出成功"}}"
-// @Failure 400 {string} string "{"data":{}, "meta":{"status":400,"msg":"错误信息"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/logout [put]
 func UserLogout(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
@@ -81,8 +85,10 @@ func UserLogout(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data formData api.UpdateUserReq true "创建成功，data返回密码"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/update [post]
 func UpdateUser(c *gin.Context) {
 	var userReq api.UpdateUserReq
@@ -90,7 +96,7 @@ func UpdateUser(c *gin.Context) {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	user, err := service.User().UpdateUser(&userReq)
+	user, passwd, err := service.User().UpdateUser(&userReq)
 	if err != nil {
 		logger.Log().Error("User", "添加/修改用户", err)
 		if err.Error() == "用户密码bcrypt加密失败" {
@@ -100,8 +106,16 @@ func UpdateUser(c *gin.Context) {
 		c.JSON(500, api.Err("添加/修改用户", err))
 		return
 	}
+
+	data := map[string]any{
+		"string": user,
+	}
+	if passwd != "" {
+		data["passwd"] = passwd
+	}
+
 	c.JSON(200, api.Response{
-		Data: user,
+		Data: data,
 		Meta: api.Meta{
 			Msg: "Success",
 		},
@@ -116,8 +130,10 @@ func UpdateUser(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data query api.GetUserListReq true "所需参数,输入了ids则不再需要输入其他参数"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success","Data":"User信息","Page":"页码","PageSize":"单页条数","Total":"总条数"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/search [get]
 func GetUserList(c *gin.Context) {
 	var param api.GetUserListReq
@@ -152,8 +168,10 @@ func GetUserList(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data body api.IdsReq true "用户IDs"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/delete [delete]
 func DeleteUser(c *gin.Context) {
 	var param api.IdsReq
@@ -182,8 +200,10 @@ func DeleteUser(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data formData api.PasswordReq true "创建成功，data返回密码"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/password [patch]
 func UpdatePasswd(c *gin.Context) {
 	var passwd api.PasswordReq
@@ -220,8 +240,10 @@ func UpdatePasswd(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param password formData string true "需要修改的密码"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/selfPassword [patch]
 func UpdateSelfPasswd(c *gin.Context) {
 	var passwd api.PasswordReq
@@ -269,8 +291,10 @@ func UpdateSelfPasswd(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data formData api.StatusReq true "用户状态(恢复传1，禁用传2)"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/status [patch]
 func UpdateStatus(c *gin.Context) {
 	var params api.StatusReq
@@ -299,8 +323,10 @@ func UpdateStatus(c *gin.Context) {
 // @Summary 用户个人信息
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/getSelfInfo [get]
 func GetSelfInfo(c *gin.Context) {
 	cClaims, _ := c.Get("claims")
@@ -333,8 +359,10 @@ func GetSelfInfo(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data query api.IdReq true "用户的ID"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/getAssGroup [get]
 func GetAssGroup(c *gin.Context) {
 	var id api.IdReq
@@ -364,8 +392,10 @@ func GetAssGroup(c *gin.Context) {
 // @Summary 获取用户本身关联的组
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/getSelfAssGroup [get]
 func GetSelfAssGroup(c *gin.Context) {
 	cClaims, _ := c.Get("claims")
@@ -399,8 +429,10 @@ func GetSelfAssGroup(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data query api.GetPagingByIdReq true "用户username"
-// @Success 200 {} string "{"data":{用户记录},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/getActLog [get]
 func GetRecordList(c *gin.Context) {
 	var param api.GetPagingByIdReq
@@ -435,8 +467,10 @@ func GetRecordList(c *gin.Context) {
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param keyFile formData file true "私钥文件上传"
 // @Param KeyPasswd formData string true "私钥通行证密码上传"
-// @Success 200 {} string "{"data":{用户记录},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/keyFile [post]
 func UpdateKeyFileContext(c *gin.Context) {
 	file, err := c.FormFile("keyFile")
@@ -475,8 +509,10 @@ func UpdateKeyFileContext(c *gin.Context) {
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param keyStr formData string true "私钥文本内容上传"
 // @Param KeyPasswd formData string true "私钥通行证密码上传"
-// @Success 200 {} string "{"data":{用户记录},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/keyStr [post]
 func UpdateKeyContext(c *gin.Context) {
 	keyStr := c.PostForm("keyStr")

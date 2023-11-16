@@ -16,10 +16,12 @@ import (
 // @Summary 获取Api列表
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
-// @Param     data  formData      api.PageInfo   false  "页码, 每页大小"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/api/getApiList [post]
+// @Param data query api.PageInfo false "页码, 每页大小"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/api/getApiList [get]
 func GetApiList(c *gin.Context) {
 	var param api.PageInfo
 	if err := c.ShouldBind(&param); err != nil {
@@ -52,8 +54,10 @@ func GetApiList(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
 // @Param     data  formData      api.UpdateApiReq  true  "新增或者修改Api"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router    /api/v1/api/updateApi [post]
 func UpdateApi(c *gin.Context) {
 	var param api.UpdateApiReq
@@ -84,8 +88,10 @@ func UpdateApi(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
 // @Param     data  body      api.IdsReq   true  "id"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/api/delApi [delete]
 func DeleteApi(c *gin.Context) {
 	var param api.IdsReq
@@ -113,9 +119,11 @@ func DeleteApi(c *gin.Context) {
 // @Summary 刷新casbin缓存
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/api/fresh [get]
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/api/fresh [post]
 func FreshCasbin(c *gin.Context) {
 	err := service.Api().FreshCasbin()
 	if err != nil {
@@ -137,10 +145,12 @@ func FreshCasbin(c *gin.Context) {
 // @Summary 获取用户已有的API权限列表
 // @Produce   application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
-// @Param gid query []uint true "组ID"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router    /api/v1/api/casbinList [get]
+// @Param gid query uint true "组ID"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router    /api/v1/api/getCasbinList [get]
 func GetCasbinList(c *gin.Context) {
 	idStr := c.Query("gid")
 	paths, err := service.CasbinServiceApp().GetPolicyPathByGroupId(idStr)
@@ -165,8 +175,10 @@ func GetCasbinList(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
 // @Param     data  body      api.CasbinInReceiveReq  true  "为用户分配API权限的请求"
-// @Success 200 {} string "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 500 {string} string "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router    /api/v1/api/updateCasbin [post]
 func UpdateCasbin(c *gin.Context) {
 	var param api.CasbinInReceiveReq

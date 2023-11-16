@@ -30,12 +30,12 @@ func NewRoute() *gin.Engine {
 
 		// ------------API Casbin RBAC相关----------------
 		apiRouter := v1.Group("api")
-		apiRouter.POST("getApiList", GetApiList)     // api列表
-		apiRouter.GET("fresh", FreshCasbin)          // 刷新casbin缓存
-		apiRouter.GET("casbinList", GetCasbinList)   // 获取用户已有的API权限列表
-		apiRouter.POST("updateApi", UpdateApi)       // api添加/修改
-		apiRouter.DELETE("delApi", DeleteApi)        // 删除api
-		apiRouter.POST("updateCasbin", UpdateCasbin) // 为用户分配API权限
+		apiRouter.GET("getApiList", GetApiList)       // api列表
+		apiRouter.POST("fresh", FreshCasbin)          // 刷新casbin缓存
+		apiRouter.GET("getCasbinList", GetCasbinList) // 获取用户已有的API权限列表
+		apiRouter.POST("updateApi", UpdateApi)        // api添加/修改
+		apiRouter.DELETE("delApi", DeleteApi)         // 删除api
+		apiRouter.POST("updateCasbin", UpdateCasbin)  // 为用户分配API权限
 		// ------------用户相关------------
 		userRoute := v1.Group("user")
 		{
