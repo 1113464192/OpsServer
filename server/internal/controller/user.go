@@ -466,7 +466,7 @@ func GetRecordList(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param keyFile formData file true "私钥文件上传"
-// @Param KeyPasswd formData string true "私钥通行证密码上传"
+// @Param Passphrase formData string true "私钥通行证密码上传"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -478,7 +478,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 		c.JSON(500, api.Err("上传失败", err))
 		return
 	}
-	keyPasswd := c.PostForm("KeyPasswd")
+	passphrase := c.PostForm("Passphrase")
 	cClaims, _ := c.Get("claims")
 	claims, ok := cClaims.(*jwt.CustomClaims)
 	if !ok {
@@ -486,7 +486,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	err = service.User().UpdateKeyFileContext(file, keyPasswd, claims.User.ID)
+	err = service.User().UpdateKeyFileContext(file, passphrase, claims.User.ID)
 	if err != nil {
 		logger.Log().Error("User", "上传文件写入个人密钥失败", err)
 		c.JSON(500, api.Err("上传文件写入个人密钥失败", err))
@@ -508,7 +508,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param keyStr formData string true "私钥文本内容上传"
-// @Param KeyPasswd formData string true "私钥通行证密码上传"
+// @Param Passphrase formData string true "私钥通行证密码上传"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -516,7 +516,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 // @Router /api/v1/user/keyStr [post]
 func UpdateKeyContext(c *gin.Context) {
 	keyStr := c.PostForm("keyStr")
-	keyPasswd := c.PostForm("KeyPasswd")
+	passphrase := c.PostForm("Passphrase")
 	cClaims, _ := c.Get("claims")
 	claims, ok := cClaims.(*jwt.CustomClaims)
 	if !ok {
@@ -524,7 +524,7 @@ func UpdateKeyContext(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	err := service.User().UpdateKeyContext(keyStr, keyPasswd, claims.User.ID)
+	err := service.User().UpdateKeyContext(keyStr, passphrase, claims.User.ID)
 	if err != nil {
 		logger.Log().Error("User", "私钥字符串写入个人密钥失败", err)
 		c.JSON(500, api.Err("私钥字符串写入个人密钥失败", err))

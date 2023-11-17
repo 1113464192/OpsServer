@@ -267,7 +267,7 @@ func (s *UserService) Login(u *model.User) (userInfo *api.AuthLoginRes, err erro
 }
 
 // 通过文件更新私钥
-func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, keyPasswd string, id uint) error {
+func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, passphrase string, id uint) error {
 	fileP, err := file.Open()
 	if err != nil {
 		return err
@@ -287,8 +287,8 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, keyPasswd
 	}
 
 	// 简单xor加密并写入passphrase
-	data = utils.XorEncrypt([]byte(keyPasswd), consts.XorKey)
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", data).Error
+	data = utils.XorEncrypt([]byte(passphrase), consts.XorKey)
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("passphrase", data).Error
 	if err != nil {
 		return errors.New("通行证密码写入数据库失败")
 	}
@@ -296,14 +296,14 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, keyPasswd
 }
 
 // 通过字符串更新私钥内容
-func (s *UserService) UpdateKeyContext(key string, keyPasswd string, id uint) (err error) {
+func (s *UserService) UpdateKeyContext(key string, passphrase string, id uint) (err error) {
 	data := utils.XorEncrypt([]byte(key), consts.XorKey)
 	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error
 	if err != nil {
 		return errors.New("私钥字符串写入数据库失败")
 	}
-	data = utils.XorEncrypt([]byte(keyPasswd), consts.XorKey)
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("key_passwd", data).Error
+	data = utils.XorEncrypt([]byte(passphrase), consts.XorKey)
+	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("passphrase", data).Error
 	if err != nil {
 		return errors.New("通行证密码写入数据库失败")
 	}

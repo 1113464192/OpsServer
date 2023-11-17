@@ -27,29 +27,33 @@ func Group() *GroupService {
 func (s *GroupService) UpdateGroup(params *api.UpdateGroupReq) (groupInfo any, err error) {
 	var group model.UserGroup
 	var count int64
+	// 判断组是否被占用
 	if model.DB.Model(&group).Where("name = ? AND id != ?", params.Name, params.ID).Count(&count); count > 0 {
 		return group, errors.New("组名已被使用")
 	}
+	// 根据ID查询组
 	if params.ID != 0 {
-		// 修改
+		// 判断组是否存在
 		if !utils2.CheckIdExists(&group, &params.ID) {
 			return group, errors.New("用户组不存在")
 		}
-
+		// 获取组对象
 		if err := model.DB.Where("id = ?", params.ID).First(&group).Error; err != nil {
 			return group, errors.New("用户组数据库查询失败")
 		}
 
 		group.Name = params.Name
 		group.ParentId = params.ParentId
+		// 有标识则写入，没有默认为Null
 		if params.Mark != "" {
 			group.Mark = sql.NullString{String: params.Mark, Valid: true}
 		}
-
+		// 入库
 		err = model.DB.Save(&group).Error
 		if err != nil {
 			return group, errors.New("数据保存失败")
 		}
+		// 过滤结果
 		var result *[]api.GroupRes
 		if result, err = s.GetResults(&group); err != nil {
 			return nil, err
@@ -83,6 +87,7 @@ func (s *GroupService) UpdateUserAss(params *api.UpdateUserAssReq) (err error) {
 	var noExistId []uint
 	for _, uid := range params.UserIDs {
 		uBool := utils2.CheckIdExists(&user, &uid)
+		// 如果不存在则添加到noexistid切片
 		if !uBool {
 			noExistId = append(noExistId, uid)
 		}
@@ -174,14 +179,17 @@ func (s *GroupService) GetAssUser(params *api.GetPagingByIdReq) (userObj any, to
 	if err = model.DB.Preload("Users").Where("id = ?", params.Id).First(&group).Error; err != nil {
 		return nil, 0, errors.New("组查询失败")
 	}
+	// 分页获取
 	assQueryReq := &api.AssQueryReq{
 		Condition: model.DB.Model(&model.UserGroup{}),
 		Table:     &group.Users,
 		PageInfo:  params.PageInfo,
 	}
+
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err
 	}
+	// 过滤结果
 	var result *[]api.UserRes
 	if result, err = User().GetResults(&group.Users); err != nil {
 		return nil, total, err
@@ -198,6 +206,7 @@ func (s *GroupService) GetAssProject(params *api.GetPagingByIdReq) (projectObj a
 	if err = model.DB.Preload("Users").Where("id = ?", params.Id).First(&group).Error; err != nil {
 		return nil, 0, errors.New("组查询失败")
 	}
+	// 分页获取项目
 	assQueryReq := &api.AssQueryReq{
 		Condition: model.DB.Model(&model.UserGroup{}),
 		Table:     &group.Project,

@@ -27,11 +27,6 @@ type UpdateHostReq struct {
 	// CurrLoad    float32 `form:"curr_load" json:"curr_load"`
 }
 
-type UpdateHostAssProjectReq struct {
-	Pids []uint `form:"pid" json:"pid"`
-	Hid  uint   `form:"hid" json:"hid" binding:"required"`
-}
-
 type GetHostReq struct {
 	Ip       string `json:"ip" form:"ip"` // 查询IP则输入IP，v4或v6都可以
 	PageInfo `form:"page_info" json:"page_info"`

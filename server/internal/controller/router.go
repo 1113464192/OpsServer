@@ -35,65 +35,63 @@ func NewRoute() *gin.Engine {
 		apiRouter.GET("getCasbinList", GetCasbinList) // 获取用户已有的API权限列表
 		apiRouter.POST("updateApi", UpdateApi)        // api添加/修改
 		apiRouter.DELETE("delApi", DeleteApi)         // 删除api
-		apiRouter.POST("updateCasbin", UpdateCasbin)  // 为用户分配API权限
+		apiRouter.POST("updateCasbin", UpdateCasbin)  // 为用户组分配API权限
 		// ------------用户相关------------
 		userRoute := v1.Group("user")
 		{
-			userRoute.POST("update", UpdateUser)
-			userRoute.GET("search", GetUserList)
-			userRoute.DELETE("delete", DeleteUser)
-			userRoute.PATCH("status", UpdateStatus)
-			userRoute.PATCH("password", UpdatePasswd)
-			userRoute.PATCH("selfPassword", UpdateSelfPasswd)
-			userRoute.GET("getSelfInfo", GetSelfInfo)
-			userRoute.GET("getAssGroup", GetAssGroup)
-			userRoute.GET("getSelfAssGroup", GetSelfAssGroup)
-			userRoute.PUT("logout", UserLogout)
-			userRoute.GET("getActLog", GetRecordList)
-			userRoute.POST("keyFile", UpdateKeyFileContext)
-			userRoute.POST("keyStr", UpdateKeyContext)
+			userRoute.POST("update", UpdateUser)              // 新增/修改用户
+			userRoute.GET("search", GetUserList)              // 查询用户切片
+			userRoute.DELETE("delete", DeleteUser)            // 删除用户
+			userRoute.PATCH("status", UpdateStatus)           // 修改用户状态
+			userRoute.PATCH("password", UpdatePasswd)         // 修改用户密码
+			userRoute.PATCH("selfPassword", UpdateSelfPasswd) // 修改自己的密码
+			userRoute.GET("getSelfInfo", GetSelfInfo)         // 查询自己的信息
+			userRoute.GET("getAssGroup", GetAssGroup)         // 根据用户ID查询组
+			userRoute.GET("getSelfAssGroup", GetSelfAssGroup) // 获取自己关联的组
+			userRoute.PUT("logout", UserLogout)               // 登出
+			userRoute.GET("getActLog", GetRecordList)         // 查询用户所有的历史操作
+			userRoute.POST("keyFile", UpdateKeyFileContext)   // 添加私钥文件
+			userRoute.POST("keyStr", UpdateKeyContext)        // 添加私钥内容(与文件二选一)
 		}
 		// ------------用户组相关--------------
-		// 暂未实现单用户多用户组的权限绑定，只能一个用户对一个工作室，以后功能齐全再写
 		groupRoute := v1.Group("group")
 		{
-			groupRoute.POST("update", UpdateGroup)
-			groupRoute.PUT("association", UpdateUserAss)
-			groupRoute.DELETE("delete", DeleteUserGroup)
-			groupRoute.GET("getGroups", GetGroup)
-			groupRoute.GET("getUserAss", GetAssUser)
-			groupRoute.GET("getProjectAss", GetAssProject)
+			groupRoute.POST("update", UpdateGroup)         // 新增/修改组
+			groupRoute.PUT("association", UpdateUserAss)   // 用户组关联用户
+			groupRoute.DELETE("delete", DeleteUserGroup)   // 删除用户组
+			groupRoute.GET("getGroups", GetGroup)          // 查询组切片
+			groupRoute.GET("getUserAss", GetAssUser)       // 查询组关联的用户
+			groupRoute.GET("getProjectAss", GetAssProject) // 查询组关联的项目
 		}
 		// ------------菜单相关--------------
 		menuRoute := v1.Group("menu")
 		{
-			menuRoute.POST("update", UpdateMenu)
-			menuRoute.PUT("association", UpdateMenuAss)
-			menuRoute.GET("getMenus", GetMenuList)
-			menuRoute.DELETE("delete", DeleteMenu)
+			menuRoute.POST("update", UpdateMenu)        // 新增/修改组
+			menuRoute.PUT("association", UpdateMenuAss) // 菜单关联组
+			menuRoute.GET("getMenus", GetMenuList)      // 获取用户组ID对应菜单
+			menuRoute.DELETE("delete", DeleteMenu)      // 删除菜单
 		}
 		// -----------项目相关-------------
 		projectRoute := v1.Group("project")
 		{
-			projectRoute.POST("update", UpdateProject)
-			projectRoute.GET("getProject", GetProject)
-			projectRoute.GET("getSelfProject", GetSelfProjectList)
-			projectRoute.GET("getHost", GetHostAss)
-			projectRoute.PUT("association", UpdateHostAss)
-			projectRoute.DELETE("delete", DeleteProject)
+			projectRoute.POST("update", UpdateProject)             // 新增/修改项目
+			projectRoute.GET("getProject", GetProject)             // 查询项目
+			projectRoute.GET("getSelfProject", GetSelfProjectList) // 获取自身所有项目
+			projectRoute.GET("getAssHost", GetHostAss)             // 查询项目关联的服务器
+			projectRoute.PUT("association", UpdateHostAss)         // 项目关联服务器
+			projectRoute.DELETE("delete", DeleteProject)           // 删除项目
 		}
 		// -----------主机相关-------------
 		hostRoute := v1.Group("host")
 		{
-			hostRoute.POST("update", UpdateHost)
-			hostRoute.POST("updateDomain", UpdateDomain)
-			hostRoute.PUT("association", UpdateProjectAss)
-			hostRoute.PUT("assDomain", UpdateDomainAss)
-			hostRoute.DELETE("delete", DeleteHost)
-			hostRoute.DELETE("deleteDomain", DeleteDomain)
-			hostRoute.GET("Host", GetHost)
-			hostRoute.GET("Project", GetProjectAss)
-			hostRoute.GET("domainAssHost", GetDomainAssHost)
+			hostRoute.POST("update", UpdateHost)             // 新增/修改服务器
+			hostRoute.GET("getHostPasswd", GetHostPasswd)    // 获取服务器密码
+			hostRoute.POST("updateDomain", UpdateDomain)     // 新增/修改的域名
+			hostRoute.PUT("assDomain", UpdateDomainAss)      // 更新域名关联的服务器
+			hostRoute.DELETE("delete", DeleteHost)           // 删除主机
+			hostRoute.DELETE("deleteDomain", DeleteDomain)   // 删除域名
+			hostRoute.GET("Host", GetHost)                   // 获取主机当前的状态
+			hostRoute.GET("domainAssHost", GetDomainAssHost) // 获取域名关联服务器
 		}
 		// -----------任务模板相关-----------
 		taskRoute := v1.Group("task")

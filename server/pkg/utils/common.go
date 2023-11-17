@@ -221,9 +221,9 @@ func SplitStringMap(originalMap map[string][]string) []map[string]string {
 }
 
 // 用flag map类型, 做表达式中flag字符串的变量替换，生成结果为float64 slice类型
-func GenerateExprResult(rule map[int]string, flag any) ([]float64, error) {
+func GenerateExprResult(rules map[string]string, flag any) ([]float64, error) {
 	var resultList []float64
-	for _, rule := range rule {
+	for _, rule := range rules {
 		// 判断规则是否规范
 		if !strings.Contains(rule, "flag") {
 			return nil, errors.New(rule + " 不包含 flag 字符串")
@@ -241,6 +241,7 @@ func GenerateExprResult(rule map[int]string, flag any) ([]float64, error) {
 		if err != nil {
 			return nil, fmt.Errorf("表达式计算报错: %v", err)
 		}
+		// 收集所有float64
 		resultList = append(resultList, num.(float64))
 	}
 	return resultList, nil

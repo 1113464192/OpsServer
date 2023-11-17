@@ -8,22 +8,22 @@ import (
 	"fqhWeb/pkg/api"
 )
 
-func (s *OpsService) getGeneral(hosts *[]model.Host, task *model.TaskTemplate, args *map[string][]string, sshParam *api.RunSSHCmdAsyncReq, configParam *api.RunSFTPAsyncReq) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.RunSFTPAsyncReq, err error) {
+func (s *OpsService) getGeneral(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, args *map[string][]string, sshParam *api.SSHClientConfigReq, configParam *api.SFTPClientConfigReq) (sshReq *api.RunSSHCmdAsyncReq, sftpReq *api.RunSFTPAsyncReq, err error) {
 	// 不走端口规则，但有path参数，过滤至path总数的可用服务器
 	// if pathCount != 0 {
 	// 	needHosts := (*hosts)[:pathCount]
 	// 	// 清空变量
-	// 	resParam = &api.RunSSHCmdAsyncReq{}
-	// 	resParam.Key = user.PriKey
-	// 	resParam.Passphrase = user.KeyPasswd
+	// 	sshReq = &api.RunSSHCmdAsyncReq{}
+	// 	sshReq.Key = user.PriKey
+	// 	sshReq.Passphrase = user.Passphrase
 	// 	for _, host := range needHosts {
-	// 		resParam.HostIp = append(resParam.HostIp, host.Ipv4.String)
-	// 		resParam.Username = append(resParam.Username, host.User)
-	// 		resParam.SSHPort = append(resParam.SSHPort, host.Port)
+	// 		sshReq.HostIp = append(sshReq.HostIp, host.Ipv4.String)
+	// 		sshReq.Username = append(sshReq.Username, host.User)
+	// 		sshReq.SSHPort = append(sshReq.SSHPort, host.Port)
 	// 		if task.ConfigTem != "" {
-	// 			resConfig.HostIp = append(resConfig.HostIp, host.Ipv4.String)
-	// 			resConfig.Username = append(resConfig.Username, host.User)
-	// 			resConfig.SSHPort = append(resConfig.SSHPort, host.Port)
+	// 			sftpReq.HostIp = append(sftpReq.HostIp, host.Ipv4.String)
+	// 			sftpReq.Username = append(sftpReq.Username, host.User)
+	// 			sftpReq.SSHPort = append(sftpReq.SSHPort, host.Port)
 	// 		}
 	// 	}
 	// 	// 不走端口规则返回全部符合条件的服务器

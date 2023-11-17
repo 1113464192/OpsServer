@@ -2151,7 +2151,7 @@ paths:
         type: file
       - description: 私钥通行证密码上传
         in: formData
-        name: KeyPasswd
+        name: Passphrase
         required: true
         type: string
       produces:
@@ -2192,7 +2192,7 @@ paths:
         type: string
       - description: 私钥通行证密码上传
         in: formData
-        name: KeyPasswd
+        name: Passphrase
         required: true
         type: string
       produces:

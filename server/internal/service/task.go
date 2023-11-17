@@ -32,7 +32,7 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 	if err != nil {
 		return nil, err
 	}
-	portRuleJson, err := utils.ConvertToJson(params.PortRule)
+	portRuleJson, err := utils.ConvertToJsonPair(params.PortRule)
 	if err != nil {
 		return nil, err
 	}

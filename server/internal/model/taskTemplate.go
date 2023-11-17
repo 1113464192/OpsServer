@@ -10,7 +10,7 @@ type TaskTemplate struct {
 	Comment    string       `json:"comment" gorm:"type:varchar(50);comment: 任务备注, 限长50"`
 	Pid        uint         `json:"pid" gorm:"index;comment: 项目ID"`
 	Condition  string       `json:"condition" gorm:"type:text;comment:如: mem=5 代表1个服最少占用5G"`
-	PortRule   string       `json:"port_rule" gorm:"type:text;comment: 端口规则, 如: 10000 + flag % 1000"`
+	PortRule   string       `json:"port_rule" gorm:"type:text;comment: 端口规则,如: serverPort=10000 + flag % 1000 用模板变量名"`
 	Args       string       `json:"args" gorm:"type: text;comment: 任意变量, 如: path=/data/a_b_c"`
 	Hosts      []Host       `gorm:"many2many:template_host"`
 	Auditor    []User       `gorm:"many2many:auditor_task"`

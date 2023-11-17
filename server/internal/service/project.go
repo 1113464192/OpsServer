@@ -26,11 +26,12 @@ func Project() *ProjectService {
 func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInfo any, err error) {
 	var project model.Project
 	var count int64
+	// 判断项目名是否已被使用
 	if model.DB.Model(&project).Where("name = ? AND id != ?", params.Name, params.ID).Count(&count); count > 0 {
 		return project, errors.New("项目名已被使用")
 	}
+	// ID查询
 	if params.ID != 0 {
-		// 修改
 		if !utils2.CheckIdExists(&project, &params.ID) {
 			return project, errors.New("项目不存在")
 		}
@@ -71,6 +72,7 @@ func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInf
 	}
 }
 
+// 删除项目
 func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 	for _, i := range ids {
 		if !utils2.CheckIdExists(&model.Project{}, &i) {

@@ -3001,7 +3001,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "私钥通行证密码上传",
-                        "name": "KeyPasswd",
+                        "name": "Passphrase",
                         "in": "formData",
                         "required": true
                     }
@@ -3062,7 +3062,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "私钥通行证密码上传",
-                        "name": "KeyPasswd",
+                        "name": "Passphrase",
                         "in": "formData",
                         "required": true
                     }

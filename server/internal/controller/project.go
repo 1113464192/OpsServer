@@ -199,7 +199,7 @@ func GetSelfProjectList(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/getHost [get]
+// @Router /api/v1/project/getAssHost [get]
 func GetHostAss(c *gin.Context) {
 	var projectReq api.GetHostAssReq
 	if err := c.ShouldBind(&projectReq); err != nil {

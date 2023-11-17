@@ -30,11 +30,44 @@ func UpdateHost(c *gin.Context) {
 	host, err := service.Host().UpdateHost(&hostReq)
 	if err != nil {
 		logger.Log().Error("Host", "创建/修改服务器", err)
-		c.JSON(500, api.Err("创建/修改服务器", err))
+		c.JSON(500, api.Err("创建/修改服务器失败", err))
 		return
 	}
 	c.JSON(200, api.Response{
 		Data: host,
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
+// GetHostPasswd
+// @Tags 服务器相关
+// @title 返回服务器的密码
+// @description 返回服务器的密码
+// @Summary 返回服务器的密码
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data formData api.IdReq true "hostid"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/host/getPasswd [get]
+func GetHostPasswd(c *gin.Context) {
+	var param api.IdReq
+	if err := c.ShouldBind(&param); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	passwd, err := service.Host().GetHostPasswd(param.Id)
+	if err != nil {
+		logger.Log().Error("Host", "获取服务器密码", err)
+		c.JSON(500, api.Err("获取服务器密码失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Data: passwd,
 		Meta: api.Meta{
 			Msg: "Success",
 		},
@@ -64,38 +97,6 @@ func DeleteHost(c *gin.Context) {
 	if err != nil {
 		logger.Log().Error("Project", "删除服务器", err)
 		c.JSON(500, api.Err("删除服务器失败", err))
-		return
-	}
-	c.JSON(200, api.Response{
-		Meta: api.Meta{
-			Msg: "Success",
-		},
-	})
-}
-
-// UpdateProjectAss
-// @Tags 服务器相关
-// @title 关联项目
-// @description 项目ID[多选]
-// @Summary 关联项目
-// @Produce  application/json
-// @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.UpdateHostAssProjectReq true "关联传入参数"
-// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/host/association [put]
-func UpdateProjectAss(c *gin.Context) {
-	var hostReq api.UpdateHostAssProjectReq
-	if err := c.ShouldBind(&hostReq); err != nil {
-		c.JSON(500, api.ErrorResponse(err))
-		return
-	}
-	err := service.Host().UpdateProjectAss(&hostReq)
-	if err != nil {
-		logger.Log().Error("Host", "关联项目", err)
-		c.JSON(500, api.Err("关联项目失败", err))
 		return
 	}
 	c.JSON(200, api.Response{
@@ -138,42 +139,6 @@ func GetHost(c *gin.Context) {
 		Meta: api.Meta{
 			Msg: "Success",
 		},
-	})
-}
-
-// GetProjectAss
-// @Tags 服务器相关
-// @title 查询服务器对应项目
-// @description 返回项目切片
-// @Summary 查询服务器对应项目
-// @Produce  application/json
-// @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetPagingByIdReq true "传参数"
-// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/host/Project [get]
-func GetProjectAss(c *gin.Context) {
-	var hostReq api.GetPagingByIdReq
-	if err := c.ShouldBind(&hostReq); err != nil {
-		c.JSON(500, api.ErrorResponse(err))
-		return
-	}
-	project, total, err := service.Host().GetProject(&hostReq)
-	if err != nil {
-		logger.Log().Error("Host", "查询服务器关联项目", err)
-		c.JSON(500, api.Err("查询服务器关联项目失败", err))
-		return
-	}
-	c.JSON(200, api.PageResult{
-		Data: project,
-		Meta: api.Meta{
-			Msg: "Success",
-		},
-		Total:    total,
-		Page:     hostReq.PageInfo.Page,
-		PageSize: hostReq.PageInfo.PageSize,
 	})
 }
 

@@ -25,6 +25,7 @@ func Host() *HostService {
 	return insHost
 }
 
+// 新增/修改服务器
 func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err error) {
 	var host *model.Host
 	var count int64
@@ -62,12 +63,13 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		host.Iops = params.Iops
 		host.Mbps = params.Mbps
 		host.Mem = uint64(params.Mem) * uint64(1024)
-		// 只支持从代码中获取
+		// 当前数据则只支持从代码中获取
 		// host.CurrDisk = params.CurrDisk
 		// host.CurrMem = params.CurrMem
 		// host.CurrIowait = params.CurrIowait
 		// host.CurrIdle = params.CurrIdle
 		// host.CurrLoad = params.CurrLoad
+		// 入库
 		err = model.DB.Save(host).Error
 		if err != nil {
 			return host, errors.New("数据保存失败")
@@ -116,6 +118,17 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 	}
 }
 
+// 获取服务器密码
+func (s *HostService) GetHostPasswd(id uint) (passwd string, err error) {
+	var host model.Host
+	if err = model.DB.First(&host, id).Error; err != nil {
+		return "", fmt.Errorf("查找服务器失败: %v", err)
+	}
+	passwd = string(utils.XorDecrypt([]byte(host.Password), consts.XorKey))
+	return passwd, err
+}
+
+// 删除服务器
 func (s *HostService) DeleteHost(ids []uint) (err error) {
 	for _, i := range ids {
 		if !utils2.CheckIdExists(&model.Host{}, &i) {
@@ -147,6 +160,7 @@ func (s *HostService) DeleteHost(ids []uint) (err error) {
 	return err
 }
 
+// 删除域名
 func (s *HostService) DeleteDomain(ids []uint) (err error) {
 	for _, i := range ids {
 		if !utils2.CheckIdExists(&model.Host{}, &i) {
@@ -170,40 +184,7 @@ func (s *HostService) DeleteDomain(ids []uint) (err error) {
 	return err
 }
 
-func (s *HostService) UpdateProjectAss(params *api.UpdateHostAssProjectReq) (err error) {
-	var host model.Host
-	var noExistId []uint
-	var project []model.Project
-	// 判断所有项目是否都存在
-	for _, pid := range params.Pids {
-		uBool := utils2.CheckIdExists(&project, &pid)
-		if !uBool {
-			noExistId = append(noExistId, pid)
-		}
-	}
-	if len(noExistId) != 0 {
-		return fmt.Errorf("%v %s", noExistId, "项目不存在")
-	}
-
-	if !utils2.CheckIdExists(&host, &params.Hid) {
-		return errors.New("服务器ID不存在")
-	}
-
-	if err = model.DB.Find(&project, params.Pids).Error; err != nil {
-		return errors.New("项目数据库查询操作失败")
-	}
-	if err = model.DB.First(&host, params.Hid).Error; err != nil {
-		return errors.New("服务器数据库查询操作失败")
-	}
-	if err = model.DB.Model(&host).Association("Projects").Replace(&project); err != nil {
-		return errors.New("项目与服务器数据库关联操作失败")
-	}
-	if err != nil {
-		return err
-	}
-	return err
-}
-
+// 获取主机
 func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64, err error) {
 	var host []model.Host
 	ipstr := "%" + params.Ip + "%"
@@ -235,31 +216,7 @@ func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64
 	return result, count, err
 }
 
-// 获取对应关联项目
-func (s *HostService) GetProject(params *api.GetPagingByIdReq) (projectInfo any, total int64, err error) {
-	var host model.Host
-	if !utils2.CheckIdExists(&host, &params.Id) {
-		return nil, 0, errors.New("主机ID不存在")
-	}
-	if err = model.DB.Preload("Projects").Where("id = ?", params.Id).First(&host).Error; err != nil {
-		return nil, 0, errors.New("主机查询失败")
-	}
-	assQueryReq := &api.AssQueryReq{
-		Condition: model.DB.Model(&model.Project{}),
-		Table:     &host.Projects,
-		PageInfo:  params.PageInfo,
-	}
-	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
-		return nil, 0, err
-	}
-	var result *[]api.ProjectRes
-	if result, err = Project().GetResults(&host.Projects); err != nil {
-		return nil, total, err
-	}
-	return result, total, err
-}
-
-// 获取对应关联项目
+// 获取域名关联的主机
 func (s *HostService) GetDomainAssHost(params *api.GetPagingByIdReq) (hostInfo any, total int64, err error) {
 	var domain model.Domain
 	if !utils2.CheckIdExists(&domain, &params.Id) {
@@ -283,6 +240,7 @@ func (s *HostService) GetDomainAssHost(params *api.GetPagingByIdReq) (hostInfo a
 	return result, total, err
 }
 
+// 新增或修改域名
 func (s *HostService) UpdateDomain(params *api.UpdateDomainReq) (domain *model.Domain, err error) {
 	var count int64
 	// NULL不会参与分配
@@ -315,6 +273,7 @@ func (s *HostService) UpdateDomain(params *api.UpdateDomainReq) (domain *model.D
 	}
 }
 
+// 更新域名关联的主机
 func (s *HostService) UpdateDomainAss(params *api.UpdateDomainAssHostReq) (err error) {
 	var host []model.Host
 	var noExistId []uint
@@ -349,7 +308,8 @@ func (s *HostService) UpdateDomainAss(params *api.UpdateDomainAssHostReq) (err e
 	return err
 }
 
-func (s *HostService) GetHostCurrData(param *api.RunSSHCmdAsyncReq) (*api.HostInfoRes, error) {
+// 获取主机当前状态
+func (s *HostService) GetHostCurrData(param *[]api.SSHClientConfigReq) (*api.HostInfoRes, error) {
 	// systemDiskShell := `df -Th | awk '{if ($NF=="/")print$(NF-2)}' | grep -Eo "[0-9]+"`
 	// dataDiskShell := `df -Th | awk '{if ($NF=="/data")print$(NF-2)}' | grep -Eo "[0-9]+"`
 	// memShell := `free -m | awk '/Mem/{print $NF}'`
@@ -369,8 +329,9 @@ func (s *HostService) GetHostCurrData(param *api.RunSSHCmdAsyncReq) (*api.HostIn
 
 	var hostInfo api.HostInfoRes
 	var err error
-
-	param.Cmd = []string{cmdShell}
+	for i := 0; i < len(*param); i++ {
+		(*param)[i].Cmd = cmdShell
+	}
 	hostDataRes, err := SSH().RunSSHCmdAsync(param)
 	// 返回*[]SSHResultRes
 	if err != nil {
@@ -485,6 +446,7 @@ func (s *HostService) GetHostCurrData(param *api.RunSSHCmdAsyncReq) (*api.HostIn
 // }
 // hostInfo.CurrLoad = loadRes
 
+// 写入主机信息到数据库
 func (s *HostService) WritieToDatabase(data *api.HostInfoRes) error {
 	var host model.Host
 	tx := model.DB.Begin()

@@ -82,13 +82,18 @@ func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][
 	return cmd, config, err
 }
 
-func (s *OpsService) filterConditionHost(hosts *[]model.Host, task *model.TaskTemplate, resParam *api.RunSSHCmdAsyncReq, memSize *float32) (err error) {
-	for _, host := range *hosts {
-		resParam.HostIp = append(resParam.HostIp, host.Ipv4.String)
-		resParam.Username = append(resParam.Username, host.User)
-		resParam.SSHPort = append(resParam.SSHPort, host.Port)
+// 按条件筛选符合条件的服务器
+func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHClientConfigReq, memSize *float32) (err error) {
+	// 赋值可用IP给ssh命令参数
+	for i := 0; i < len(*sshReq); i++ {
+		(*sshReq)[i].HostIp = (*hosts)[i].Ipv4.String
+		(*sshReq)[i].Username = (*hosts)[i].User
+		(*sshReq)[i].SSHPort = (*hosts)[i].Port
+		(*sshReq)[i].Key = user.PriKey
+		(*sshReq)[i].Passphrase = user.Passphrase
 	}
-	hostInfo, err := service.Host().GetHostCurrData(resParam)
+	// 更新每个服务器的最新状态
+	hostInfo, err := service.Host().GetHostCurrData(sshReq)
 	if err != nil {
 		logger.Log().Error("Host", "机器数据采集——数据结构有错误", err)
 		return fmt.Errorf("机器数据采集——数据结构有错误: %v", err)
@@ -98,14 +103,16 @@ func (s *OpsService) filterConditionHost(hosts *[]model.Host, task *model.TaskTe
 		return fmt.Errorf("机器数据采集——数据写入数据库失败: %v", err)
 	}
 
+	// 获取允许执行命令的服务器资源条件
 	var condition map[string][]string
 	if err = json.Unmarshal([]byte(task.Condition), &condition); err != nil {
 		return errors.New("筛选机器条件规则进行json解析失败")
 	}
 	var fields []string
-	// 为了使用不定长参数的解包方法，所以要设置为interface{}
+	// 为了使用不定长参数的解包方法，所以要设置为[]any
 	var values []any
 
+	// 将条件组合成切片
 	for key, value := range condition {
 		switch key {
 		case "mem":
@@ -134,10 +141,15 @@ func (s *OpsService) filterConditionHost(hosts *[]model.Host, task *model.TaskTe
 		}
 	}
 
+	// 将可用IP做成切片，方便后续执行GORM命令
+	var hostsIp []string
+	for _, sshReq := range *sshReq {
+		hostsIp = append(hostsIp, sshReq.HostIp)
+	}
 	if len(fields) > 0 {
 		conditions := strings.Join(fields, " AND ")
-		// 从关联的主机中查询
-		if err = model.DB.Where("ipv4 IN ?", resParam.HostIp).Where(conditions, values...).Order("curr_mem").Find(hosts).Error; err != nil {
+		// 从关联的主机中获取符合条件的单服
+		if err = model.DB.Where("ipv4 IN ?", hostsIp).Where(conditions, values...).Order("curr_mem").Find(hosts).Error; err != nil {
 			return fmt.Errorf("%s%v", "筛选符合条件的主机操作报错: ", err)
 		}
 	}
@@ -173,22 +185,29 @@ func (s *OpsService) filterConditionHost(hosts *[]model.Host, task *model.TaskTe
 	// return err
 }
 
-func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, task *model.TaskTemplate, sshReq *api.RunSSHCmdAsyncReq, args *map[string][]string, memSize float32) (hostList *[]model.Host, err error) {
+// 按端口规则筛选可用服务器
+func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHClientConfigReq, args *map[string][]string, memSize float32) (hostList *[]model.Host, err error) {
+	// 做一个用来计算的host切片，避免影响到host表(防止后面突然有人Save)
 	tmpHosts := make([]model.Host, len(*hosts))
 	copy(tmpHosts, *hosts)
 
-	var portRule map[int]string
+	// 解析出每个端口规则
+	var portRule map[string]string
 	if err = json.Unmarshal([]byte(task.PortRule), &portRule); err != nil {
 		return nil, errors.New("端口规则进行json解析失败")
 	}
+	// 获取每个服的字符串标识
 	flags, err := s.getFlag(task.Args, args)
 	if err != nil {
 		return nil, err
 	}
+	// 添加到后续的模板变量映射
 	flagsString := utils.IntSliceToStringSlice(flags)
 	(*args)["flag"] = flagsString
 
+	// 接收可用host切片
 	var availHost []model.Host
+	// 遍历每个服
 	for _, flag := range flags {
 		// 遍历前面进行条件筛选和内存排序的机器
 		for i := range tmpHosts {
@@ -196,63 +215,69 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, task *model.TaskTem
 			if host.CurrMem < memSize {
 				continue
 			}
-			sshReq.HostIp = []string{host.Ipv4.String}
-			sshReq.SSHPort = []string{host.Port}
-			sshReq.Username = []string{host.User}
-			var cmdList []string
+			// 获取基于flag的端口
 			var portList []float64
 			portList, err = utils.GenerateExprResult(portRule, flag)
+			if len(portList) != len(portRule) {
+				return nil, errors.New("取出端口数量不等于端口规则数量")
+			}
+			// 添加到后续的模板变量映射
+			var p int
+			for key := range portRule {
+				portString := strconv.FormatFloat(portList[p], 'f', -1, 64)
+				(*args)[key] = append((*args)[key], portString)
+				p += 1
+			}
+			if err != nil {
+				return nil, fmt.Errorf("端口规则\n%v\n基于flag %d 生成端口失败: %v", portRule, flag, err)
+			}
+			// 计算有多少个端口需要检查占用
+			var c int
 			for _, port := range portList {
 				cmdShell := fmt.Sprintf(`
 				if [[ -z $(netstat -plan | grep %d) ]];then
 					echo "success"
 				fi`, int(port))
-				cmdList = append(cmdList, cmdShell)
+				// 兼容多个端口多个命令，这样子就允许单主机多命令
+				n := len(*sshReq)
+				(*sshReq)[n].HostIp = host.Ipv4.String
+				(*sshReq)[n].SSHPort = host.Port
+				(*sshReq)[n].Username = host.User
+				(*sshReq)[n].Key = user.PriKey
+				(*sshReq)[n].Passphrase = user.Passphrase
+				(*sshReq)[n].Cmd = cmdShell
+				c += 1
 			}
-			if err != nil {
-				continue
-			}
-			portString := utils.Float64SliceToStringSlice(portList)
-			(*args)["port"] = portString
-
 			var sshResult *[]api.SSHResultRes
-			count := len(cmdList)
-			num := 0
-			for _, cmd := range cmdList {
-				sshReq.Cmd = []string{cmd}
-				sshResult, err = service.SSH().RunSSHCmdAsync(sshReq)
-				if err != nil {
-					return nil, fmt.Errorf("端口检测命令执行失败: %v", err)
-				}
-				if strings.Contains((*sshResult)[0].Response, "success") {
-					num += 1
+			// 判断成功次数
+			var successNum int
+			sshResult, err = service.SSH().RunSSHCmdAsync(sshReq)
+			if err != nil {
+				return nil, fmt.Errorf("端口检测命令执行失败: %v", err)
+			}
+			// 判断每个端口占用
+			for _, res := range *sshResult {
+				if strings.Contains(res.Response, "success") {
+					successNum += 1
 				}
 			}
-			if count == num {
+			// 查看当前循环的服务器能否装服
+			if successNum == c {
 				availHost = append(availHost, *host)
 				host.CurrMem = host.CurrMem - memSize
+				// 开始循环下一个预备单服
 				break
-			} else {
-				continue
 			}
+			continue
 		}
 	}
 	return &availHost, err
 }
 
-func (s *OpsService) writingTaskRecord(resParam *api.RunSSHCmdAsyncReq, resConfig *api.RunSFTPAsyncReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
+func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq *api.SFTPClientConfigReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
 	// sshReq编码JSON
-	sshJson := make(map[string][]string)
-	sshJson["ipv4"] = resParam.HostIp
-	sshJson["sshPort"] = resParam.SSHPort
-	sshJson["username"] = resParam.Username
-	sshJson["cmd"] = resParam.Cmd
-	if resConfig.FileContent != nil {
-		sshJson["config"] = resConfig.FileContent
-		sshJson["configPath"] = resConfig.Path
-	}
 	var data []byte
-	data, err = json.Marshal(sshJson)
+	data, err = json.Marshal(sshReq)
 	if err != nil {
 		return nil, fmt.Errorf("map转换json失败: %v", err)
 	}

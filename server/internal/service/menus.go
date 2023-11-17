@@ -24,11 +24,12 @@ func Menu() *MenuService {
 func (s *MenuService) UpdateMenu(params *api.UpdateMenuReq) (menuInfo any, err error) {
 	var menu model.Menus
 	var count int64
+	// 判断菜单名/字段是否被占用
 	if model.DB.Model(&menu).Where("name = ? AND id != ?", params.Name, params.ID).Or("title = ? AND id != ?", params.Title, params.ID).Count(&count); count > 0 {
 		return menu, errors.New("菜单Name字段或菜单Title字段已被使用")
 	}
 	if params.ID != 0 {
-		// 修改
+		// 判断菜单是否存在
 		if !utils2.CheckIdExists(&menu, &params.ID) {
 			return menu, errors.New("该菜单不存在")
 		}
@@ -88,6 +89,7 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 	// 判断用户组是否都存在
 	for _, gid := range params.GroupIDs {
 		uBool := utils2.CheckIdExists(&groups, &gid)
+		// 不存在纳入noExistId切片
 		if !uBool {
 			noExistId = append(noExistId, gid)
 		}
@@ -137,6 +139,7 @@ func (s *MenuService) GetMenuList(gid uint, isAdmin uint8) (menu *[]model.Menus,
 	return nil, errors.New("如果不是管理员, 请输入菜单ID")
 }
 
+// 删除菜单
 func (s *MenuService) DeleteMenu(ids []uint) (err error) {
 	for _, i := range ids {
 		if !utils2.CheckIdExists(&model.UserGroup{}, &i) {

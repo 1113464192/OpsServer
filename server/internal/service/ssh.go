@@ -36,22 +36,17 @@ func (s *SSHServer) TestSSH(param api.TestSSHReq) (*[]api.SSHResultRes, error) {
 	if err := model.DB.Find(&hosts, param.HostId).Error; err != nil {
 		return nil, fmt.Errorf("GORM服务器未找到: %v", err)
 	}
-	var hostIp []string
-	var hostUsers []string
-	var ports []string
-	for _, host := range hosts {
-		hostIp = append(hostIp, host.Ipv4.String)
-		hostUsers = append(hostUsers, host.User)
-		ports = append(ports, host.Port)
+	var sshReq []api.SSHClientConfigReq
+	for i := 0; i < len(hosts); i++ {
+		sshReq[i].HostIp = hosts[i].Ipv4.String
+		sshReq[i].Username = hosts[i].User
+		sshReq[i].SSHPort = hosts[i].Port
+		sshReq[i].Key = user.PriKey
+		sshReq[i].Passphrase = user.Passphrase
+		sshReq[i].Cmd = `ifconfig eth0 | grep inet`
 	}
-	sshReq := &api.RunSSHCmdAsyncReq{
-		HostIp:     hostIp,
-		Username:   hostUsers,
-		SSHPort:    ports,
-		Key:        user.PriKey,
-		Passphrase: user.KeyPasswd,
-	}
-	hostInfo, err := Host().GetHostCurrData(sshReq)
+
+	hostInfo, err := Host().GetHostCurrData(&sshReq)
 	if err != nil {
 		logger.Log().Error("Host", "机器数据采集——数据结构有错误", err)
 		return nil, fmt.Errorf("机器数据采集——数据结构有错误: %v", err)
@@ -60,8 +55,7 @@ func (s *SSHServer) TestSSH(param api.TestSSHReq) (*[]api.SSHResultRes, error) {
 		logger.Log().Error("Host", "机器数据采集——数据写入数据库失败", err)
 		return nil, fmt.Errorf("机器数据采集——数据写入数据库失败: %v", err)
 	}
-	sshReq.Cmd = []string{`ifconfig eth0 | grep inet`}
-	result, err = s.RunSSHCmdAsync(sshReq)
+	result, err = s.RunSSHCmdAsync(&sshReq)
 	if err != nil {
 		return nil, fmt.Errorf("测试执行失败: %v", err)
 	}
@@ -73,7 +67,7 @@ type clientGroup struct {
 	clientMapMutex sync.Mutex
 }
 
-func (s *SSHServer) RunSSHCmdAsync(param *api.RunSSHCmdAsyncReq) (*[]api.SSHResultRes, error) {
+func (s *SSHServer) RunSSHCmdAsync(param *[]api.SSHClientConfigReq) (*[]api.SSHResultRes, error) {
 	if err := s.CheckSSHParam(param); err != nil {
 		return nil, err
 	}
@@ -83,31 +77,17 @@ func (s *SSHServer) RunSSHCmdAsync(param *api.RunSSHCmdAsyncReq) (*[]api.SSHResu
 		clientMapMutex: sync.Mutex{},
 	}
 
-	channel := make(chan *api.SSHResultRes, len(param.HostIp))
+	channel := make(chan *api.SSHResultRes, len(*param))
 	wg := sync.WaitGroup{}
 	var err error
 	var result []api.SSHResultRes
 	// data := make(map[string]string)
-	for i := 0; i < len(param.HostIp); i++ {
+	for i := 0; i < len(*param); i++ {
 		if err = configs.Sem.Acquire(context.Background(), 1); err != nil {
 			return nil, fmt.Errorf("获取信号失败，错误为: %v", err)
 		}
 		wg.Add(1)
-		password := param.Password[param.HostIp[i]]
-		sshParam := &api.SSHClientConfigReq{
-			HostIp:     param.HostIp[i],
-			Username:   param.Username[i],
-			SSHPort:    param.SSHPort[i],
-			Password:   password,
-			Key:        param.Key,
-			Passphrase: param.Passphrase,
-			Cmd:        param.Cmd[0],
-		}
-		// 如果是一个主机一个命令则多条
-		if len(param.Cmd) > 1 {
-			sshParam.Cmd = param.Cmd[i]
-		}
-		go s.RunSSHCmd(sshParam, channel, &wg, &insClientGroup)
+		go s.RunSSHCmd(&(*param)[i], channel, &wg, &insClientGroup)
 	}
 	wg.Wait()
 	close(channel)
@@ -161,39 +141,16 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHRes
 }
 
 // 检查是否符合执行条件
-func (s *SSHServer) CheckSSHParam(param *api.RunSSHCmdAsyncReq) error {
-	fmt.Println(param.HostIp)
-	fmt.Println(param.Username)
-	fmt.Println(param.SSHPort)
-	fmt.Println(param.Cmd)
-	for _, value := range param.HostIp {
-		if value == "" {
-			// 可能path大于hosts数量
-			return fmt.Errorf("IP切片中有值为空字符串")
+func (s *SSHServer) CheckSSHParam(param *[]api.SSHClientConfigReq) error {
+	for _, p := range *param {
+		if p.HostIp == "" || p.Username == "" || p.SSHPort == "" || p.Cmd == "" || p.Key == nil || p.Passphrase == nil {
+			return fmt.Errorf("执行参数中存在空值: \n%v", p)
 		}
-	}
-	for _, value := range param.SSHPort {
-		if value == "" {
-			return fmt.Errorf("端口切片中有值为空字符串")
-		}
-	}
-	for _, value := range param.Username {
-		if value == "" {
-			return fmt.Errorf("用户切片中有值为空字符串")
-		}
-	}
-	for _, value := range param.Cmd {
-		if value == "" {
-			return fmt.Errorf("CMD切片中有值为空字符串")
-		}
-	}
-	if len(param.HostIp) != len(param.SSHPort) || len(param.HostIp) != len(param.Username) || len(param.Cmd) > 1 && len(param.Cmd) != len(param.HostIp) {
-		return errors.New("请检查: IP、端口、用户名这些切片是否一一对应")
 	}
 	return nil
 }
 
-func (s *SSHServer) RunSFTPAsync(param *api.RunSFTPAsyncReq) (*[]api.SSHResultRes, error) {
+func (s *SSHServer) RunSFTPAsync(param *[]api.SFTPClientConfigReq) (*[]api.SSHResultRes, error) {
 	if err := s.CheckSFTPParam(param); err != nil {
 		return nil, err
 	}
@@ -203,35 +160,17 @@ func (s *SSHServer) RunSFTPAsync(param *api.RunSFTPAsyncReq) (*[]api.SSHResultRe
 		clientMapMutex: sync.Mutex{},
 	}
 
-	channel := make(chan *api.SSHResultRes, len(param.HostIp))
+	channel := make(chan *api.SSHResultRes, len(*param))
 	wg := sync.WaitGroup{}
 	var err error
 	var result []api.SSHResultRes
 	// data := make(map[string]string)
-	for i := 0; i < len(param.HostIp); i++ {
+	for i := 0; i < len(*param); i++ {
 		if err = configs.Sem.Acquire(context.Background(), 1); err != nil {
 			return nil, fmt.Errorf("获取信号失败，错误为: %v", err)
 		}
 		wg.Add(1)
-		password := param.Password[param.HostIp[i]]
-		sftpParam := &api.SFTPClientConfigReq{
-			HostIp:      param.HostIp[i],
-			Username:    param.Username[i],
-			SSHPort:     param.SSHPort[i],
-			Password:    password,
-			Key:         param.Key,
-			Passphrase:  param.Passphrase,
-			Path:        param.Path[0],
-			FileContent: param.FileContent[0],
-		}
-		// 如果是一个主机一个命令则多条
-		if len(param.FileContent) > 1 {
-			sftpParam.FileContent = param.FileContent[i]
-		}
-		if len(param.Path) > 1 {
-			sftpParam.Path = param.Path[i]
-		}
-		go s.RunSFTPTransfer(sftpParam, channel, &wg, &insClientGroup)
+		go s.RunSFTPTransfer(&(*param)[i], channel, &wg, &insClientGroup)
 	}
 	wg.Wait()
 	close(channel)
@@ -296,40 +235,11 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 }
 
 // 检查是否符合执行条件
-func (s *SSHServer) CheckSFTPParam(param *api.RunSFTPAsyncReq) error {
-	fmt.Println(param.HostIp)
-	fmt.Println(param.Username)
-	fmt.Println(param.SSHPort)
-	fmt.Println(param.Path)
-	fmt.Println(param.FileContent)
-	for _, value := range param.HostIp {
-		if value == "" {
-			// 可能path大于hosts数量
-			return fmt.Errorf("IP切片中有值为空字符串")
+func (s *SSHServer) CheckSFTPParam(param *[]api.SFTPClientConfigReq) error {
+	for _, p := range *param {
+		if p.HostIp == "" || p.Username == "" || p.SSHPort == "" || p.FileContent == "" || p.Key == nil || p.Passphrase == nil || p.Path == "" {
+			return fmt.Errorf("执行参数中存在空值: \n%v", p)
 		}
-	}
-	for _, value := range param.SSHPort {
-		if value == "" {
-			return fmt.Errorf("端口切片中有值为空字符串")
-		}
-	}
-	for _, value := range param.Username {
-		if value == "" {
-			return fmt.Errorf("用户切片中有值为空字符串")
-		}
-	}
-	for _, value := range param.Path {
-		if value == "" {
-			return fmt.Errorf("PATH切片中有值为空字符串")
-		}
-	}
-	for _, value := range param.FileContent {
-		if value == "" {
-			return fmt.Errorf("FileContent切片中有值为空字符串")
-		}
-	}
-	if len(param.HostIp) != len(param.SSHPort) || len(param.HostIp) != len(param.Username) || len(param.FileContent) > 1 && len(param.FileContent) != len(param.HostIp) || len(param.Path) > 1 && len(param.Path) != len(param.HostIp) {
-		return errors.New("请检查: IP、端口、用户名、路径、文件内容这些切片是否一一对应")
 	}
 	return nil
 }

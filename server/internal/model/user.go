@@ -12,7 +12,7 @@ type User struct {
 	Expiration uint64       `json:"expiration"`
 	IsAdmin    uint8        `json:"is_admin" gorm:"default:0"`
 	PriKey     []byte       `json:"pri_key" gorm:"type:blob;comment: 用户私钥，不传为NULL"`
-	KeyPasswd  []byte       `json:"key_passwd" gorm:"type:blob;comment: 用户私钥通行密码，不传为NULL"`
+	Passphrase []byte       `json:"passphrase" gorm:"type:blob;comment: 用户私钥通行密码，不传为NULL"`
 	UserGroups []UserGroup  `json:"user_group" gorm:"many2many:permit_users;comment: 管理用户填1"`
 	Project    []Project    `gorm:"foreignKey:UserId;references:ID"`
 	TaskRecord []TaskRecord `gorm:"foreignKey:OperatorId;references:ID"`

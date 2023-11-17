@@ -97,7 +97,7 @@ func GetExecParam(c *gin.Context) {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	resParam, resConfig, err := ops.Ops().GetExecParam(param.Id)
+	sshReq, sftpReq, err := ops.Ops().GetExecParam(param.Id)
 	if err != nil {
 		logger.Log().Error("Task", "获取ssh执行参数", err)
 		c.JSON(500, api.Err("获取Ops任务执行参数失败", err))
@@ -105,8 +105,8 @@ func GetExecParam(c *gin.Context) {
 	}
 	c.JSON(200, api.Response{
 		Data: map[string]any{
-			"sshReq":          *resParam,
-			"RunSFTPAsyncReq": *resConfig,
+			"sshReq":          *sshReq,
+			"RunSFTPAsyncReq": *sftpReq,
 		},
 		Meta: api.Meta{
 			Msg: "Success",

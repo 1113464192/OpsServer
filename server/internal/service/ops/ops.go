@@ -39,18 +39,8 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 		return nil, errors.New("任务的命令和传输文件内容都为空")
 	}
 
-	var resParam *api.RunSSHCmdAsyncReq
-	var resConfig *api.RunSFTPAsyncReq
-	resParam = new(api.RunSSHCmdAsyncReq)
-	if task.CmdTem != "" {
-		resParam.Key = user.PriKey
-		resParam.Passphrase = user.KeyPasswd
-	}
-	resConfig = new(api.RunSFTPAsyncReq)
-	if task.ConfigTem != "" {
-		resConfig.Key = user.PriKey
-		resConfig.Passphrase = user.KeyPasswd
-	}
+	var sshReq *api.RunSSHCmdAsyncReq
+	var sftpReq *api.RunSFTPAsyncReq
 
 	// 获取模板/项目对应主机
 	var hosts []model.Host
@@ -98,18 +88,18 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 		// 如果有设置条件 则筛选符合条件的主机
 		var memSize float32
 		if task.Condition != "" {
-			if err = s.filterConditionHost(&hosts, &task, resParam, &memSize); err != nil {
+			if err = s.filterConditionHost(&hosts, &user, &task, sshReq, &memSize); err != nil {
 				return nil, fmt.Errorf("筛选符合条件的主机失败: %v", err)
 			}
 		}
 		if task.PortRule != "" {
-			hostList, err = s.filterPortRuleHost(&hosts, &task, resParam, &args, memSize)
+			hostList, err = s.filterPortRuleHost(&hosts, &user, &task, sshReq, &args, memSize)
 			if err != nil {
 				return nil, fmt.Errorf("端口筛选报错: %v", err)
 			}
 			hosts = *hostList
 		}
-		resParam, resConfig, err = s.getInstallServer(&hosts, &task, &user, pathCount, &args, resConfig)
+		sshReq, sftpReq, err = s.getInstallServer(&hosts, &task, &user, pathCount, &args, sftpReq)
 		if err != nil {
 			return nil, fmt.Errorf("获取装服参数报错: %v", err)
 		}
@@ -119,13 +109,13 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 	// 关联机器全操作
 	default:
 		// 看有无需求, 要做成多cmd轮流执行, 没有的话就单cmd, 装服再多CMD
-		resParam, resConfig, err = s.getGeneral(&hosts, &task, &args, resParam, resConfig)
+		sshReq, sftpReq, err = s.getGeneral(&hosts, &user, &task, &args, sshReq, sftpReq)
 		if err != nil {
 			return nil, fmt.Errorf("获取参数报错: %v", err)
 		}
 	}
 	// Auditor
-	taskRecord, err = s.writingTaskRecord(resParam, resConfig, &user, &task, param.Auditor)
+	taskRecord, err = s.writingTaskRecord(sshReq, sftpReq, &user, &task, param.Auditor)
 	if err != nil {
 		return nil, fmt.Errorf("写入TaskRecord失败: %v", err)
 	}
@@ -181,7 +171,7 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result *[]api.TaskRecordRes
 
 }
 
-func (s *OpsService) GetExecParam(tid uint) (resParam *api.RunSSHCmdAsyncReq, resConfig *api.RunSFTPAsyncReq, err error) {
+func (s *OpsService) GetExecParam(tid uint) (sshReq *api.RunSSHCmdAsyncReq, sftpReq *api.RunSFTPAsyncReq, err error) {
 	var task model.TaskRecord
 	if err = model.DB.First(&task, tid).Error; err != nil {
 		return nil, nil, fmt.Errorf("查询TaskRecord数据失败: %v", err)
@@ -202,28 +192,28 @@ func (s *OpsService) GetExecParam(tid uint) (resParam *api.RunSSHCmdAsyncReq, re
 	cmd := sshJson["cmd"]
 	config := sshJson["config"]
 
-	resParam = &api.RunSSHCmdAsyncReq{
+	sshReq = &api.RunSSHCmdAsyncReq{
 		HostIp:     hostIp,
 		Username:   username,
 		SSHPort:    sshPort,
 		Cmd:        cmd,
 		Key:        user.PriKey,
-		Passphrase: user.KeyPasswd,
+		Passphrase: user.Passphrase,
 	}
 	if config != nil {
 		path := sshJson["configPath"]
-		resConfig = &api.RunSFTPAsyncReq{
+		sftpReq = &api.RunSFTPAsyncReq{
 			HostIp:      hostIp,
 			Username:    username,
 			SSHPort:     sshPort,
 			FileContent: config,
 			Path:        path,
 			Key:         user.PriKey,
-			Passphrase:  user.KeyPasswd,
+			Passphrase:  user.Passphrase,
 		}
-		return resParam, resConfig, err
+		return sshReq, sftpReq, err
 	}
-	return resParam, nil, err
+	return sshReq, nil, err
 }
 
 func (s *OpsService) ApproveTask(tid uint, uid uint) error {
@@ -279,19 +269,19 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 	var result *[]api.SSHResultRes
 	var err error
 	data := make(map[string][]api.SSHResultRes)
-	resParam, resConfig, err := s.GetExecParam(id)
+	sshReq, sftpReq, err := s.GetExecParam(id)
 	if err != nil {
 		return nil, fmt.Errorf("获取执行参数失败: %v", err)
 	}
-	if resConfig.FileContent != nil {
-		result, err = service.SSH().RunSFTPAsync(resConfig)
+	if sftpReq.FileContent != nil {
+		result, err = service.SSH().RunSFTPAsync(sftpReq)
 		if err != nil {
 			return nil, fmt.Errorf("测试执行失败: %v", err)
 		}
 		data["ssh"] = *result
 	}
-	if resParam.Cmd != nil {
-		result, err = service.SSH().RunSFTPAsync(resConfig)
+	if sshReq.Cmd != nil {
+		result, err = service.SSH().RunSFTPAsync(sftpReq)
 		if err != nil {
 			return nil, fmt.Errorf("测试执行失败: %v", err)
 		}
