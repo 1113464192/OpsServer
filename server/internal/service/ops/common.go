@@ -32,52 +32,50 @@ func (s *OpsService) getFlag(param string, args *map[string][]string) (flags []i
 	return flags, err
 }
 
-func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][]string) (cmd []string, config []string, err error) {
-	if task.CmdTem == "" && task.ConfigTem == "" {
-		return nil, nil, errors.New("任务的命令和传输文件内容都为空")
-	}
-	pathCount := len((*args)["path"])
+func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][]string, pathCount int) (cmd []string, config []string, err error) {
 	var cmdTem *template.Template
-	if task.CmdTem != "" {
-		cmdTem, err = template.New("cmdTem").Parse(task.CmdTem)
-		if err != nil {
-			return cmd, config, fmt.Errorf("无法解析CMD模板: %v", err)
-		}
+	cmdTem, err = template.New("cmdTem").Parse(task.CmdTem)
+	if err != nil {
+		return cmd, config, fmt.Errorf("无法解析CMD模板: %v", err)
 	}
 	var configTem *template.Template
-	if pathCount != 0 && task.ConfigTem != "" {
-		configTem, err = template.New("configTem").Parse(task.ConfigTem)
-		if err != nil {
-			return cmd, config, fmt.Errorf("无法解析config模板: %v", err)
-		}
+	configTem, err = template.New("configTem").Parse(task.ConfigTem)
+	if err != nil {
+		return cmd, config, fmt.Errorf("无法解析config模板: %v", err)
 	}
 
 	var buf strings.Builder
 	var bufString string
+	// 对map[string][]string进行拆解，以便模板渲染
 	serverInfo := utils.SplitStringMap(*args)
 	for i := 0; i < len(serverInfo); i++ {
-		if task.CmdTem != "" {
-			if err = cmdTem.Execute(&buf, serverInfo[i]); err != nil {
-				return cmd, config, fmt.Errorf("无法渲染cmd模板: %v", err)
-			}
-			bufString = buf.String()
-			if strings.Contains(bufString, "no value") {
-				return cmd, config, fmt.Errorf("cmd模板有变量没有获取对应解析 %s", bufString)
-			}
-			cmd = append(cmd, bufString)
-			buf.Reset()
+		if err = cmdTem.Execute(&buf, serverInfo[i]); err != nil {
+			return cmd, config, fmt.Errorf("无法渲染cmd模板: %v", err)
 		}
-		if pathCount != 0 && task.ConfigTem != "" {
-			if err = configTem.Execute(&buf, serverInfo[i]); err != nil {
-				return cmd, config, fmt.Errorf("无法渲染config模板: %v", err)
-			}
-			bufString = buf.String()
-			if strings.Contains(bufString, "no value") {
-				return cmd, config, fmt.Errorf("config模板有变量没有获取对应解析 %s", bufString)
-			}
-			config = append(config, bufString)
-			buf.Reset()
+		bufString = buf.String()
+		if strings.Contains(bufString, "no value") {
+			return cmd, config, fmt.Errorf("cmd模板有变量没有获取对应解析 %s", bufString)
 		}
+		cmd = append(cmd, bufString)
+		buf.Reset()
+		if err = configTem.Execute(&buf, serverInfo[i]); err != nil {
+			return cmd, config, fmt.Errorf("无法渲染config模板: %v", err)
+		}
+		bufString = buf.String()
+		if strings.Contains(bufString, "no value") {
+			return cmd, config, fmt.Errorf("config模板有变量没有获取对应解析 %s", bufString)
+		}
+		config = append(config, bufString)
+		buf.Reset()
+	}
+	// 兼容所有单服一套命令或配置
+	cmdCount := len(cmd)
+	if cmdCount != 1 && cmdCount != pathCount {
+		return nil, nil, errors.New("CMD不等于1, 也不等于路径数量")
+	}
+	configCount := len(config)
+	if configCount != 1 && configCount != pathCount {
+		return nil, nil, errors.New("CONFIG不等于1, 也不等于路径数量")
 	}
 	return cmd, config, err
 }
@@ -274,10 +272,10 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 	return &availHost, err
 }
 
-func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq *api.SFTPClientConfigReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
+func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
 	// sshReq编码JSON
 	var data []byte
-	data, err = json.Marshal(sshReq)
+	data, err = json.Marshal(*sshReq)
 	if err != nil {
 		return nil, fmt.Errorf("map转换json失败: %v", err)
 	}
@@ -287,6 +285,13 @@ func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq
 		TemplateId: task.ID,
 		OperatorId: user.ID,
 		SSHJson:    string(data),
+	}
+	if len(*sftpReq) != 0 {
+		data, err = json.Marshal(*sftpReq)
+		if err != nil {
+			return nil, fmt.Errorf("map转换json失败: %v", err)
+		}
+		taskRecord.SFTPJson = string(data)
 	}
 	tx := model.DB.Begin()
 	if err = tx.Create(taskRecord).Error; err != nil {

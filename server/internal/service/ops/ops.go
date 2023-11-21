@@ -24,7 +24,7 @@ func Ops() *OpsService {
 	return insOps
 }
 
-func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskRecordRes, err error) {
+func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *api.TaskRecordRes, err error) {
 	var taskRecord *model.TaskRecord
 	var task model.TaskTemplate
 	var user model.User
@@ -39,8 +39,8 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 		return nil, errors.New("任务的命令和传输文件内容都为空")
 	}
 
-	var sshReq *api.RunSSHCmdAsyncReq
-	var sftpReq *api.RunSFTPAsyncReq
+	var sshReq *[]api.SSHClientConfigReq
+	var sftpReq *[]api.SFTPClientConfigReq
 
 	// 获取模板/项目对应主机
 	var hosts []model.Host
@@ -84,6 +84,9 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 		if pathCount == 0 {
 			return nil, errors.New("path参数数量为0")
 		}
+		if task.CmdTem == "" || task.ConfigTem == "" {
+			return nil, errors.New("任务的命令和传输文件内容都为空")
+		}
 		var hostList *[]model.Host
 		// 如果有设置条件 则筛选符合条件的主机
 		var memSize float32
@@ -92,6 +95,7 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 				return nil, fmt.Errorf("筛选符合条件的主机失败: %v", err)
 			}
 		}
+		// 筛选端口规则
 		if task.PortRule != "" {
 			hostList, err = s.filterPortRuleHost(&hosts, &user, &task, sshReq, &args, memSize)
 			if err != nil {
@@ -99,7 +103,7 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 			}
 			hosts = *hostList
 		}
-		sshReq, sftpReq, err = s.getInstallServer(&hosts, &task, &user, pathCount, &args, sftpReq)
+		sshReq, sftpReq, err = s.getInstallServer(&hosts, &task, &user, pathCount, &args)
 		if err != nil {
 			return nil, fmt.Errorf("获取装服参数报错: %v", err)
 		}
@@ -108,11 +112,7 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 
 	// 关联机器全操作
 	default:
-		// 看有无需求, 要做成多cmd轮流执行, 没有的话就单cmd, 装服再多CMD
-		sshReq, sftpReq, err = s.getGeneral(&hosts, &user, &task, &args, sshReq, sftpReq)
-		if err != nil {
-			return nil, fmt.Errorf("获取参数报错: %v", err)
-		}
+		return nil, errors.New("没有对应模板类型, 请检查模板类型是否定义正确, 如需添加请联系运维")
 	}
 	// Auditor
 	taskRecord, err = s.writingTaskRecord(sshReq, sftpReq, &user, &task, param.Auditor)
@@ -126,7 +126,7 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 	return result, err
 }
 
-func (s *OpsService) GetTask(param *api.GetTaskReq) (result *[]api.TaskRecordRes, total int64, err error) {
+func (s *OpsService) GetTask(param *api.GetTaskReq) (result *api.TaskRecordRes, total int64, err error) {
 	var task []model.TaskRecord
 	db := model.DB.Model(&task)
 	// id存在返回id对应model
@@ -171,7 +171,7 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result *[]api.TaskRecordRes
 
 }
 
-func (s *OpsService) GetExecParam(tid uint) (sshReq *api.RunSSHCmdAsyncReq, sftpReq *api.RunSFTPAsyncReq, err error) {
+func (s *OpsService) GetExecParam(tid uint) (sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, err error) {
 	var task model.TaskRecord
 	if err = model.DB.First(&task, tid).Error; err != nil {
 		return nil, nil, fmt.Errorf("查询TaskRecord数据失败: %v", err)
@@ -182,38 +182,40 @@ func (s *OpsService) GetExecParam(tid uint) (sshReq *api.RunSSHCmdAsyncReq, sftp
 		return nil, nil, fmt.Errorf("查询用户数据失败: %v", err)
 	}
 
-	sshJson := make(map[string][]string)
-	if err = json.Unmarshal([]byte(task.SSHJson), &sshJson); err != nil {
+	if err = json.Unmarshal([]byte(task.SSHJson), sshReq); err != nil {
 		return nil, nil, errors.New("sshJson进行json解析失败")
 	}
-	hostIp := sshJson["ipv4"]
-	username := sshJson["username"]
-	sshPort := sshJson["sshPort"]
-	cmd := sshJson["cmd"]
-	config := sshJson["config"]
+	if err = json.Unmarshal([]byte(task.SFTPJson), sftpReq); err != nil {
+		return nil, nil, errors.New("sshJson进行json解析失败")
+	}
+	// hostIp := sshJson["ipv4"]
+	// username := sshJson["username"]
+	// sshPort := sshJson["sshPort"]
+	// cmd := sshJson["cmd"]
+	// config := sshJson["config"]
 
-	sshReq = &api.RunSSHCmdAsyncReq{
-		HostIp:     hostIp,
-		Username:   username,
-		SSHPort:    sshPort,
-		Cmd:        cmd,
-		Key:        user.PriKey,
-		Passphrase: user.Passphrase,
-	}
-	if config != nil {
-		path := sshJson["configPath"]
-		sftpReq = &api.RunSFTPAsyncReq{
-			HostIp:      hostIp,
-			Username:    username,
-			SSHPort:     sshPort,
-			FileContent: config,
-			Path:        path,
-			Key:         user.PriKey,
-			Passphrase:  user.Passphrase,
-		}
-		return sshReq, sftpReq, err
-	}
-	return sshReq, nil, err
+	// sshReq = &api.RunSSHCmdAsyncReq{
+	// 	HostIp:     hostIp,
+	// 	Username:   username,
+	// 	SSHPort:    sshPort,
+	// 	Cmd:        cmd,
+	// 	Key:        user.PriKey,
+	// 	Passphrase: user.Passphrase,
+	// }
+	// if config != nil {
+	// 	path := sshJson["configPath"]
+	// 	sftpReq = &api.RunSFTPAsyncReq{
+	// 		HostIp:      hostIp,
+	// 		Username:    username,
+	// 		SSHPort:     sshPort,
+	// 		FileContent: config,
+	// 		Path:        path,
+	// 		Key:         user.PriKey,
+	// 		Passphrase:  user.Passphrase,
+	// 	}
+	// 	return sshReq, sftpReq, err
+	// }
+	return sshReq, sftpReq, err
 }
 
 func (s *OpsService) ApproveTask(tid uint, uid uint) error {
@@ -232,11 +234,22 @@ func (s *OpsService) ApproveTask(tid uint, uid uint) error {
 	}
 	nonApprover := utils.DeleteUintSlice(nonApproverSlice, uid)
 	if len(nonApprover) != 0 {
+		// 更改taskRecord表的nonApprover
+		nonApproverMap := make(map[string][]uint)
+		nonApproverMap["ids"] = nonApprover
+		var data []byte
+		data, err = json.Marshal(nonApproverMap)
+		if err != nil {
+			return fmt.Errorf("map转换json失败: %v", err)
+		}
+		if err = model.DB.Model(&task).Where("id = ?", task.ID).Update("non_approver", string(data)).Error; err != nil {
+			return fmt.Errorf("更改TaskRecord表的NonApprover失败: %v", err)
+		}
 		// 向下一个审批者发送审批信息
 		fmt.Println("==========向下一个审批者发送审批信息===========")
 	} else {
-		if err = model.DB.Model(&task).Where("id = ?", task.ID).Update("status", 1).Error; err != nil {
-			return fmt.Errorf("更改工单状态为可执行失败")
+		if err = model.DB.Model(&task).Where("id = ?", task.ID).Updates(model.TaskRecord{Status: 1, NonApprover: `{"ids":[]}`}).Error; err != nil {
+			return fmt.Errorf("更改工单状态为可执行状态失败")
 		}
 		// 向操作者发送信息
 		fmt.Println("==========向操作者发送信息===========")
@@ -273,14 +286,14 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 	if err != nil {
 		return nil, fmt.Errorf("获取执行参数失败: %v", err)
 	}
-	if sftpReq.FileContent != nil {
+	if len(*sftpReq) != 0 {
 		result, err = service.SSH().RunSFTPAsync(sftpReq)
 		if err != nil {
 			return nil, fmt.Errorf("测试执行失败: %v", err)
 		}
 		data["ssh"] = *result
 	}
-	if sshReq.Cmd != nil {
+	if len(*sshReq) != 0 {
 		result, err = service.SSH().RunSFTPAsync(sftpReq)
 		if err != nil {
 			return nil, fmt.Errorf("测试执行失败: %v", err)
@@ -294,72 +307,77 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 }
 
 // 返回工单结果
-func (s *OpsService) GetResults(taskInfo any) (*[]api.TaskRecordRes, error) {
-	var res api.TaskRecordRes
-	var result []api.TaskRecordRes
-	var err error
-	if tasks, ok := taskInfo.(*[]model.TaskRecord); ok {
-		for _, task := range *tasks {
-			sshJson := make(map[string][]string)
-			if err = json.Unmarshal([]byte(task.SSHJson), &sshJson); err != nil {
-				return nil, errors.New("sshJson进行json解析失败")
-			}
-			hostIp := sshJson["ipv4"]
-			username := sshJson["username"]
-			sshPort := sshJson["sshPort"]
-			cmd := sshJson["cmd"]
-			config := sshJson["config"]
-			var path []string
-			if config != nil {
-				path = sshJson["configPath"]
-			}
+func (s *OpsService) GetResults(taskInfo any) (result *api.TaskRecordRes, err error) {
+	// var res api.TaskRecordRes
+	// var result []api.TaskRecordRes
+	// var err error
+	// if tasks, ok := taskInfo.(*[]model.TaskRecord); ok {
+	// 	for _, task := range *tasks {
+	// 		sshJson := make(map[string][]string)
+	// 		if err = json.Unmarshal([]byte(task.SSHJson), &sshJson); err != nil {
+	// 			return nil, errors.New("sshJson进行json解析失败")
+	// 		}
+	// 		hostIp := sshJson["ipv4"]
+	// 		username := sshJson["username"]
+	// 		sshPort := sshJson["sshPort"]
+	// 		cmd := sshJson["cmd"]
+	// 		config := sshJson["config"]
+	// 		var path []string
+	// 		if config != nil {
+	// 			path = sshJson["configPath"]
+	// 		}
 
-			nonApproverJson := make(map[string][]uint)
-			if err = json.Unmarshal([]byte(task.NonApprover), &nonApproverJson); err != nil {
-				return nil, errors.New("sshJson进行json解析失败")
-			}
-			nonApprover := nonApproverJson["ids"]
-			var auditor []model.User
-			if err = model.DB.Model(&task).Association("Auditor").Find(&auditor); err != nil {
-				return nil, fmt.Errorf("获取关联用户失败: %v", err)
-			}
-			var auditorIds []uint
-			for _, a := range auditor {
-				auditorIds = append(auditorIds, a.ID)
-			}
+	// 		nonApproverJson := make(map[string][]uint)
+	// 		if err = json.Unmarshal([]byte(task.NonApprover), &nonApproverJson); err != nil {
+	// 			return nil, errors.New("sshJson进行json解析失败")
+	// 		}
+	// 		nonApprover := nonApproverJson["ids"]
+	// 		var auditor []model.User
+	// 		if err = model.DB.Model(&task).Association("Auditor").Find(&auditor); err != nil {
+	// 			return nil, fmt.Errorf("获取关联用户失败: %v", err)
+	// 		}
+	// 		var auditorIds []uint
+	// 		for _, a := range auditor {
+	// 			auditorIds = append(auditorIds, a.ID)
+	// 		}
 
-			res = api.TaskRecordRes{
-				ID:          task.ID,
-				TaskName:    task.TaskName,
-				TemplateId:  task.TemplateId,
-				OperatorId:  task.OperatorId,
-				Status:      task.Status,
-				Response:    task.Response,
-				HostIp:      hostIp,
-				Username:    username,
-				SSHPort:     sshPort,
-				Cmd:         cmd,
-				ConfigPath:  path,
-				FileContent: config,
-				NonApprover: nonApprover,
-				Auditor:     auditorIds,
-			}
-			result = append(result, res)
-		}
-		return &result, err
-	} else if task, ok := taskInfo.(*model.TaskRecord); ok {
-		sshJson := make(map[string][]string)
-		if err = json.Unmarshal([]byte(task.SSHJson), &sshJson); err != nil {
+	// 		res = api.TaskRecordRes{
+	// 			ID:          task.ID,
+	// 			TaskName:    task.TaskName,
+	// 			TemplateId:  task.TemplateId,
+	// 			OperatorId:  task.OperatorId,
+	// 			Status:      task.Status,
+	// 			Response:    task.Response,
+	// 			HostIp:      hostIp,
+	// 			Username:    username,
+	// 			SSHPort:     sshPort,
+	// 			Cmd:         cmd,
+	// 			ConfigPath:  path,
+	// 			FileContent: config,
+	// 			NonApprover: nonApprover,
+	// 			Auditor:     auditorIds,
+	// 		}
+	// 		result = append(result, res)
+	// 	}
+	// 	return &result, err
+	// }
+	if task, ok := taskInfo.(*model.TaskRecord); ok {
+		// 除了CMD全部写入
+		if err = json.Unmarshal([]byte(task.SFTPJson), &result.SSHReqs); err != nil {
 			return nil, errors.New("sshJson进行json解析失败")
 		}
-		hostIp := sshJson["ipv4"]
-		username := sshJson["username"]
-		sshPort := sshJson["sshPort"]
-		cmd := sshJson["cmd"]
-		config := sshJson["config"]
-		var path []string
-		if config != nil {
-			path = sshJson["configPath"]
+		// 写入CMD
+		var sshCmdReq []api.SSHClientConfigReq
+		if err = json.Unmarshal([]byte(task.SSHJson), &sshCmdReq); err != nil {
+			return nil, errors.New("sshJson进行json解析失败")
+		}
+		// 写入cmd给result.SSHReqs
+		if len(sshCmdReq) == len(result.SSHReqs) {
+			for i := 0; i < len(result.SSHReqs); i++ {
+				result.SSHReqs[i].Cmd = sshCmdReq[i].Cmd
+			}
+		} else {
+			return nil, errors.New("ssh切片和sftp切片数量不对等")
 		}
 
 		nonApproverJson := make(map[string][]uint)
@@ -376,24 +394,18 @@ func (s *OpsService) GetResults(taskInfo any) (*[]api.TaskRecordRes, error) {
 			auditorIds = append(auditorIds, a.ID)
 		}
 
-		res = api.TaskRecordRes{
+		result = &api.TaskRecordRes{
 			ID:          task.ID,
 			TaskName:    task.TaskName,
 			TemplateId:  task.TemplateId,
 			OperatorId:  task.OperatorId,
 			Status:      task.Status,
 			Response:    task.Response,
-			HostIp:      hostIp,
-			Username:    username,
-			SSHPort:     sshPort,
-			Cmd:         cmd,
-			ConfigPath:  path,
-			FileContent: config,
+			SSHReqs:     result.SSHReqs,
 			NonApprover: nonApprover,
 			Auditor:     auditorIds,
 		}
-		result = append(result, res)
-		return &result, err
+		return result, err
 	}
-	return &result, errors.New("转换taskRecord结果失败")
+	return result, errors.New("转换taskRecord结果失败")
 }

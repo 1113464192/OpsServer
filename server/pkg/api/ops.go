@@ -19,12 +19,16 @@ type TaskRecordRes struct {
 	OperatorId  uint
 	Status      uint8
 	Response    string
-	HostIp      []string
-	Username    []string
-	SSHPort     []string
-	Cmd         []string
-	ConfigPath  []string
-	FileContent []string
+	SSHReqs     []TaskRecordSSHRes
 	NonApprover []uint
 	Auditor     []uint
+}
+
+type TaskRecordSSHRes struct {
+	HostIp      string `json:"host_ip"`
+	Username    string `json:"username"`
+	SSHPort     string `json:"ssh_port"`
+	Cmd         string `json:"cmd"`
+	Path        string `json:"path"`
+	FileContent string `json:"file_content"`
 }

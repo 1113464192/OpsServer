@@ -85,7 +85,7 @@ func NewRoute() *gin.Engine {
 		hostRoute := v1.Group("host")
 		{
 			hostRoute.POST("update", UpdateHost)             // 新增/修改服务器
-			hostRoute.GET("getHostPasswd", GetHostPasswd)    // 获取服务器密码
+			hostRoute.GET("getPasswd", GetHostPasswd)    // 获取服务器密码
 			hostRoute.POST("updateDomain", UpdateDomain)     // 新增/修改的域名
 			hostRoute.PUT("assDomain", UpdateDomainAss)      // 更新域名关联的服务器
 			hostRoute.DELETE("delete", DeleteHost)           // 删除主机
