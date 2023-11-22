@@ -24,6 +24,7 @@ func Ops() *OpsService {
 	return insOps
 }
 
+// 提交工单
 func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskRecordRes, err error) {
 	var taskRecord *model.TaskRecord
 	var task model.TaskTemplate
@@ -126,6 +127,7 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 	return result, err
 }
 
+// 获取工单
 func (s *OpsService) GetTask(param *api.GetTaskReq) (result *[]api.TaskRecordRes, total int64, err error) {
 	var task []model.TaskRecord
 	db := model.DB.Model(&task)
@@ -171,6 +173,7 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result *[]api.TaskRecordRes
 
 }
 
+// 获取执行参数
 func (s *OpsService) GetExecParam(tid uint) (*[]api.SSHClientConfigReq, *[]api.SFTPClientConfigReq, error) {
 	var sshReq []api.SSHClientConfigReq
 	var sftpReq []api.SFTPClientConfigReq
@@ -221,45 +224,55 @@ func (s *OpsService) GetExecParam(tid uint) (*[]api.SSHClientConfigReq, *[]api.S
 	return &sshReq, &sftpReq, err
 }
 
-func (s *OpsService) ApproveTask(tid uint, uid uint) error {
-	var err error
+// 对应用户审核工单
+func (s *OpsService) ApproveTask(param api.ApproveTaskReq, uid uint) (res string, err error) {
 	var task model.TaskRecord
-	if err = model.DB.First(&task, tid).Error; err != nil {
-		return fmt.Errorf("查询TaskRecord数据失败: %v", err)
+	var nonApproverSlice []uint
+	if nonApproverSlice, err = s.getNonApprover(param.Id); err != nil {
+		return "", err
 	}
-	nonApproverJson := make(map[string][]uint)
-	if err = json.Unmarshal([]byte(task.NonApprover), &nonApproverJson); err != nil {
-		return errors.New("sshJson进行json解析失败")
-	}
-	nonApproverSlice := nonApproverJson["ids"]
 	if !utils.IsSliceContain(nonApproverSlice, uid) {
-		return fmt.Errorf("未审批人:%v中 不包含 %v", nonApproverSlice, uid)
+		return "", fmt.Errorf("未审批人:%v中 不包含 %v", nonApproverSlice, uid)
 	}
-	nonApprover := utils.DeleteUintSlice(nonApproverSlice, uid)
-	if len(nonApprover) != 0 {
-		// 更改taskRecord表的nonApprover
-		nonApproverMap := make(map[string][]uint)
-		nonApproverMap["ids"] = nonApprover
-		var data []byte
-		data, err = json.Marshal(nonApproverMap)
-		if err != nil {
-			return fmt.Errorf("map转换json失败: %v", err)
+	// 判断审批通过还是拒绝
+	if param.Status == 1 {
+		res = "审批通过"
+		nonApprover := utils.DeleteUintSlice(nonApproverSlice, uid)
+		if len(nonApprover) != 0 {
+			// 更改taskRecord表的nonApprover
+			nonApproverMap := make(map[string][]uint)
+			nonApproverMap["ids"] = nonApprover
+			var data []byte
+			data, err = json.Marshal(nonApproverMap)
+			if err != nil {
+				return "", fmt.Errorf("map转换json失败: %v", err)
+			}
+			if err = model.DB.Model(&task).Where("id = ?", param.Id).Update("non_approver", string(data)).Error; err != nil {
+				return "", fmt.Errorf("更改TaskRecord表的NonApprover失败: %v", err)
+			}
+			// 向下一个审批者发送审批信息
+			fmt.Println("==========向下一个审批者发送审批信息===========")
+		} else {
+			if err = model.DB.Model(&task).Where("id = ?", param.Id).Updates(model.TaskRecord{Status: 1, NonApprover: `{"ids":[]}`}).Error; err != nil {
+				return "", fmt.Errorf("更改工单状态为可执行状态失败: %v", err)
+			}
+			// 向操作者发送信息
+			fmt.Println("==========向操作者发送信息===========")
 		}
-		if err = model.DB.Model(&task).Where("id = ?", task.ID).Update("non_approver", string(data)).Error; err != nil {
-			return fmt.Errorf("更改TaskRecord表的NonApprover失败: %v", err)
+	} else if param.Status == 4 {
+		res = "审批拒绝"
+		if err = model.DB.Model(&task).Where("id = ?", param.Id).Update("status", 4).Error; err != nil {
+			return "", fmt.Errorf("更改工单状态为可执行状态失败: %v", err)
 		}
-		// 向下一个审批者发送审批信息
-		fmt.Println("==========向下一个审批者发送审批信息===========")
 	} else {
-		if err = model.DB.Model(&task).Where("id = ?", task.ID).Updates(model.TaskRecord{Status: 1, NonApprover: `{"ids":[]}`}).Error; err != nil {
-			return fmt.Errorf("更改工单状态为可执行状态失败")
-		}
-		// 向操作者发送信息
-		fmt.Println("==========向操作者发送信息===========")
+		res = "Status传参错误, 参数不在给定条件中"
+		return "", errors.New("status传参错误, 参数不在给定条件中")
 	}
-	return err
+
+	return res, err
 }
 
+// 删除工单
 func (s *OpsService) DeleteTask(ids []uint) (err error) {
 	if err = utils2.CheckIdsExists(model.TaskRecord{}, ids); err != nil {
 		return err
@@ -273,7 +286,7 @@ func (s *OpsService) DeleteTask(ids []uint) (err error) {
 		tx.Rollback()
 		return errors.New("清除表信息 工单与用户关联 失败")
 	}
-	if err = tx.Where("id IN ?", ids).Delete(&[]model.TaskRecord{}).Error; err != nil {
+	if err = tx.Where("id IN ?", ids).Delete(&model.TaskRecord{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除工单失败")
 	}
@@ -281,9 +294,45 @@ func (s *OpsService) DeleteTask(ids []uint) (err error) {
 	return err
 }
 
+// 获取未审批用户
+func (s *OpsService) getNonApprover(id uint) (nonApproverSlice []uint, err error) {
+	var task model.TaskRecord
+	if err = model.DB.First(&task, id).Error; err != nil {
+		return nil, fmt.Errorf("查询TaskRecord数据失败: %v", err)
+	}
+	nonApproverJson := make(map[string][]uint)
+	if err = json.Unmarshal([]byte(task.NonApprover), &nonApproverJson); err != nil {
+		return nil, errors.New("sshJson进行json解析失败")
+	}
+	nonApproverSlice = nonApproverJson["ids"]
+	return nonApproverSlice, err
+}
+
+// 写入工单操作后的结果入库
+func (s *OpsService) execTaskResultWriteDB(status uint8, tid uint, data *map[string][]api.SSHResultRes) (err error) {
+	var task model.TaskRecord
+	var res []byte
+	if res, err = json.Marshal(*data); err != nil {
+		return fmt.Errorf("json编码报错: %v", err)
+	}
+	if err = model.DB.Model(&task).Where("id = ?", tid).Updates(model.TaskRecord{Status: status, Response: string(res)}).Error; err != nil {
+		return fmt.Errorf("写入数据到工单结果表中报错: %v", err)
+	}
+	return err
+}
+
+// 执行工单操作
 func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error) {
 	var result *[]api.SSHResultRes
 	var err error
+	var task model.TaskRecord
+	if err = model.DB.Select("status").First(&task, id).Error; err != nil {
+		return nil, fmt.Errorf("取出status的值报错: %v", err)
+	}
+	if task.Status != 1 {
+		return nil, errors.New("当前工单状态不可执行")
+	}
+
 	data := make(map[string][]api.SSHResultRes)
 	sshReq, sftpReq, err := s.GetExecParam(id)
 	if err != nil {
@@ -291,20 +340,25 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 	}
 	if len(*sftpReq) != 0 {
 		result, err = service.SSH().RunSFTPAsync(sftpReq)
-		if err != nil {
-			return nil, fmt.Errorf("SFTP执行失败: %v", err)
-		}
 		data["ssh"] = *result
+		if err != nil {
+			err2 := s.execTaskResultWriteDB(3, id, &data)
+			return nil, fmt.Errorf("SFTP执行失败: %v。%v", err, err2)
+		}
 	}
 	if len(*sshReq) != 0 {
 		result, err = service.SSH().RunSSHCmdAsync(sshReq)
-		if err != nil {
-			return nil, fmt.Errorf("SSH执行失败: %v", err)
-		}
 		data["sftp"] = *result
+		if err != nil {
+			err2 := s.execTaskResultWriteDB(3, id, &data)
+			return nil, fmt.Errorf("SSH执行失败: %v。%v", err, err2)
+		}
 	}
 	if len(data) == 0 {
 		return nil, errors.New("没有获取到任务结果")
+	}
+	if err = s.execTaskResultWriteDB(2, id, &data); err != nil {
+		return nil, err
 	}
 	return data, err
 }

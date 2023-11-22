@@ -121,7 +121,7 @@ func GetExecParam(c *gin.Context) {
 // @Summary 用户审批工单
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.IdReq true "传入工单的ID"
+// @Param data formData api.ApproveTaskReq true "传入工单的ID和是否成功"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -134,19 +134,20 @@ func ApproveTask(c *gin.Context) {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
 	}
-	var param api.IdReq
+	var param api.ApproveTaskReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
 	userId := claims.User.ID
-	err := ops.Ops().ApproveTask(param.Id, userId)
+	res, err := ops.Ops().ApproveTask(param, userId)
 	if err != nil {
 		logger.Log().Error("Task", "提交执行工单", err)
 		c.JSON(500, api.Err("提交执行工单失败", err))
 		return
 	}
 	c.JSON(200, api.Response{
+		Data: res,
 		Meta: api.Meta{
 			Msg: "Success",
 		},
@@ -206,8 +207,8 @@ func OpsExecTask(c *gin.Context) {
 	}
 	data, err := ops.Ops().OpsExecTask(param.Id)
 	if err != nil {
-		logger.Log().Error("Task", "删除工单", err)
-		c.JSON(500, api.Err("删除工单失败", err))
+		logger.Log().Error("Task", "执行工单操作", err)
+		c.JSON(500, api.Err("执行工单操作失败", err))
 		return
 	}
 	c.JSON(200, api.Response{

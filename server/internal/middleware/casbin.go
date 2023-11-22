@@ -36,20 +36,23 @@ func CasbinHandler() gin.HandlerFunc {
 		sCount := 0
 		var sub string
 		// 遍历用户对应的所有组
-		for _, group := range userGroup {
-			sub = strconv.FormatUint(uint64(group.ID), 10)
-			if claims.User.IsAdmin == 1 {
-				sub = "admin"
-			}
+		// 超级用户判断
+		if claims.User.IsAdmin == 1 {
+			sub = "admin"
 			e := casbinService.Casbin()
-			success, _ := e.Enforce(sub, obj, act)
-			if success {
+			if success, _ := e.Enforce(sub, obj, act); success {
 				sCount += 1
-				break
 			}
-
+		} else {
+			for _, group := range userGroup {
+				sub = strconv.FormatUint(uint64(group.ID), 10)
+				e := casbinService.Casbin()
+				if success, _ := e.Enforce(sub, obj, act); success {
+					sCount += 1
+					break
+				}
+			}
 		}
-
 		// 判断策略中是否存在
 		if sCount > 0 {
 			c.Next()

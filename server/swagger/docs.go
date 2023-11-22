@@ -1550,6 +1550,13 @@ const docTemplate = `{
                         "name": "id",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1:通过 4:驳回",
+                        "name": "status",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
