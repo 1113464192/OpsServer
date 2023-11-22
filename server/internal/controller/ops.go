@@ -105,8 +105,8 @@ func GetExecParam(c *gin.Context) {
 	}
 	c.JSON(200, api.Response{
 		Data: map[string]any{
-			"sshReq":          *sshReq,
-			"RunSFTPAsyncReq": *sftpReq,
+			"SSHReq":  *sshReq,
+			"SFTPReq": *sftpReq,
 		},
 		Meta: api.Meta{
 			Msg: "Success",
@@ -160,19 +160,19 @@ func ApproveTask(c *gin.Context) {
 // @Summary 工单删除
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.IdReq true "传入工单的ID"
+// @Param data body api.IdsReq true "传入工单的ID"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/ops/delete [delete]
 func DeleteTask(c *gin.Context) {
-	var param api.IdReq
+	var param api.IdsReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	err := ops.Ops().DeleteTask(param.Id)
+	err := ops.Ops().DeleteTask(param.Ids)
 	if err != nil {
 		logger.Log().Error("Task", "删除工单", err)
 		c.JSON(500, api.Err("删除工单失败", err))

@@ -74,17 +74,6 @@ definitions:
     required:
     - did
     type: object
-  api.UpdateHostAssProjectReq:
-    properties:
-      hid:
-        type: integer
-      pid:
-        items:
-          type: integer
-        type: array
-    required:
-    - hid
-    type: object
   api.UpdateMenuAssReq:
     properties:
       group_id:
@@ -136,7 +125,7 @@ definitions:
         description: 对应项目ID
         type: integer
       port_rule:
-        description: '端口规则, 如: 10000 + flag % 1000'
+        description: '端口规则, 如: serverPort=10000 + flag % 1000'
         items:
           type: string
         type: array
@@ -694,48 +683,6 @@ paths:
       summary: 查询服务器
       tags:
       - 服务器相关
-  /api/v1/host/Project:
-    get:
-      description: 返回项目切片
-      parameters:
-      - description: 格式为：Bearer 用户令牌
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - in: query
-        name: id
-        type: integer
-      - description: 页码
-        in: query
-        name: page
-        type: integer
-      - description: 每页大小
-        in: query
-        name: page_size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"data":{},"meta":{msg":"Success"}}'
-          schema:
-            $ref: '#/definitions/api.Response'
-        "401":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            $ref: '#/definitions/api.Response'
-        "403":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            $ref: '#/definitions/api.Response'
-        "500":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            $ref: '#/definitions/api.Response'
-      summary: 查询服务器对应项目
-      tags:
-      - 服务器相关
   /api/v1/host/assDomain:
     put:
       description: 服务器ID[多选]
@@ -771,43 +718,6 @@ paths:
           schema:
             $ref: '#/definitions/api.Response'
       summary: 域名关联服务器
-      tags:
-      - 服务器相关
-  /api/v1/host/association:
-    put:
-      description: 项目ID[多选]
-      parameters:
-      - description: 格式为：Bearer 用户令牌
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: 关联传入参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/api.UpdateHostAssProjectReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"data":{},"meta":{msg":"Success"}}'
-          schema:
-            $ref: '#/definitions/api.Response'
-        "401":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            $ref: '#/definitions/api.Response'
-        "403":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            $ref: '#/definitions/api.Response'
-        "500":
-          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
-          schema:
-            $ref: '#/definitions/api.Response'
-      summary: 关联项目
       tags:
       - 服务器相关
   /api/v1/host/domainAssHost:
@@ -850,6 +760,41 @@ paths:
           schema:
             $ref: '#/definitions/api.Response'
       summary: 查询域名对应服务器
+      tags:
+      - 服务器相关
+  /api/v1/host/getPasswd:
+    get:
+      description: 返回服务器的密码
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 返回服务器的密码
       tags:
       - 服务器相关
   /api/v1/host/update:
@@ -1269,10 +1214,12 @@ paths:
         name: Authorization
         required: true
         type: string
-      - in: formData
-        name: id
+      - description: 传入工单的ID
+        in: body
+        name: data
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/api.IdsReq'
       produces:
       - application/json
       responses:
@@ -1553,7 +1500,7 @@ paths:
       summary: 删除项目
       tags:
       - 项目相关
-  /api/v1/project/getHost:
+  /api/v1/project/getAssHost:
     get:
       description: 返回服务器切片
       parameters:

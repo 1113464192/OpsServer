@@ -3,7 +3,6 @@ package service
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -34,7 +33,7 @@ func (s *GroupService) UpdateGroup(params *api.UpdateGroupReq) (groupInfo any, e
 	// 根据ID查询组
 	if params.ID != 0 {
 		// 判断组是否存在
-		if !utils2.CheckIdExists(&group, &params.ID) {
+		if !utils2.CheckIdExists(&group, params.ID) {
 			return group, errors.New("用户组不存在")
 		}
 		// 获取组对象
@@ -84,16 +83,8 @@ func (s *GroupService) UpdateUserAss(params *api.UpdateUserAssReq) (err error) {
 	var group model.UserGroup
 	var user []model.User
 	// 判断用户是否都存在
-	var noExistId []uint
-	for _, uid := range params.UserIDs {
-		uBool := utils2.CheckIdExists(&user, &uid)
-		// 如果不存在则添加到noexistid切片
-		if !uBool {
-			noExistId = append(noExistId, uid)
-		}
-	}
-	if len(noExistId) != 0 {
-		return fmt.Errorf("%v %s", noExistId, "用户不存在")
+	if err = utils2.CheckIdsExists(user, params.UserIDs); err != nil {
+		return err
 	}
 
 	tx := model.DB.Begin()
@@ -116,10 +107,8 @@ func (s *GroupService) UpdateUserAss(params *api.UpdateUserAssReq) (err error) {
 
 // 删除用户组
 func (s *GroupService) DeleteUserGroup(ids []uint) (err error) {
-	for _, i := range ids {
-		if !utils2.CheckIdExists(&model.UserGroup{}, &i) {
-			return errors.New("用户组不存在")
-		}
+	if err = utils2.CheckIdsExists(model.UserGroup{}, ids); err != nil {
+		return err
 	}
 	var group []model.UserGroup
 	tx := model.DB.Begin()
@@ -173,7 +162,7 @@ func (s *GroupService) GetGroupList(params *api.GetGroupReq) (groupObj any, tota
 // 获取用户组对应用户
 func (s *GroupService) GetAssUser(params *api.GetPagingByIdReq) (userObj any, total int64, err error) {
 	var group model.UserGroup
-	if !utils2.CheckIdExists(&group, &params.Id) {
+	if !utils2.CheckIdExists(&group, params.Id) {
 		return nil, 0, errors.New("组ID不存在")
 	}
 	if err = model.DB.Preload("Users").Where("id = ?", params.Id).First(&group).Error; err != nil {
@@ -200,7 +189,7 @@ func (s *GroupService) GetAssUser(params *api.GetPagingByIdReq) (userObj any, to
 // 获取用户组对应项目
 func (s *GroupService) GetAssProject(params *api.GetPagingByIdReq) (projectObj any, total int64, err error) {
 	var group model.UserGroup
-	if !utils2.CheckIdExists(&group, &params.Id) {
+	if !utils2.CheckIdExists(&group, params.Id) {
 		return nil, 0, errors.New("组ID不存在")
 	}
 	if err = model.DB.Preload("Users").Where("id = ?", params.Id).First(&group).Error; err != nil {

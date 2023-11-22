@@ -36,14 +36,18 @@ func (s *SSHServer) TestSSH(param api.TestSSHReq) (*[]api.SSHResultRes, error) {
 	if err := model.DB.Find(&hosts, param.HostId).Error; err != nil {
 		return nil, fmt.Errorf("GORM服务器未找到: %v", err)
 	}
-	var sshReq []api.SSHClientConfigReq
+	sshReq := []api.SSHClientConfigReq{}
+	var req api.SSHClientConfigReq
 	for i := 0; i < len(hosts); i++ {
-		sshReq[i].HostIp = hosts[i].Ipv4.String
-		sshReq[i].Username = hosts[i].User
-		sshReq[i].SSHPort = hosts[i].Port
-		sshReq[i].Key = user.PriKey
-		sshReq[i].Passphrase = user.Passphrase
-		sshReq[i].Cmd = `ifconfig eth0 | grep inet`
+		req = api.SSHClientConfigReq{
+			HostIp:     hosts[i].Ipv4.String,
+			Username:   hosts[i].User,
+			SSHPort:    hosts[i].Port,
+			Key:        user.PriKey,
+			Passphrase: user.Passphrase,
+			Cmd:        `ifconfig eth0 | grep inet`,
+		}
+		sshReq = append(sshReq, req)
 	}
 
 	hostInfo, err := Host().GetHostCurrData(&sshReq)
@@ -100,13 +104,17 @@ func (s *SSHServer) RunSSHCmdAsync(param *[]api.SSHClientConfigReq) (*[]api.SSHR
 func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
 	result := &api.SSHResultRes{
 		HostIp: param.HostIp,
-		Status: true,
+		Status: 0,
 	}
 
 	// client, err := ssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
 	client, err := s.getSSHClient(param.HostIp, param, insClientGroup)
 	if err != nil {
-		result.Status = false
+		if exitError, ok := err.(*gossh.ExitError); ok {
+			result.Status = exitError.ExitStatus()
+		} else {
+			result.Status = 99999
+		}
 		result.Response = fmt.Sprintf("建立/获取SSH客户端错误: %s", err.Error())
 		ch <- result
 		wg.Done()
@@ -116,7 +124,11 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHRes
 	defer client.Close()
 	session, err := ssh.SSHNewSession(client)
 	if err != nil {
-		result.Status = false
+		if exitError, ok := err.(*gossh.ExitError); ok {
+			result.Status = exitError.ExitStatus()
+		} else {
+			result.Status = 99999
+		}
 		result.Response = fmt.Sprintf("建立SSH会话错误: %s", err.Error())
 		ch <- result
 		wg.Done()
@@ -126,7 +138,11 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHRes
 	defer session.Close()
 	output, err := session.CombinedOutput(param.Cmd)
 	if err != nil {
-		result.Status = false
+		if exitError, ok := err.(*gossh.ExitError); ok {
+			result.Status = exitError.ExitStatus()
+		} else {
+			result.Status = 99999
+		}
 		result.Response = fmt.Sprintf("Failed to execute command: %s %s", string(output), err.Error())
 		ch <- result
 		wg.Done()
@@ -183,13 +199,17 @@ func (s *SSHServer) RunSFTPAsync(param *[]api.SFTPClientConfigReq) (*[]api.SSHRe
 func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
 	result := &api.SSHResultRes{
 		HostIp: param.HostIp,
-		Status: true,
+		Status: 0,
 	}
 
 	// client, err := ssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
 	client, err := s.getSSHClient(param.HostIp, param, insClientGroup)
 	if err != nil {
-		result.Status = false
+		if exitError, ok := err.(*gossh.ExitError); ok {
+			result.Status = exitError.ExitStatus()
+		} else {
+			result.Status = 99999
+		}
 		result.Response = fmt.Sprintf("建立/获取SSH客户端错误: %s", err.Error())
 		ch <- result
 		wg.Done()
@@ -199,7 +219,11 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 	defer client.Close()
 	sftpClient, err := ssh.CreateSFTPClient(client)
 	if err != nil {
-		result.Status = false
+		if exitError, ok := err.(*gossh.ExitError); ok {
+			result.Status = exitError.ExitStatus()
+		} else {
+			result.Status = 99999
+		}
 		result.Response = fmt.Sprintf("建立SSH会话错误: %s", err.Error())
 		ch <- result
 		wg.Done()
@@ -209,7 +233,11 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 	defer sftpClient.Close()
 	remoteFile, err := sftpClient.OpenFile(param.Path, os.O_WRONLY|os.O_CREATE)
 	if err != nil {
-		result.Status = false
+		if exitError, ok := err.(*gossh.ExitError); ok {
+			result.Status = exitError.ExitStatus()
+		} else {
+			result.Status = 99999
+		}
 		result.Response = fmt.Sprintf("开启文件失败: %s ", err.Error())
 		ch <- result
 		wg.Done()
@@ -220,7 +248,11 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 	var bytesWritten int
 	bytesWritten, err = remoteFile.Write([]byte(param.FileContent))
 	if err != nil {
-		result.Status = false
+		if exitError, ok := err.(*gossh.ExitError); ok {
+			result.Status = exitError.ExitStatus()
+		} else {
+			result.Status = 99999
+		}
 		result.Response = fmt.Sprintf("写入文件内容到文件失败: %s", err.Error())
 		ch <- result
 		wg.Done()

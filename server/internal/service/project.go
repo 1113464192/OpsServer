@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -32,7 +31,7 @@ func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInf
 	}
 	// ID查询
 	if params.ID != 0 {
-		if !utils2.CheckIdExists(&project, &params.ID) {
+		if !utils2.CheckIdExists(&project, params.ID) {
 			return project, errors.New("项目不存在")
 		}
 
@@ -74,10 +73,8 @@ func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInf
 
 // 删除项目
 func (s *ProjectService) DeleteProject(ids []uint) (err error) {
-	for _, i := range ids {
-		if !utils2.CheckIdExists(&model.Project{}, &i) {
-			return errors.New("项目不存在")
-		}
+	if err = utils2.CheckIdsExists(model.Project{}, ids); err != nil {
+		return err
 	}
 	var project []model.Project
 	tx := model.DB.Begin()
@@ -99,20 +96,13 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 // 项目关联服务器
 func (s *ProjectService) UpdateHostAss(params *api.UpdateProjectAssHostReq) (err error) {
 	var project model.Project
-	var noExistId []uint
 	var host []model.Host
 	// 判断所有项目是否都存在
-	for _, hid := range params.Hids {
-		uBool := utils2.CheckIdExists(&host, &hid)
-		if !uBool {
-			noExistId = append(noExistId, hid)
-		}
-	}
-	if len(noExistId) != 0 {
-		return fmt.Errorf("%v %s", noExistId, "服务器不存在")
+	if err = utils2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
+		return err
 	}
 
-	if !utils2.CheckIdExists(&project, &params.Pid) {
+	if !utils2.CheckIdExists(&project, params.Pid) {
 		return errors.New("项目ID不存在")
 	}
 
@@ -186,7 +176,7 @@ func (s *ProjectService) GetSelfProjectList(groupList *[]model.UserGroup, page *
 // 获取项目关联的服务器
 func (s *ProjectService) GetHostAss(params *api.GetHostAssReq) (hostInfo any, total int64, err error) {
 	var project model.Project
-	if !utils2.CheckIdExists(&project, &params.ProjectId) {
+	if !utils2.CheckIdExists(&project, params.ProjectId) {
 		return nil, 0, errors.New("项目ID不存在")
 	}
 	if err = model.DB.Preload("Hosts").Where("id = ?", params.ProjectId).First(&project).Error; err != nil {

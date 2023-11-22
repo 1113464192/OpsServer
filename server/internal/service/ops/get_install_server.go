@@ -21,17 +21,27 @@ func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTe
 	if task.CmdTem == "" || task.ConfigTem == "" {
 		return nil, nil, errors.New("执行命令与配置文件模板都为空")
 	}
+	sshReq = &[]api.SSHClientConfigReq{}
+	sftpReq = &[]api.SFTPClientConfigReq{}
+	var sReq api.SSHClientConfigReq
+	var fReq api.SFTPClientConfigReq
 	for i := 0; i < len(*hostList); i++ {
-		(*sshReq)[i].HostIp = (*hostList)[i].Ipv4.String
-		(*sshReq)[i].Username = (*hostList)[i].User
-		(*sshReq)[i].SSHPort = (*hostList)[i].Port
-		(*sshReq)[i].Key = user.PriKey
-		(*sshReq)[i].Passphrase = user.Passphrase
-		(*sftpReq)[i].HostIp = (*hostList)[i].Ipv4.String
-		(*sftpReq)[i].Username = (*hostList)[i].User
-		(*sftpReq)[i].SSHPort = (*hostList)[i].Port
-		(*sftpReq)[i].Key = user.PriKey
-		(*sftpReq)[i].Passphrase = user.Passphrase
+		sReq = api.SSHClientConfigReq{
+			HostIp:     (*hostList)[i].Ipv4.String,
+			Username:   (*hostList)[i].User,
+			SSHPort:    (*hostList)[i].Port,
+			Key:        user.PriKey,
+			Passphrase: user.Passphrase,
+		}
+		*sshReq = append(*sshReq, sReq)
+		fReq = api.SFTPClientConfigReq{
+			HostIp:     (*hostList)[i].Ipv4.String,
+			Username:   (*hostList)[i].User,
+			SSHPort:    (*hostList)[i].Port,
+			Key:        user.PriKey,
+			Passphrase: user.Passphrase,
+		}
+		*sftpReq = append(*sftpReq, fReq)
 	}
 
 	// 对模板进行渲染

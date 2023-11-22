@@ -40,7 +40,7 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (any, string, error)
 	var count int64
 	if params.ID != 0 {
 		// 修改
-		if !utils2.CheckIdExists(&user, &params.ID) {
+		if !utils2.CheckIdExists(&user, params.ID) {
 			return nil, "", errors.New("用户不存在")
 		}
 
@@ -147,10 +147,8 @@ func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total in
 
 // 删除用户
 func (s *UserService) DeleteUser(ids []uint) (err error) {
-	for _, i := range ids {
-		if !utils2.CheckIdExists(&model.User{}, &i) {
-			return errors.New("用户不存在")
-		}
+	if err = utils2.CheckIdsExists(model.User{}, ids); err != nil {
+		return err
 	}
 	var user []model.User
 	// 开启事务
@@ -175,7 +173,7 @@ func (s *UserService) DeleteUser(ids []uint) (err error) {
 
 // 修改用户状态
 func (s *UserService) UpdateStatus(params *api.StatusReq) (err error) {
-	if !utils2.CheckIdExists(&model.User{}, &params.ID) {
+	if !utils2.CheckIdExists(&model.User{}, params.ID) {
 		return errors.New("用户不存在")
 	}
 	err = model.DB.Model(&model.User{}).Where("id = ?", params.ID).Update("status", params.Status).Error
@@ -184,7 +182,7 @@ func (s *UserService) UpdateStatus(params *api.StatusReq) (err error) {
 
 // 修改密码
 func (s *UserService) UpdatePasswd(passwd *api.PasswordReq) (err error) {
-	if !utils2.CheckIdExists(&model.User{}, &passwd.ID) {
+	if !utils2.CheckIdExists(&model.User{}, passwd.ID) {
 		return errors.New("用户不存在")
 	}
 	err = model.DB.Model(&model.User{}).Where("id = ?", passwd.ID).Update("password", passwd.Password).Error
@@ -192,12 +190,12 @@ func (s *UserService) UpdatePasswd(passwd *api.PasswordReq) (err error) {
 }
 
 // 获取用户个人信息
-func (s *UserService) GetSelfInfo(id *uint) (userInfo any, err error) {
+func (s *UserService) GetSelfInfo(id uint) (userInfo any, err error) {
 	var user model.User
 	if !utils2.CheckIdExists(&model.User{}, id) {
 		return nil, errors.New("用户不存在")
 	}
-	if err = model.DB.Where("id in (?)", *id).First(&user).Error; err != nil {
+	if err = model.DB.Where("id in (?)", id).First(&user).Error; err != nil {
 		return user, errors.New("查询用户个人信息失败")
 	}
 	var result *[]api.UserRes
@@ -215,7 +213,7 @@ func (s *UserService) GetAssGroup(id uint) (groupInfo any, err error) {
 	if err != nil {
 		return nil, err
 	}
-	if !utils2.CheckIdExists(&model.User{}, &id) {
+	if !utils2.CheckIdExists(&model.User{}, id) {
 		return nil, errors.New("用户不存在")
 	}
 	if err = model.DB.First(&user, id).Error; err != nil {

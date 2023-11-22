@@ -24,7 +24,7 @@ func Ops() *OpsService {
 	return insOps
 }
 
-func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *api.TaskRecordRes, err error) {
+func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskRecordRes, err error) {
 	var taskRecord *model.TaskRecord
 	var task model.TaskTemplate
 	var user model.User
@@ -39,8 +39,8 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *api.TaskRecord
 		return nil, errors.New("任务的命令和传输文件内容都为空")
 	}
 
-	var sshReq *[]api.SSHClientConfigReq
-	var sftpReq *[]api.SFTPClientConfigReq
+	sshReq := &[]api.SSHClientConfigReq{}
+	sftpReq := &[]api.SFTPClientConfigReq{}
 
 	// 获取模板/项目对应主机
 	var hosts []model.Host
@@ -119,14 +119,14 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *api.TaskRecord
 	if err != nil {
 		return nil, fmt.Errorf("写入TaskRecord失败: %v", err)
 	}
-	result, err = s.GetResults(&taskRecord)
+	result, err = s.GetResults(taskRecord)
 	if err != nil {
 		return nil, fmt.Errorf("转换结果输出失败: %v", err)
 	}
 	return result, err
 }
 
-func (s *OpsService) GetTask(param *api.GetTaskReq) (result *api.TaskRecordRes, total int64, err error) {
+func (s *OpsService) GetTask(param *api.GetTaskReq) (result *[]api.TaskRecordRes, total int64, err error) {
 	var task []model.TaskRecord
 	db := model.DB.Model(&task)
 	// id存在返回id对应model
@@ -134,7 +134,7 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result *api.TaskRecordRes, 
 		if err = db.Where("id = ?", param.Tid).Count(&total).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询id数错误: %v", err)
 		}
-		if err = db.Where("id = ?", param.Tid).Find(&task).Error; err != nil {
+		if err = db.Where("id = ?", param.Tid).First(&task).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询id错误: %v", err)
 		}
 	} else {
@@ -146,8 +146,7 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result *api.TaskRecordRes, 
 		// 返回name的模糊匹配
 		if param.TaskName != "" {
 			name := "%" + strings.ToUpper(param.TaskName) + "%"
-			db = model.DB.Where("UPPER(task_name) LIKE ?", name).Order("id desc")
-			searchReq.Condition = db
+			searchReq.Condition = db.Where("UPPER(task_name) LIKE ?", name).Order("id desc")
 			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 				return nil, 0, err
 			}
@@ -158,9 +157,10 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result *api.TaskRecordRes, 
 				return nil, 0, err
 			}
 		}
-		// 全展示即首页展示，去掉sshJson，否则传输数据太大
+		// 非ID展示则去掉执行Json，否则传输数据太大
 		for i := 0; i < len(task); i++ {
 			task[i].SSHJson = ""
+			task[i].SFTPJson = ""
 		}
 	}
 	result, err = s.GetResults(&task)
@@ -171,7 +171,10 @@ func (s *OpsService) GetTask(param *api.GetTaskReq) (result *api.TaskRecordRes, 
 
 }
 
-func (s *OpsService) GetExecParam(tid uint) (sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, err error) {
+func (s *OpsService) GetExecParam(tid uint) (*[]api.SSHClientConfigReq, *[]api.SFTPClientConfigReq, error) {
+	var sshReq []api.SSHClientConfigReq
+	var sftpReq []api.SFTPClientConfigReq
+	var err error
 	var task model.TaskRecord
 	if err = model.DB.First(&task, tid).Error; err != nil {
 		return nil, nil, fmt.Errorf("查询TaskRecord数据失败: %v", err)
@@ -182,10 +185,10 @@ func (s *OpsService) GetExecParam(tid uint) (sshReq *[]api.SSHClientConfigReq, s
 		return nil, nil, fmt.Errorf("查询用户数据失败: %v", err)
 	}
 
-	if err = json.Unmarshal([]byte(task.SSHJson), sshReq); err != nil {
+	if err = json.Unmarshal([]byte(task.SSHJson), &sshReq); err != nil {
 		return nil, nil, errors.New("sshJson进行json解析失败")
 	}
-	if err = json.Unmarshal([]byte(task.SFTPJson), sftpReq); err != nil {
+	if err = json.Unmarshal([]byte(task.SFTPJson), &sftpReq); err != nil {
 		return nil, nil, errors.New("sshJson进行json解析失败")
 	}
 	// hostIp := sshJson["ipv4"]
@@ -215,7 +218,7 @@ func (s *OpsService) GetExecParam(tid uint) (sshReq *[]api.SSHClientConfigReq, s
 	// 	}
 	// 	return sshReq, sftpReq, err
 	// }
-	return sshReq, sftpReq, err
+	return &sshReq, &sftpReq, err
 }
 
 func (s *OpsService) ApproveTask(tid uint, uid uint) error {
@@ -257,20 +260,20 @@ func (s *OpsService) ApproveTask(tid uint, uid uint) error {
 	return err
 }
 
-func (s *OpsService) DeleteTask(id uint) (err error) {
-	if !utils2.CheckIdExists(&model.TaskRecord{}, &id) {
-		return errors.New("工单不存在")
+func (s *OpsService) DeleteTask(ids []uint) (err error) {
+	if err = utils2.CheckIdsExists(model.TaskRecord{}, ids); err != nil {
+		return err
 	}
-	var task model.TaskRecord
+	var task []model.TaskRecord
 	tx := model.DB.Begin()
-	if err = tx.First(&task, id).Error; err != nil {
+	if err = tx.Find(&task, ids).Error; err != nil {
 		return errors.New("查询工单信息失败")
 	}
 	if err = tx.Model(&task).Association("Auditor").Clear(); err != nil {
 		tx.Rollback()
 		return errors.New("清除表信息 工单与用户关联 失败")
 	}
-	if err = tx.Where("id = ?", id).Delete(&model.TaskRecord{}).Error; err != nil {
+	if err = tx.Where("id IN ?", ids).Delete(&[]model.TaskRecord{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除工单失败")
 	}
@@ -289,14 +292,14 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 	if len(*sftpReq) != 0 {
 		result, err = service.SSH().RunSFTPAsync(sftpReq)
 		if err != nil {
-			return nil, fmt.Errorf("测试执行失败: %v", err)
+			return nil, fmt.Errorf("SFTP执行失败: %v", err)
 		}
 		data["ssh"] = *result
 	}
 	if len(*sshReq) != 0 {
-		result, err = service.SSH().RunSFTPAsync(sftpReq)
+		result, err = service.SSH().RunSSHCmdAsync(sshReq)
 		if err != nil {
-			return nil, fmt.Errorf("测试执行失败: %v", err)
+			return nil, fmt.Errorf("SSH执行失败: %v", err)
 		}
 		data["sftp"] = *result
 	}
@@ -307,7 +310,9 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 }
 
 // 返回工单结果
-func (s *OpsService) GetResults(taskInfo any) (result *api.TaskRecordRes, err error) {
+func (s *OpsService) GetResults(taskInfo any) (*[]api.TaskRecordRes, error) {
+	result := &[]api.TaskRecordRes{}
+	var err error
 	// var res api.TaskRecordRes
 	// var result []api.TaskRecordRes
 	// var err error
@@ -362,27 +367,41 @@ func (s *OpsService) GetResults(taskInfo any) (result *api.TaskRecordRes, err er
 	// 	return &result, err
 	// }
 	if task, ok := taskInfo.(*model.TaskRecord); ok {
-		// 除了CMD全部写入
-		if err = json.Unmarshal([]byte(task.SFTPJson), &result.SSHReqs); err != nil {
-			return nil, errors.New("sshJson进行json解析失败")
-		}
-		// 写入CMD
-		var sshCmdReq []api.SSHClientConfigReq
-		if err = json.Unmarshal([]byte(task.SSHJson), &sshCmdReq); err != nil {
-			return nil, errors.New("sshJson进行json解析失败")
-		}
-		// 写入cmd给result.SSHReqs
-		if len(sshCmdReq) == len(result.SSHReqs) {
-			for i := 0; i < len(result.SSHReqs); i++ {
-				result.SSHReqs[i].Cmd = sshCmdReq[i].Cmd
+		var res api.TaskRecordRes
+		sshCmdReq := []api.SSHClientConfigReq{}
+		if task.SFTPJson != "" {
+			// 除了CMD全部写入
+			if err = json.Unmarshal([]byte(task.SFTPJson), &res.SSHReqs); err != nil {
+				return nil, fmt.Errorf("sftpJson进行json解析失败: %v", err)
 			}
-		} else {
-			return nil, errors.New("ssh切片和sftp切片数量不对等")
+			// 基于SFTP写入CMD
+			if task.SSHJson != "" {
+				if err = json.Unmarshal([]byte(task.SSHJson), &sshCmdReq); err != nil {
+					return nil, fmt.Errorf("sshJson进行json解析失败: %v", err)
+				}
+			}
+		} else if task.SSHJson != "" {
+			// 只写入SSH
+			if err = json.Unmarshal([]byte(task.SSHJson), &res.SSHReqs); err != nil {
+				return nil, fmt.Errorf("sshJson进行json解析失败: %v", err)
+			}
+		}
+
+		// 写入cmd给res.SSHReqs
+		if task.SFTPJson != "" && task.SSHJson != "" {
+			// 判断是否对等
+			if len(sshCmdReq) == len(res.SSHReqs) {
+				for i := 0; i < len(res.SSHReqs); i++ {
+					res.SSHReqs[i].Cmd = sshCmdReq[i].Cmd
+				}
+			} else {
+				return nil, errors.New("ssh切片和sftp切片数量不对等")
+			}
 		}
 
 		nonApproverJson := make(map[string][]uint)
 		if err = json.Unmarshal([]byte(task.NonApprover), &nonApproverJson); err != nil {
-			return nil, errors.New("sshJson进行json解析失败")
+			return nil, fmt.Errorf("NonApprover进行json解析失败: %v", err)
 		}
 		nonApprover := nonApproverJson["ids"]
 		var auditor []model.User
@@ -394,18 +413,83 @@ func (s *OpsService) GetResults(taskInfo any) (result *api.TaskRecordRes, err er
 			auditorIds = append(auditorIds, a.ID)
 		}
 
-		result = &api.TaskRecordRes{
+		res = api.TaskRecordRes{
 			ID:          task.ID,
 			TaskName:    task.TaskName,
 			TemplateId:  task.TemplateId,
 			OperatorId:  task.OperatorId,
 			Status:      task.Status,
 			Response:    task.Response,
-			SSHReqs:     result.SSHReqs,
+			SSHReqs:     res.SSHReqs,
 			NonApprover: nonApprover,
 			Auditor:     auditorIds,
 		}
+		*result = append(*result, res)
 		return result, err
+	} else if tasks, ok := taskInfo.(*[]model.TaskRecord); ok {
+		for _, task := range *tasks {
+			var res api.TaskRecordRes
+			sshCmdReq := []api.SSHClientConfigReq{}
+			if task.SFTPJson != "" {
+				// 除了CMD全部写入
+				if err = json.Unmarshal([]byte(task.SFTPJson), &res.SSHReqs); err != nil {
+					return nil, fmt.Errorf("sftpJson进行json解析失败: %v", err)
+				}
+				// 基于SFTP写入CMD
+				if task.SSHJson != "" {
+					if err = json.Unmarshal([]byte(task.SSHJson), &sshCmdReq); err != nil {
+						return nil, fmt.Errorf("sshJson进行json解析失败: %v", err)
+					}
+				}
+			} else if task.SSHJson != "" {
+				// 只写入SSH
+				if err = json.Unmarshal([]byte(task.SSHJson), &res.SSHReqs); err != nil {
+					return nil, fmt.Errorf("sshJson进行json解析失败: %v", err)
+				}
+			}
+
+			// 写入cmd给res.SSHReqs
+			if task.SFTPJson != "" && task.SSHJson != "" {
+				// 判断是否对等
+				if len(sshCmdReq) == len(res.SSHReqs) {
+					for i := 0; i < len(res.SSHReqs); i++ {
+						res.SSHReqs[i].Cmd = sshCmdReq[i].Cmd
+					}
+				} else {
+					return nil, errors.New("ssh切片和sftp切片数量不对等")
+				}
+			}
+
+			nonApproverJson := make(map[string][]uint)
+			if err = json.Unmarshal([]byte(task.NonApprover), &nonApproverJson); err != nil {
+				return nil, fmt.Errorf("NonApprover进行json解析失败: %v", err)
+			}
+			nonApprover := nonApproverJson["ids"]
+			var auditor []model.User
+			if err = model.DB.Model(&task).Association("Auditor").Find(&auditor); err != nil {
+				return nil, fmt.Errorf("获取关联用户失败: %v", err)
+			}
+			var auditorIds []uint
+			for _, a := range auditor {
+				auditorIds = append(auditorIds, a.ID)
+			}
+
+			res = api.TaskRecordRes{
+				ID:          task.ID,
+				TaskName:    task.TaskName,
+				TemplateId:  task.TemplateId,
+				OperatorId:  task.OperatorId,
+				Status:      task.Status,
+				Response:    task.Response,
+				SSHReqs:     res.SSHReqs,
+				NonApprover: nonApprover,
+				Auditor:     auditorIds,
+			}
+			*result = append(*result, res)
+
+		}
+		return result, err
+	} else {
+		return result, errors.New("返回结果转换类型不配对, 转换taskRecord结果失败")
 	}
-	return result, errors.New("转换taskRecord结果失败")
 }

@@ -21,13 +21,18 @@ func CronWrittenHostInfo() {
 		return
 	}
 
-	var sshParam []api.SSHClientConfigReq
+	sshParam := []api.SSHClientConfigReq{}
+	var req api.SSHClientConfigReq
 	for i := 0; i < len(hosts); i++ {
-		sshParam[i].Key = opsUser.PriKey
-		sshParam[i].Passphrase = opsUser.Passphrase
-		sshParam[i].HostIp = hosts[i].Ipv4.String
-		sshParam[i].Username = hosts[i].User
-		sshParam[i].SSHPort = hosts[i].Port
+		req = api.SSHClientConfigReq{
+			HostIp:     hosts[i].Ipv4.String,
+			Username:   hosts[i].User,
+			SSHPort:    hosts[i].Port,
+			Key:        opsUser.PriKey,
+			Passphrase: opsUser.Passphrase,
+			Cmd:        `ifconfig eth0 | grep inet`,
+		}
+		sshParam = append(sshParam, req)
 	}
 	hostInfo, err := service.Host().GetHostCurrData(&sshParam)
 	if err != nil {

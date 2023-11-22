@@ -53,3 +53,19 @@
 [Task][2023-11-14 19:19:38] 2023/11/14 19:19:38 [Error] [查看任务工单] 转换结果输出失败: 转换taskRecord结果失败
 [Task][2023-11-15 09:33:46] 2023/11/15 09:33:46 [Error] [查看任务工单] 转换结果输出失败: 转换taskRecord结果失败
 [Task][2023-11-15 09:34:22] 2023/11/15 09:34:22 [Error] [查看任务工单] 转换结果输出失败: 转换taskRecord结果失败
+[Task][2023-11-21 19:05:55] 2023/11/21 19:05:55 [Error] [查看任务工单] 转换结果输出失败: 转换taskRecord结果失败
+[Task][2023-11-21 19:25:55] 2023/11/21 19:25:55 [Error] [查看任务工单] 查询id错误: record not found
+[Task][2023-11-21 19:26:08] 2023/11/21 19:26:08 [Error] [查看任务工单] 转换结果输出失败: sshJson进行json解析失败
+[Task][2023-11-21 19:28:10] 2023/11/21 19:28:10 [Error] [查看任务工单] 转换结果输出失败: sftpJson进行json解析失败: unexpected end of JSON input
+[Task][2023-11-22 09:54:37] 2023/11/22 09:54:37 [Error] [创建/修改任务模板] 查询到的记录为0: <nil>
+[Task][2023-11-22 11:08:29] 2023/11/22 11:08:29 [Error] [提交执行工单] 没有对应模板类型, 请检查模板类型是否定义正确, 如需添加请联系运维
+[Task][2023-11-22 11:48:29] 2023/11/22 11:48:29 [Error] [提交执行工单] 转换结果输出失败: 转换taskRecord结果失败
+[Task][2023-11-22 12:02:36] 2023/11/22 12:02:36 [Error] [提交执行工单] 转换结果输出失败: 转换taskRecord结果失败
+[Task][2023-11-22 12:06:29] 2023/11/22 12:06:29 [Error] [提交执行工单] path参数数量为0
+[Task][2023-11-22 12:17:47] 2023/11/22 12:17:47 [Error] [查看任务工单] 记录数查询失败: unsupported data type: 0xc0012018a0: Table not set, please set it like: db.Model(&user) or db.Table("users")
+[Task][2023-11-22 12:18:00] 2023/11/22 12:18:00 [Error] [查看任务工单] 记录数查询失败: unsupported data type: 0xc001201d68: Table not set, please set it like: db.Model(&user) or db.Table("users")
+[Task][2023-11-22 12:19:33] 2023/11/22 12:19:33 [Error] [查看任务工单] 转换结果输出失败: sshJson进行json解析失败: unexpected end of JSON input
+[Task][2023-11-22 13:04:10] 2023/11/22 13:04:10 [Error] [查看任务工单] 转换结果输出失败: sshJson进行json解析失败: unexpected end of JSON input
+[Task][2023-11-22 13:04:33] 2023/11/22 13:04:33 [Error] [查看任务工单] 记录数查询失败: unsupported data type: 0xc0013750f8: Table not set, please set it like: db.Model(&user) or db.Table("users")
+[Task][2023-11-22 13:16:46] 2023/11/22 13:16:46 [Error] [获取ssh执行参数] sshJson进行json解析失败
+[Task][2023-11-22 13:23:43] 2023/11/22 13:23:43 [Error] [获取ssh执行参数] sshJson进行json解析失败

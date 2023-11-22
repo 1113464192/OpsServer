@@ -35,7 +35,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 	}
 	if params.ID != 0 {
 		// 修改
-		if !utils2.CheckIdExists(host, &params.ID) {
+		if !utils2.CheckIdExists(host, params.ID) {
 			return nil, errors.New("服务器ID不存在")
 		}
 
@@ -130,10 +130,8 @@ func (s *HostService) GetHostPasswd(id uint) (passwd string, err error) {
 
 // 删除服务器
 func (s *HostService) DeleteHost(ids []uint) (err error) {
-	for _, i := range ids {
-		if !utils2.CheckIdExists(&model.Host{}, &i) {
-			return errors.New("服务器不存在")
-		}
+	if err = utils2.CheckIdsExists(model.Host{}, ids); err != nil {
+		return err
 	}
 	var host []model.Host
 	tx := model.DB.Begin()
@@ -162,10 +160,8 @@ func (s *HostService) DeleteHost(ids []uint) (err error) {
 
 // 删除域名
 func (s *HostService) DeleteDomain(ids []uint) (err error) {
-	for _, i := range ids {
-		if !utils2.CheckIdExists(&model.Host{}, &i) {
-			return errors.New("域名不存在")
-		}
+	if err = utils2.CheckIdsExists(model.Domain{}, ids); err != nil {
+		return err
 	}
 	var domain []model.Domain
 	tx := model.DB.Begin()
@@ -219,7 +215,7 @@ func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64
 // 获取域名关联的主机
 func (s *HostService) GetDomainAssHost(params *api.GetPagingByIdReq) (hostInfo any, total int64, err error) {
 	var domain model.Domain
-	if !utils2.CheckIdExists(&domain, &params.Id) {
+	if !utils2.CheckIdExists(&domain, params.Id) {
 		return nil, 0, errors.New("域名ID不存在")
 	}
 	if err = model.DB.Preload("Hosts").Where("id = ?", params.Id).First(&domain).Error; err != nil {
@@ -249,7 +245,7 @@ func (s *HostService) UpdateDomain(params *api.UpdateDomainReq) (domain *model.D
 	}
 	if params.Id != 0 {
 		// 修改
-		if !utils2.CheckIdExists(domain, &params.Id) {
+		if !utils2.CheckIdExists(domain, params.Id) {
 			return nil, errors.New("域名ID不存在")
 		}
 
@@ -276,20 +272,13 @@ func (s *HostService) UpdateDomain(params *api.UpdateDomainReq) (domain *model.D
 // 更新域名关联的主机
 func (s *HostService) UpdateDomainAss(params *api.UpdateDomainAssHostReq) (err error) {
 	var host []model.Host
-	var noExistId []uint
 	var domain model.Domain
 	// 判断所有项目是否都存在
-	for _, hid := range params.Hids {
-		uBool := utils2.CheckIdExists(&host, &hid)
-		if !uBool {
-			noExistId = append(noExistId, hid)
-		}
-	}
-	if len(noExistId) != 0 {
-		return fmt.Errorf("%v %s", noExistId, "服务器不存在")
+	if err = utils2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
+		return err
 	}
 
-	if !utils2.CheckIdExists(&host, &params.Did) {
+	if !utils2.CheckIdExists(&host, params.Did) {
 		return errors.New("域名ID不存在")
 	}
 
@@ -329,6 +318,7 @@ func (s *HostService) GetHostCurrData(param *[]api.SSHClientConfigReq) (*api.Hos
 
 	var hostInfo api.HostInfoRes
 	var err error
+	// 对各个sshReq写入CMD
 	for i := 0; i < len(*param); i++ {
 		(*param)[i].Cmd = cmdShell
 	}
@@ -338,7 +328,7 @@ func (s *HostService) GetHostCurrData(param *[]api.SSHClientConfigReq) (*api.Hos
 		return nil, err
 	}
 
-	for i := range *hostDataRes {
+	for i := 0; i < len(*hostDataRes); i++ {
 		splitRes := strings.Fields((*hostDataRes)[i].Response)
 		// 这里请为我实现将所有value依次赋给对应的key
 		if len(splitRes) == 6 {
@@ -450,45 +440,45 @@ func (s *HostService) GetHostCurrData(param *[]api.SSHClientConfigReq) (*api.Hos
 func (s *HostService) WritieToDatabase(data *api.HostInfoRes) error {
 	var host model.Host
 	tx := model.DB.Begin()
-	// 如果status是false，则全部填0
+	// 如果status非0则全部-1
 	// for _, hostRes := range *data.CurrSystemDisk {
 	for i := 0; i < len(data.CurrSystemDisk); i++ {
-		if !(data.CurrSystemDisk)[i].Status {
+		if (data.CurrSystemDisk)[i].Status != 0 {
 			(data.CurrSystemDisk)[i].Response = "-1"
 		}
 		currSystemDisk, err := strconv.ParseFloat((data.CurrSystemDisk)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
-		if !(data.CurrDataDisk)[i].Status {
+		if (data.CurrSystemDisk)[i].Status != 0 {
 			(data.CurrDataDisk)[i].Response = "-1"
 		}
 		currDataDisk, err := strconv.ParseFloat((data.CurrDataDisk)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
-		if !(data.CurrMem)[i].Status {
+		if (data.CurrSystemDisk)[i].Status != 0 {
 			(data.CurrMem)[i].Response = "-1"
 		}
 		currMem, err := strconv.ParseFloat((data.CurrMem)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
-		if !(data.CurrIdle)[i].Status {
+		if (data.CurrSystemDisk)[i].Status != 0 {
 			(data.CurrIdle)[i].Response = "-1"
 		}
 		currIdle, err := strconv.ParseFloat((data.CurrIdle)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
-		if !(data.CurrIowait)[i].Status {
+		if (data.CurrSystemDisk)[i].Status != 0 {
 			(data.CurrIowait)[i].Response = "-1"
 		}
 		currIowait, err := strconv.ParseFloat((data.CurrIowait)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
-		if !(data.CurrLoad)[i].Status {
+		if (data.CurrSystemDisk)[i].Status != 0 {
 			(data.CurrLoad)[i].Response = "-1"
 		}
 		currLoad, err := strconv.ParseFloat((data.CurrLoad)[i].Response, 32)

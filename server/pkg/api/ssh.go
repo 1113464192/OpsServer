@@ -50,6 +50,6 @@ type SFTPClientConfigReq struct {
 // 返回更改
 type SSHResultRes struct {
 	HostIp   string
-	Status   bool
+	Status   int
 	Response string
 }

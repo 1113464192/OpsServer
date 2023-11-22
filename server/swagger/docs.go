@@ -794,70 +794,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/host/Project": {
-            "get": {
-                "description": "返回项目切片",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "服务器相关"
-                ],
-                "summary": "查询服务器对应项目",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页大小",
-                        "name": "page_size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/host/assDomain": {
             "put": {
                 "description": "服务器ID[多选]",
@@ -883,62 +819,6 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/api.UpdateDomainAssHostReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/host/association": {
-            "put": {
-                "description": "项目ID[多选]",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "服务器相关"
-                ],
-                "summary": "关联项目",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "关联传入参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.UpdateHostAssProjectReq"
                         }
                     }
                 ],
@@ -1004,6 +884,59 @@ const docTemplate = `{
                         "description": "每页大小",
                         "name": "page_size",
                         "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/host/getPasswd": {
+            "get": {
+                "description": "返回服务器的密码",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务器相关"
+                ],
+                "summary": "返回服务器的密码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1666,10 +1599,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "formData",
-                        "required": true
+                        "description": "传入工单的ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -2092,7 +2028,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/project/getHost": {
+        "/api/v1/project/getAssHost": {
             "get": {
                 "description": "返回服务器切片",
                 "produces": [
@@ -3593,23 +3529,6 @@ const docTemplate = `{
                 }
             }
         },
-        "api.UpdateHostAssProjectReq": {
-            "type": "object",
-            "required": [
-                "hid"
-            ],
-            "properties": {
-                "hid": {
-                    "type": "integer"
-                },
-                "pid": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
         "api.UpdateMenuAssReq": {
             "type": "object",
             "required": [
@@ -3690,7 +3609,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "port_rule": {
-                    "description": "端口规则, 如: 10000 + flag % 1000",
+                    "description": "端口规则, 如: serverPort=10000 + flag % 1000",
                     "type": "array",
                     "items": {
                         "type": "string"

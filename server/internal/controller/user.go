@@ -336,7 +336,7 @@ func GetSelfInfo(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	userInfo, err := service.User().GetSelfInfo(&claims.User.ID)
+	userInfo, err := service.User().GetSelfInfo(claims.User.ID)
 	if err != nil {
 		logger.Log().Error("User", "获取用户个人信息", err)
 		c.JSON(500, api.Err("获取用户个人信息失败", err))

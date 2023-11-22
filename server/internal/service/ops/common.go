@@ -9,6 +9,7 @@ import (
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/utils"
+	"fqhWeb/pkg/utils2"
 	"regexp"
 	"strconv"
 	"strings"
@@ -83,12 +84,16 @@ func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][
 // 按条件筛选符合条件的服务器
 func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHClientConfigReq, memSize *float32) (err error) {
 	// 赋值可用IP给ssh命令参数
-	for i := 0; i < len(*sshReq); i++ {
-		(*sshReq)[i].HostIp = (*hosts)[i].Ipv4.String
-		(*sshReq)[i].Username = (*hosts)[i].User
-		(*sshReq)[i].SSHPort = (*hosts)[i].Port
-		(*sshReq)[i].Key = user.PriKey
-		(*sshReq)[i].Passphrase = user.Passphrase
+	var req api.SSHClientConfigReq
+	for i := 0; i < len(*hosts); i++ {
+		req = api.SSHClientConfigReq{
+			HostIp:     (*hosts)[i].Ipv4.String,
+			Username:   (*hosts)[i].User,
+			SSHPort:    (*hosts)[i].Port,
+			Key:        user.PriKey,
+			Passphrase: user.Passphrase,
+		}
+		*sshReq = append(*sshReq, req)
 	}
 	// 更新每个服务器的最新状态
 	hostInfo, err := service.Host().GetHostCurrData(sshReq)
@@ -229,7 +234,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 			if err != nil {
 				return nil, fmt.Errorf("端口规则\n%v\n基于flag %d 生成端口失败: %v", portRule, flag, err)
 			}
-			// 计算有多少个端口需要检查占用
+			// 统计需检查端口的总数
 			var c int
 			for _, port := range portList {
 				cmdShell := fmt.Sprintf(`
@@ -237,13 +242,16 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 					echo "success"
 				fi`, int(port))
 				// 兼容多个端口多个命令，这样子就允许单主机多命令
-				n := len(*sshReq)
-				(*sshReq)[n].HostIp = host.Ipv4.String
-				(*sshReq)[n].SSHPort = host.Port
-				(*sshReq)[n].Username = host.User
-				(*sshReq)[n].Key = user.PriKey
-				(*sshReq)[n].Passphrase = user.Passphrase
-				(*sshReq)[n].Cmd = cmdShell
+				req := api.SSHClientConfigReq{
+					HostIp:     host.Ipv4.String,
+					Username:   host.User,
+					SSHPort:    host.Port,
+					Key:        user.PriKey,
+					Passphrase: user.Passphrase,
+					Cmd:        cmdShell,
+				}
+				*sshReq = append(*sshReq, req)
+
 				c += 1
 			}
 			var sshResult *[]api.SSHResultRes
@@ -275,6 +283,10 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
 	// sshReq编码JSON
 	var data []byte
+	if err = utils2.CheckIdsExists(model.User{}, auditorIds); err != nil {
+		return nil, err
+	}
+
 	data, err = json.Marshal(*sshReq)
 	if err != nil {
 		return nil, fmt.Errorf("map转换json失败: %v", err)
@@ -298,7 +310,7 @@ func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq
 		tx.Rollback()
 		return nil, fmt.Errorf("TaskRecord存储失败: %v", err)
 	}
-	var auditor model.User
+	var auditor []model.User
 	if err = tx.Model(&model.User{}).Find(&auditor, auditorIds).Error; err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("查询工单审批用户失败: %v", err)
@@ -322,5 +334,13 @@ func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq
 	fmt.Println("==========首次写入,接入微信小程序之类的请求,向第一个审批用户发送===========")
 	model.DB.Save(&taskRecord)
 
+	// 清空装服的参数，方便后续用户填写装服
+	if strings.Contains(task.TypeName, "装服") {
+		task.Args = ""
+		err = model.DB.Save(task).Error
+		if err != nil {
+			return nil, errors.New("Task的Args数据清除失败")
+		}
+	}
 	return taskRecord, err
 }

@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -43,7 +42,7 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 
 	if params.ID != 0 {
 		// 修改
-		if !utils2.CheckIdExists(&task, &params.ID) {
+		if !utils2.CheckIdExists(&task, params.ID) {
 			return task, errors.New("不存在")
 		}
 		if err := model.DB.Model(&task).Where("id = ?", params.ID).First(&task).Error; err != nil {
@@ -168,10 +167,8 @@ func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj 
 }
 
 func (s *TaskService) DeleteTaskTemplate(ids []uint) (err error) {
-	for _, i := range ids {
-		if !utils2.CheckIdExists(&model.TaskTemplate{}, &i) {
-			return errors.New("任务不存在")
-		}
+	if err = utils2.CheckIdsExists(model.TaskTemplate{}, ids); err != nil {
+		return err
 	}
 	var task []model.TaskTemplate
 	tx := model.DB.Begin()
@@ -193,20 +190,13 @@ func (s *TaskService) DeleteTaskTemplate(ids []uint) (err error) {
 // 任务关联主机
 func (s *TaskService) UpdateHostAss(params api.UpdateTemplateAssHostReq) (err error) {
 	var host []model.Host
-	var noExistId []uint
 	var task model.TaskTemplate
 	// 判断所有项目是否都存在
-	for _, hid := range params.Hids {
-		uBool := utils2.CheckIdExists(&host, &hid)
-		if !uBool {
-			noExistId = append(noExistId, hid)
-		}
-	}
-	if len(noExistId) != 0 {
-		return fmt.Errorf("%v %s", noExistId, "项目不存在")
+	if err = utils2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
+		return err
 	}
 
-	if !utils2.CheckIdExists(&task, &params.Tid) {
+	if !utils2.CheckIdExists(&task, params.Tid) {
 		return errors.New("任务模板ID不存在")
 	}
 

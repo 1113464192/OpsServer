@@ -30,7 +30,7 @@ func (s *MenuService) UpdateMenu(params *api.UpdateMenuReq) (menuInfo any, err e
 	}
 	if params.ID != 0 {
 		// 判断菜单是否存在
-		if !utils2.CheckIdExists(&menu, &params.ID) {
+		if !utils2.CheckIdExists(&menu, params.ID) {
 			return menu, errors.New("该菜单不存在")
 		}
 
@@ -84,18 +84,8 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 	// if !utils.IsSliceContain(params.GroupIDs, 1) {
 	// 	params.GroupIDs = append(params.GroupIDs, 1)
 	// }
-	var noExistId []uint
-
-	// 判断用户组是否都存在
-	for _, gid := range params.GroupIDs {
-		uBool := utils2.CheckIdExists(&groups, &gid)
-		// 不存在纳入noExistId切片
-		if !uBool {
-			noExistId = append(noExistId, gid)
-		}
-	}
-	if len(noExistId) != 0 {
-		return groups, fmt.Errorf("%v %s", noExistId, "用户组不存在")
+	if err = utils2.CheckIdsExists(model.UserGroup{}, params.GroupIDs); err != nil {
+		return nil, err
 	}
 
 	tx := model.DB.Begin()
@@ -141,10 +131,8 @@ func (s *MenuService) GetMenuList(gid uint, isAdmin uint8) (menu *[]model.Menus,
 
 // 删除菜单
 func (s *MenuService) DeleteMenu(ids []uint) (err error) {
-	for _, i := range ids {
-		if !utils2.CheckIdExists(&model.UserGroup{}, &i) {
-			return errors.New("菜单不存在")
-		}
+	if err = utils2.CheckIdsExists(model.UserGroup{}, ids); err != nil {
+		return err
 	}
 	var menu []model.Menus
 	tx := model.DB.Begin()
