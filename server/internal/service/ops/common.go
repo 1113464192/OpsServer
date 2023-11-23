@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"fqhWeb/internal/consts"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
@@ -335,7 +336,7 @@ func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq
 	model.DB.Save(&taskRecord)
 
 	// 清空装服的参数，方便后续用户填写装服
-	if strings.Contains(task.TypeName, "装服") {
+	if strings.Contains(task.TypeName, consts.OperationInstallServerType) {
 		task.Args = ""
 		err = model.DB.Save(task).Error
 		if err != nil {

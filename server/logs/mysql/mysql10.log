@@ -1,4 +1,0 @@
-[mysql][2023-10-27 05:00:00] 2023/10/27 05:00:00 [Error] [重命名mysql日志失败] rename D:/fqhWeb/fqhWeb/server/logs/mysql/mysql.log D:/fqhWeb/fqhWeb/server/logs/mysql/20231026.log: The system cannot find the file specified.
-[mysql][2023-10-28 05:00:00] 2023/10/28 05:00:00 [Error] [重命名mysql日志失败] rename D:/fqhWeb/fqhWeb/server/logs/mysql/mysql.log D:/fqhWeb/fqhWeb/server/logs/mysql/20231027.log: The system cannot find the file specified.
-[mysql][2023-10-29 05:00:00] 2023/10/29 05:00:00 [Error] [重命名mysql日志失败] rename D:/fqhWeb/fqhWeb/server/logs/mysql/mysql.log D:/fqhWeb/fqhWeb/server/logs/mysql/20231028.log: The system cannot find the file specified.
-[mysql][2023-10-30 05:00:00] 2023/10/30 05:00:00 [Error] [重命名mysql日志失败] rename D:/fqhWeb/fqhWeb/server/logs/mysql/mysql.log D:/fqhWeb/fqhWeb/server/logs/mysql/20231029.log: The system cannot find the file specified.

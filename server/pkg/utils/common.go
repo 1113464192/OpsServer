@@ -57,10 +57,10 @@ func CommonLog(service string, msg string) bool {
 	var dirPath, file string
 	if service == "" {
 		dirPath = GetRootPath() + "/logs" + "/common"
-		file = dirPath + "/" + "common" + time.Now().Format("01") + ".log"
+		file = dirPath + "/" + "common" + time.Now().Format("2006-01-02") + ".log"
 	} else {
 		dirPath = GetRootPath() + "/logs/" + service
-		file = dirPath + "/" + service + time.Now().Format("01") + ".log"
+		file = dirPath + "/" + service + time.Now().Format("2006-01-02") + ".log"
 	}
 
 	if !IsDir(dirPath) {

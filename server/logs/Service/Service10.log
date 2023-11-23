@@ -1,6 +1,0 @@
-[Service][2023-10-07 11:44:10] 2023/10/07 11:44:10 [Error] [ParentIdrequired] Key: 'UpdateGroupReq.ParentId' Error:Field validation for 'ParentId' failed on the 'required' tag
-[Service][2023-10-07 14:41:12] 2023/10/07 14:41:12 [Error] [更改用户组关联失败] [3] 用户不存在
-[Service][2023-10-07 14:56:52] 2023/10/07 14:56:52 [Error] [更改用户组关联失败] [3] 用户不存在
-[Service][2023-10-07 15:00:07] 2023/10/07 15:00:07 [Error] [更改用户组关联失败] [3] 用户不存在
-[Service][2023-10-07 15:04:06] 2023/10/07 15:04:06 [Error] [更改用户组关联失败] [3] 用户不存在
-[Service][2023-10-07 15:09:26] 2023/10/07 15:09:26 [Error] [更改用户组关联失败] [3] 用户不存在

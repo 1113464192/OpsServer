@@ -1,3 +1,0 @@
-[JWT][2023-11-06 15:19:22] 2023/11/06 15:19:22 [Error] [授权已过期] token is malformed: could not JSON decode claim: json: cannot unmarshal object into Go struct field User.User.pri_key of type []uint8
-[JWT][2023-11-13 15:27:57] 2023/11/13 15:27:57 [Error] [授权已过期] token has invalid claims: token is expired
-[JWT][2023-11-21 16:52:17] 2023/11/21 16:52:17 [Error] [授权已过期] token has invalid claims: token is expired

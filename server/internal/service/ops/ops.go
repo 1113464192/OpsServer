@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"fqhWeb/internal/consts"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service"
 	"fqhWeb/internal/service/dbOper"
@@ -71,17 +72,16 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 
 	// 入口
 	var typeParam string
-	// 判断类型
+	// 获取操作类型
 	switch {
-	case strings.Contains(task.TypeName, "装服"):
-		typeParam = "装服"
-		// case strings.Contains(task.TypeName, "更新"):
-		// 	typeParam = "更新"
+	case strings.Contains(task.TypeName, consts.OperationInstallServerType):
+		typeParam = consts.OperationInstallServerType
 	}
 
-	// 获取参数
+	// 执行指定操作
 	switch typeParam {
-	case "装服":
+	// 单服装服操作
+	case consts.OperationInstallServerType:
 		if pathCount == 0 {
 			return nil, errors.New("path参数数量为0")
 		}
@@ -106,12 +106,12 @@ func (s *OpsService) SubmitTask(param api.SubmitTaskReq) (result *[]api.TaskReco
 		}
 		sshReq, sftpReq, err = s.getInstallServer(&hosts, &task, &user, pathCount, &args)
 		if err != nil {
-			return nil, fmt.Errorf("获取装服参数报错: %v", err)
+			return nil, fmt.Errorf("获取%s参数报错: %v", consts.OperationInstallServerType, err)
 		}
+	// 服务端更新操作
+	// case consts.OperationUpdateServerType:
 
-	// case "更新":
-
-	// 关联机器全操作
+	// 未知类型
 	default:
 		return nil, errors.New("没有对应模板类型, 请检查模板类型是否定义正确, 如需添加请联系运维")
 	}
