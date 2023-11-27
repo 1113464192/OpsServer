@@ -129,14 +129,14 @@ func UpdateUser(c *gin.Context) {
 // @Summary 获取用户列表
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetUserListReq true "所需参数,输入了ids则不再需要输入其他参数"
+// @Param data query api.SearchStringReq true "所需参数,输入了ids则不再需要输入其他参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/search [get]
 func GetUserList(c *gin.Context) {
-	var param api.GetUserListReq
+	var param api.SearchStringReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -297,12 +297,12 @@ func UpdateSelfPasswd(c *gin.Context) {
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/status [patch]
 func UpdateStatus(c *gin.Context) {
-	var params api.StatusReq
-	if err := c.ShouldBind(&params); err != nil {
+	var param api.StatusReq
+	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	if err := service.User().UpdateStatus(&params); err != nil {
+	if err := service.User().UpdateStatus(&param); err != nil {
 		logger.Log().Error("User", "更改用户状态", err)
 		c.JSON(500, api.Err("更改用户状态失败", err))
 		return

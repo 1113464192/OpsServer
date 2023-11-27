@@ -50,14 +50,14 @@ func SubmitTask(c *gin.Context) {
 // @Summary 查看任务工单
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query apiOps.GetTaskReq true "传入所需参数,输了ID就不用name和页码"
+// @Param data query api.SearchStringReq true "传入所需参数,输了ID就不用name和页码"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/ops/getTask [get]
 func GetTask(c *gin.Context) {
-	var param apiOps.GetTaskReq
+	var param api.SearchStringReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -79,7 +79,7 @@ func GetTask(c *gin.Context) {
 	})
 }
 
-// GetExecParam
+// GetSSHExecParam
 // @Tags Ops相关
 // @title 提取执行参数
 // @description 返回sftp和ssh的执行参数
@@ -91,14 +91,14 @@ func GetTask(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/getExecParam [get]
-func GetExecParam(c *gin.Context) {
+// @Router /api/v1/ops/getSSHExecParam [get]
+func GetSSHExecParam(c *gin.Context) {
 	var param api.IdReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	sshReq, sftpReq, err := ops.Ops().GetExecParam(param.Id)
+	sshReq, sftpReq, err := ops.Ops().GetSSHExecParam(param.Id)
 	if err != nil {
 		logger.Log().Error("Task", "获取ssh执行参数", err)
 		c.JSON(500, api.Err("获取Ops任务执行参数失败", err))
@@ -187,7 +187,7 @@ func DeleteTask(c *gin.Context) {
 	})
 }
 
-// OpsExecTask
+// OpsExecSSHTask
 // @Tags Ops相关
 // @title 工单操作执行
 // @description 返回执行结果
@@ -199,14 +199,14 @@ func DeleteTask(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/execTask [post]
-func OpsExecTask(c *gin.Context) {
+// @Router /api/v1/ops/execSSHTask [post]
+func OpsExecSSHTask(c *gin.Context) {
 	var param api.IdReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	data, err := ops.Ops().OpsExecTask(param.Id)
+	data, err := ops.Ops().OpsExecSSHTask(param.Id)
 	if err != nil {
 		logger.Log().Error("Task", "执行工单操作", err)
 		c.JSON(500, api.Err("执行工单操作失败", err))

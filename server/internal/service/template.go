@@ -21,40 +21,40 @@ func Task() *TaskService {
 }
 
 // 修改或新增任务模板
-func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (projectInfo any, err error) {
+func (s *TaskService) UpdateTaskTemplate(param *api.UpdateTaskTemplateReq) (projectInfo any, err error) {
 	var task model.TaskTemplate
 	var count int64
-	if model.DB.Model(&task).Where("pid = ? AND type_name = ? AND task_name = ? AND id != ?", params.Pid, params.TypeName, params.TaskName, params.ID).Count(&count); count > 0 {
+	if model.DB.Model(&task).Where("pid = ? AND type_name = ? AND task_name = ? AND id != ?", param.Pid, param.TypeName, param.TaskName, param.ID).Count(&count); count > 0 {
 		return task, errors.New("该项目中的 任务类型的 任务名已被使用")
 	}
-	conditionJson, err := util.ConvertToJsonPair(params.Condition)
+	conditionJson, err := util.ConvertToJsonPair(param.Condition)
 	if err != nil {
 		return nil, err
 	}
-	portRuleJson, err := util.ConvertToJsonPair(params.PortRule)
+	portRuleJson, err := util.ConvertToJsonPair(param.PortRule)
 	if err != nil {
 		return nil, err
 	}
-	argsJson, err := util.ConvertToJsonPair(params.Args)
+	argsJson, err := util.ConvertToJsonPair(param.Args)
 	if err != nil {
 		return nil, err
 	}
 
-	if params.ID != 0 {
+	if param.ID != 0 {
 		// 修改
-		if !util2.CheckIdExists(&task, params.ID) {
+		if !util2.CheckIdExists(&task, param.ID) {
 			return task, errors.New("不存在")
 		}
-		if err := model.DB.Model(&task).Where("id = ?", params.ID).First(&task).Error; err != nil {
+		if err := model.DB.Model(&task).Where("id = ?", param.ID).First(&task).Error; err != nil {
 			return task, errors.New("任务模板数据库查询失败: " + err.Error())
 		}
-		task.TypeName = params.TypeName
-		task.TaskName = params.TaskName
-		task.CmdTem = params.CmdTem
-		task.ConfigTem = params.ConfigTem
+		task.TypeName = param.TypeName
+		task.TaskName = param.TaskName
+		task.CmdTem = param.CmdTem
+		task.ConfigTem = param.ConfigTem
 		task.Condition = conditionJson
-		task.Comment = params.Comment
-		task.Pid = params.Pid
+		task.Comment = param.Comment
+		task.Pid = param.Pid
 		task.PortRule = portRuleJson
 		task.Args = argsJson
 		err = model.DB.Save(&task).Error
@@ -63,13 +63,13 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 		}
 	} else {
 		task = model.TaskTemplate{
-			TypeName:  params.TypeName,
-			TaskName:  params.TaskName,
-			CmdTem:    params.CmdTem,
-			ConfigTem: params.ConfigTem,
+			TypeName:  param.TypeName,
+			TaskName:  param.TaskName,
+			CmdTem:    param.CmdTem,
+			ConfigTem: param.ConfigTem,
 			Condition: conditionJson,
-			Comment:   params.Comment,
-			Pid:       params.Pid,
+			Comment:   param.Comment,
+			Pid:       param.Pid,
 			PortRule:  portRuleJson,
 			Args:      argsJson,
 		}
@@ -85,18 +85,18 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 }
 
 // 获取任务模板
-func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj any, total int64, err error) {
+func (s *TaskService) GetProjectTask(param *api.GetProjectTaskReq) (projectObj any, total int64, err error) {
 	var task []model.TaskTemplate
 	db := model.DB.Model(&task)
 	searchReq := &api.SearchReq{
 		Condition: db,
 		Table:     &task,
-		PageInfo:  params.PageInfo,
+		PageInfo:  param.PageInfo,
 	}
 	// 如果传了模板ID
 	// 直接返回模板的所有内容
-	if params.ID != 0 {
-		db = db.Where("id = ?", params.ID)
+	if param.ID != 0 {
+		db = db.Where("id = ?", param.ID)
 		searchReq.Condition = db
 		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 			return nil, 0, err
@@ -108,8 +108,8 @@ func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj 
 		return result, total, err
 		// 如果传了类型名和项目ID
 		// 返回模板名+模板ID切片
-	} else if params.Pid != 0 && params.TypeName != "" {
-		db = db.Where("pid = ? AND type_name = ?", params.Pid, params.TypeName)
+	} else if param.Pid != 0 && param.TypeName != "" {
+		db = db.Where("pid = ? AND type_name = ?", param.Pid, param.TypeName)
 		searchReq.Condition = db
 		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 			return nil, 0, err
@@ -126,8 +126,8 @@ func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj 
 		return result, total, err
 		// 如果只传了项目ID
 		// 只返回包含的类型名
-	} else if params.Pid != 0 && params.TypeName == "" {
-		db = db.Where("pid = ?", params.Pid)
+	} else if param.Pid != 0 && param.TypeName == "" {
+		db = db.Where("pid = ?", param.Pid)
 		searchReq.Condition = db
 		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 			return nil, 0, err
@@ -141,8 +141,8 @@ func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj 
 		return result, total, err
 	}
 	return nil, 0, errors.New("参数有误")
-	// } else if params.Pid != 0 {
-	// 	db = db.Where("pid = ?", params.Pid)
+	// } else if param.Pid != 0 {
+	// 	db = db.Where("pid = ?", param.Pid)
 	// 	searchReq.Condition = db
 	// 	if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 	// 		return nil, 0, err
@@ -188,22 +188,22 @@ func (s *TaskService) DeleteTaskTemplate(ids []uint) (err error) {
 }
 
 // 任务关联主机
-func (s *TaskService) UpdateHostAss(params api.UpdateTemplateAssHostReq) (err error) {
+func (s *TaskService) UpdateHostAss(param api.UpdateTemplateAssHostReq) (err error) {
 	var host []model.Host
 	var task model.TaskTemplate
 	// 判断所有项目是否都存在
-	if err = util2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
+	if err = util2.CheckIdsExists(model.Host{}, param.Hids); err != nil {
 		return err
 	}
 
-	if !util2.CheckIdExists(&task, params.Tid) {
+	if !util2.CheckIdExists(&task, param.Tid) {
 		return errors.New("任务模板ID不存在")
 	}
 
-	if err = model.DB.Find(&host, params.Hids).Error; err != nil {
+	if err = model.DB.Find(&host, param.Hids).Error; err != nil {
 		return errors.New("主机数据库查询操作失败")
 	}
-	if err = model.DB.First(&task, params.Tid).Error; err != nil {
+	if err = model.DB.First(&task, param.Tid).Error; err != nil {
 		return errors.New("任务模板数据库查询操作失败")
 	}
 	if err = model.DB.Model(&task).Association("Hosts").Replace(&host); err != nil {

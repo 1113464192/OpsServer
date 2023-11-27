@@ -27,6 +27,7 @@ func main() {
 			&model.Project{},
 			&model.Host{},
 			&model.TaskRecord{},
+			&model.ServerRecord{},
 		)
 	}
 

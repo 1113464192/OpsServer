@@ -113,10 +113,16 @@ func NewRoute() *gin.Engine {
 			// 工单相关
 			opsRoute.POST("submitTask", SubmitTask)
 			opsRoute.GET("getTask", GetTask)
-			opsRoute.GET("getExecParam", GetExecParam)
+			opsRoute.GET("getSSHExecParam", GetSSHExecParam)
 			opsRoute.PUT("approveTask", ApproveTask)
 			opsRoute.DELETE("delete", DeleteTask)
-			opsRoute.POST("execTask", OpsExecTask)
+			opsRoute.POST("execSSHTask", OpsExecSSHTask)
+		}
+		// -----------服务端操作相关-----------
+		serverRoute := v1.Group("server")
+		{
+			serverRoute.PUT("updateServerRecord", UpdateServerRecord)
+			serverRoute.GET("getServerRecord", GetServerRecord)
 		}
 	}
 	return r

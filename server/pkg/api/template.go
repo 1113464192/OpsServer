@@ -28,7 +28,7 @@ type UpdateTaskTemplateReq struct {
 	Comment   string   `form:"comment" json:"comment"`                        // 模板备注
 	Pid       uint     `form:"pid" json:"pid" binding:"required"`             // 对应项目ID
 	PortRule  []string `form:"port_rule" json:"port_rule"`                    // 端口规则, 如: serverPort=10000 + flag % 1000
-	Args      []string `form:"args" json:"args"`                              // 任意变量, 如: path=/data/a_b_c
+	Args      []string `form:"args" json:"args"`                              // 任意变量, 如: path=/data/a_b_c,sftpPath=/data/a_b_c/server/config
 }
 
 type GetProjectTaskReq struct {

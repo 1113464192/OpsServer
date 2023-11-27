@@ -65,12 +65,12 @@ func (s *OpsService) getInstallServerParam(hostList *[]model.Host, task *model.T
 	if len(config) == pathCount {
 		for i := 0; i < len(*sftpReq); i++ {
 			(*sftpReq)[i].FileContent = config[i]
-			(*sftpReq)[i].Path = (*args)["path"][i]
+			(*sftpReq)[i].Path = (*args)["sftpPath"][i]
 		}
 	} else {
 		for i := 0; i < len(*sftpReq); i++ {
 			(*sftpReq)[i].FileContent = config[0]
-			(*sftpReq)[i].Path = (*args)["path"][i]
+			(*sftpReq)[i].Path = (*args)["sftpPath"][i]
 		}
 	}
 
@@ -88,6 +88,9 @@ func (s *OpsService) opsInstallServer(pathCount int, task *model.TaskTemplate, h
 	var err error
 	if pathCount == 0 {
 		return nil, nil, errors.New("path参数数量为0")
+	}
+	if pathCount != len((*args)["sftpPath"]) {
+		return nil, nil, errors.New("path和sftpPath参数数量不对等")
 	}
 	if task.CmdTem == "" || task.ConfigTem == "" {
 		return nil, nil, errors.New("任务的命令和传输文件内容都为空")

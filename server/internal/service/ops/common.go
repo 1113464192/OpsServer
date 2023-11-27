@@ -205,6 +205,14 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 	if err != nil {
 		return nil, err
 	}
+	// 判断当前项目下是否有重复Flag
+	var count int64
+	if err = model.DB.Model(&model.ServerRecord{}).Where("project_id = ? AND flag IN ?", task.Pid, flags).Count(&count).Error; err != nil {
+		return nil, fmt.Errorf("查询单服flag信息失败: %v", err)
+	}
+	if count != 0 {
+		return nil, errors.New("与现有单服的flag有冲突")
+	}
 	// 添加到后续的模板变量映射
 	flagsString := util.IntSliceToStringSlice(flags)
 	(*args)["flag"] = flagsString

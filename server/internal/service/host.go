@@ -26,49 +26,49 @@ func Host() *HostService {
 }
 
 // 新增/修改服务器
-func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err error) {
+func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err error) {
 	var host *model.Host
 	var count int64
 	// NULL不会参与分配
-	if model.DB.Model(host).Where("ipv4 = ?", params.Ipv4).Or("ipv6 = ?", params.Ipv6).Count(&count); count > 0 {
+	if model.DB.Model(host).Where("ipv4 = ?", param.Ipv4).Or("ipv6 = ?", param.Ipv6).Count(&count); count > 0 {
 		return nil, errors.New("IP已被使用")
 	}
-	if params.ID != 0 {
+	if param.ID != 0 {
 		// 修改
-		if !util2.CheckIdExists(host, params.ID) {
+		if !util2.CheckIdExists(host, param.ID) {
 			return nil, errors.New("服务器ID不存在")
 		}
 
-		if err := model.DB.Where("id = ?", params.ID).First(host).Error; err != nil {
+		if err := model.DB.Where("id = ?", param.ID).First(host).Error; err != nil {
 			return nil, errors.New("服务器在数据库中查询失败")
 		}
 
-		host.Ipv4 = sql.NullString{String: params.Ipv4, Valid: true}
-		if params.Ipv6 != "" {
-			host.Ipv6 = sql.NullString{String: params.Ipv6, Valid: true}
+		host.Ipv4 = sql.NullString{String: param.Ipv4, Valid: true}
+		if param.Ipv6 != "" {
+			host.Ipv6 = sql.NullString{String: param.Ipv6, Valid: true}
 		}
-		host.User = params.User
-		host.Password = util.XorEncrypt([]byte(params.Password), consts.XorKey)
-		host.Port = params.Port
-		host.Zone = params.Zone
-		host.ZoneTime = params.ZoneTime
-		host.BillingType = params.BillingType
-		host.Cost = params.Cost
-		host.Cloud = params.Cloud
-		host.System = params.System
-		host.Type = params.Type
-		host.Cores = params.Cores
-		host.SystemDisk = params.SystemDisk
-		host.DataDisk = params.DataDisk
-		host.Iops = params.Iops
-		host.Mbps = params.Mbps
-		host.Mem = uint64(params.Mem) * uint64(1024)
+		host.User = param.User
+		host.Password = util.XorEncrypt([]byte(param.Password), consts.XorKey)
+		host.Port = param.Port
+		host.Zone = param.Zone
+		host.ZoneTime = param.ZoneTime
+		host.BillingType = param.BillingType
+		host.Cost = param.Cost
+		host.Cloud = param.Cloud
+		host.System = param.System
+		host.Type = param.Type
+		host.Cores = param.Cores
+		host.SystemDisk = param.SystemDisk
+		host.DataDisk = param.DataDisk
+		host.Iops = param.Iops
+		host.Mbps = param.Mbps
+		host.Mem = uint64(param.Mem) * uint64(1024)
 		// 当前数据则只支持从代码中获取
-		// host.CurrDisk = params.CurrDisk
-		// host.CurrMem = params.CurrMem
-		// host.CurrIowait = params.CurrIowait
-		// host.CurrIdle = params.CurrIdle
-		// host.CurrLoad = params.CurrLoad
+		// host.CurrDisk = param.CurrDisk
+		// host.CurrMem = param.CurrMem
+		// host.CurrIowait = param.CurrIowait
+		// host.CurrIdle = param.CurrIdle
+		// host.CurrLoad = param.CurrLoad
 		// 入库
 		err = model.DB.Save(host).Error
 		if err != nil {
@@ -81,31 +81,31 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		return result, err
 	} else {
 		host = &model.Host{
-			Ipv4:        sql.NullString{String: params.Ipv4, Valid: true},
-			User:        params.User,
-			Password:    util.XorEncrypt([]byte(params.Password), consts.XorKey),
-			Port:        params.Port,
-			Zone:        params.Zone,
-			ZoneTime:    params.ZoneTime,
-			BillingType: params.BillingType,
-			Cost:        params.Cost,
-			Cloud:       params.Cloud,
-			System:      params.System,
-			Type:        params.Type,
-			Cores:       params.Cores,
-			SystemDisk:  params.SystemDisk,
-			DataDisk:    params.DataDisk,
-			Iops:        params.Iops,
-			Mbps:        params.Mbps,
-			Mem:         uint64(params.Mem) * 1024,
-			// CurrDisk:    params.CurrDisk,
-			// CurrMem:     params.CurrMem,
-			// CurrIowait:  params.CurrIowait,
-			// CurrIdle:    params.CurrIdle,
-			// CurrLoad:    params.CurrLoad,
+			Ipv4:        sql.NullString{String: param.Ipv4, Valid: true},
+			User:        param.User,
+			Password:    util.XorEncrypt([]byte(param.Password), consts.XorKey),
+			Port:        param.Port,
+			Zone:        param.Zone,
+			ZoneTime:    param.ZoneTime,
+			BillingType: param.BillingType,
+			Cost:        param.Cost,
+			Cloud:       param.Cloud,
+			System:      param.System,
+			Type:        param.Type,
+			Cores:       param.Cores,
+			SystemDisk:  param.SystemDisk,
+			DataDisk:    param.DataDisk,
+			Iops:        param.Iops,
+			Mbps:        param.Mbps,
+			Mem:         uint64(param.Mem) * 1024,
+			// CurrDisk:    param.CurrDisk,
+			// CurrMem:     param.CurrMem,
+			// CurrIowait:  param.CurrIowait,
+			// CurrIdle:    param.CurrIdle,
+			// CurrLoad:    param.CurrLoad,
 		}
-		if params.Ipv6 != "" {
-			host.Ipv6 = sql.NullString{String: params.Ipv6, Valid: true}
+		if param.Ipv6 != "" {
+			host.Ipv6 = sql.NullString{String: param.Ipv6, Valid: true}
 		}
 		if err = model.DB.Create(host).Error; err != nil {
 			return host, errors.New("创建服务器失败")
@@ -181,9 +181,9 @@ func (s *HostService) DeleteDomain(ids []uint) (err error) {
 }
 
 // 获取主机
-func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64, err error) {
+func (s *HostService) GetHost(param *api.GetHostReq) (hostInfo any, count int64, err error) {
 	var host []model.Host
-	ipstr := "%" + params.Ip + "%"
+	ipstr := "%" + param.Ip + "%"
 	if err := model.DB.Model(&host).Where("UPPER(name) LIKE ?", ipstr).Count(&count).Error; err != nil || count < 1 {
 		return nil, 0, errors.New("记录总数查询失败或不存在该搜索内容")
 	}
@@ -191,10 +191,10 @@ func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64
 	searchReq := &api.SearchReq{
 		Condition: db,
 		Table:     &host,
-		PageInfo:  params.PageInfo,
+		PageInfo:  param.PageInfo,
 	}
-	name := "%" + params.Ip + "%"
-	if params.Ip != "" {
+	name := "%" + param.Ip + "%"
+	if param.Ip != "" {
 		db = model.DB.Where("name LIKE ?", name)
 		searchReq.Condition = db
 		if count, err = dbOper.DbOper().DbFind(searchReq); err != nil {
@@ -213,18 +213,18 @@ func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64
 }
 
 // 获取域名关联的主机
-func (s *HostService) GetDomainAssHost(params *api.GetPagingByIdReq) (hostInfo any, total int64, err error) {
+func (s *HostService) GetDomainAssHost(param *api.GetPagingByIdReq) (hostInfo any, total int64, err error) {
 	var domain model.Domain
-	if !util2.CheckIdExists(&domain, params.Id) {
+	if !util2.CheckIdExists(&domain, param.Id) {
 		return nil, 0, errors.New("域名ID不存在")
 	}
-	if err = model.DB.Preload("Hosts").Where("id = ?", params.Id).First(&domain).Error; err != nil {
+	if err = model.DB.Preload("Hosts").Where("id = ?", param.Id).First(&domain).Error; err != nil {
 		return nil, 0, errors.New("域名查询失败")
 	}
 	assQueryReq := &api.AssQueryReq{
 		Condition: model.DB.Model(&model.Host{}),
 		Table:     &domain.Hosts,
-		PageInfo:  params.PageInfo,
+		PageInfo:  param.PageInfo,
 	}
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err
@@ -237,22 +237,22 @@ func (s *HostService) GetDomainAssHost(params *api.GetPagingByIdReq) (hostInfo a
 }
 
 // 新增或修改域名
-func (s *HostService) UpdateDomain(params *api.UpdateDomainReq) (domain *model.Domain, err error) {
+func (s *HostService) UpdateDomain(param *api.UpdateDomainReq) (domain *model.Domain, err error) {
 	var count int64
 	// NULL不会参与分配
-	if model.DB.Model(domain).Where("Value = ?", params.Value).Count(&count); count > 0 {
+	if model.DB.Model(domain).Where("Value = ?", param.Value).Count(&count); count > 0 {
 		return nil, errors.New("域名已被使用")
 	}
-	if params.Id != 0 {
+	if param.Id != 0 {
 		// 修改
-		if !util2.CheckIdExists(domain, params.Id) {
+		if !util2.CheckIdExists(domain, param.Id) {
 			return nil, errors.New("域名ID不存在")
 		}
 
-		if err := model.DB.Where("id = ?", params.Id).First(domain).Error; err != nil {
+		if err := model.DB.Where("id = ?", param.Id).First(domain).Error; err != nil {
 			return nil, errors.New("服域名在数据库中查询失败")
 		}
-		domain.Value = params.Value
+		domain.Value = param.Value
 		err = model.DB.Save(domain).Error
 		if err != nil {
 			return domain, errors.New("数据保存失败")
@@ -260,7 +260,7 @@ func (s *HostService) UpdateDomain(params *api.UpdateDomainReq) (domain *model.D
 		return domain, err
 	} else {
 		domain = &model.Domain{
-			Value: params.Value,
+			Value: param.Value,
 		}
 		if err = model.DB.Create(domain).Error; err != nil {
 			return domain, errors.New("创建域名失败")
@@ -270,22 +270,22 @@ func (s *HostService) UpdateDomain(params *api.UpdateDomainReq) (domain *model.D
 }
 
 // 更新域名关联的主机
-func (s *HostService) UpdateDomainAss(params *api.UpdateDomainAssHostReq) (err error) {
+func (s *HostService) UpdateDomainAss(param *api.UpdateDomainAssHostReq) (err error) {
 	var host []model.Host
 	var domain model.Domain
 	// 判断所有项目是否都存在
-	if err = util2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
+	if err = util2.CheckIdsExists(model.Host{}, param.Hids); err != nil {
 		return err
 	}
 
-	if !util2.CheckIdExists(&host, params.Did) {
+	if !util2.CheckIdExists(&host, param.Did) {
 		return errors.New("域名ID不存在")
 	}
 
-	if err = model.DB.Find(&host, params.Hids).Error; err != nil {
+	if err = model.DB.Find(&host, param.Hids).Error; err != nil {
 		return errors.New("服务器数据库查询操作失败")
 	}
-	if err = model.DB.First(&domain, params.Did).Error; err != nil {
+	if err = model.DB.First(&domain, param.Did).Error; err != nil {
 		return errors.New("域名数据库查询操作失败")
 	}
 	if err = model.DB.Model(&domain).Association("Hosts").Replace(&host); err != nil {

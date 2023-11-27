@@ -287,12 +287,12 @@ func (s *SSHServer) getSSHClient(hostIp string, param any, insClientGroup *clien
 		return client, err
 	}
 
-	if params, ok := param.(*api.SSHClientConfigReq); ok {
-		client, err = ssh.SSHNewClient(params.HostIp, params.Username, params.SSHPort, params.Password, params.Key, params.Passphrase)
+	if param, ok := param.(*api.SSHClientConfigReq); ok {
+		client, err = ssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
 
 	}
-	if params, ok := param.(*api.SFTPClientConfigReq); ok {
-		client, err = ssh.SSHNewClient(params.HostIp, params.Username, params.SSHPort, params.Password, params.Key, params.Passphrase)
+	if param, ok := param.(*api.SFTPClientConfigReq); ok {
+		client, err = ssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
 	}
 	if client == nil {
 		return nil, errors.New("未能成功获取到ssh.Client")

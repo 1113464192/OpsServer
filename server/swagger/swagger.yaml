@@ -89,7 +89,7 @@ definitions:
   api.UpdateTaskTemplateReq:
     properties:
       args:
-        description: '任意变量, 如: path=/data/a_b_c'
+        description: '任意变量, 如: path=/data/a_b_c,sftpPath=/data/a_b_c/server/config'
         items:
           type: string
         type: array
@@ -1247,7 +1247,7 @@ paths:
       summary: 工单删除
       tags:
       - Ops相关
-  /api/v1/ops/execTask:
+  /api/v1/ops/execSSHTask:
     post:
       description: 返回执行结果
       parameters:
@@ -1282,7 +1282,7 @@ paths:
       summary: 工单操作执行
       tags:
       - Ops相关
-  /api/v1/ops/getExecParam:
+  /api/v1/ops/getSSHExecParam:
     get:
       description: 返回sftp和ssh的执行参数
       parameters:
@@ -1326,6 +1326,9 @@ paths:
         name: Authorization
         required: true
         type: string
+      - in: query
+        name: id
+        type: integer
       - description: 页码
         in: query
         name: page
@@ -1335,11 +1338,8 @@ paths:
         name: page_size
         type: integer
       - in: query
-        name: task_name
+        name: string
         type: string
-      - in: query
-        name: tid
-        type: integer
       produces:
       - application/json
       responses:
@@ -1681,6 +1681,105 @@ paths:
       summary: 新增/修改项目
       tags:
       - 项目相关
+  /api/v1/server/getServerRecord:
+    get:
+      description: 传入查询所需参数,输了ID就不用Flag和页码以及PID，没传ID的话则必填项目ID，然后flag和name二选一加页码
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: flag
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
+      - description: 如果不输入ID则必填
+        in: query
+        name: pid
+        type: integer
+      - in: query
+        name: server_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 查看单服记录列表
+      tags:
+      - 服务端相关
+  /api/v1/server/updateServerRecord:
+    put:
+      description: 传入更改所需参数
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: flag
+        required: true
+        type: string
+      - in: query
+        name: id
+        required: true
+        type: integer
+      - in: query
+        name: path
+        required: true
+        type: string
+      - in: query
+        name: server_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 更改单服记录列表
+      tags:
+      - 服务端相关
   /api/v1/ssh/testSSH:
     post:
       description: 传入SSH命令所需参数
@@ -2254,9 +2353,6 @@ paths:
       - in: query
         name: id
         type: integer
-      - in: query
-        name: name
-        type: string
       - description: 页码
         in: query
         name: page
@@ -2265,6 +2361,9 @@ paths:
         in: query
         name: page_size
         type: integer
+      - in: query
+        name: string
+        type: string
       produces:
       - application/json
       responses:

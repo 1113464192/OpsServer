@@ -34,12 +34,6 @@ type AuthLoginRes struct {
 	Token    string `json:"token"`
 }
 
-type GetUserListReq struct {
-	Id   uint   `json:"id" form:"id"`
-	Name string `json:"name" form:"name"`
-	PageInfo
-}
-
 // 用户结果返回
 type UserRes struct {
 	ID         uint

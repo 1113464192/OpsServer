@@ -23,29 +23,29 @@ func Group() *GroupService {
 }
 
 // 修改或新增用户组
-func (s *GroupService) UpdateGroup(params *api.UpdateGroupReq) (groupInfo any, err error) {
+func (s *GroupService) UpdateGroup(param *api.UpdateGroupReq) (groupInfo any, err error) {
 	var group model.UserGroup
 	var count int64
 	// 判断组是否被占用
-	if model.DB.Model(&group).Where("name = ? AND id != ?", params.Name, params.ID).Count(&count); count > 0 {
+	if model.DB.Model(&group).Where("name = ? AND id != ?", param.Name, param.ID).Count(&count); count > 0 {
 		return group, errors.New("组名已被使用")
 	}
 	// 根据ID查询组
-	if params.ID != 0 {
+	if param.ID != 0 {
 		// 判断组是否存在
-		if !util2.CheckIdExists(&group, params.ID) {
+		if !util2.CheckIdExists(&group, param.ID) {
 			return group, errors.New("用户组不存在")
 		}
 		// 获取组对象
-		if err := model.DB.Where("id = ?", params.ID).First(&group).Error; err != nil {
+		if err := model.DB.Where("id = ?", param.ID).First(&group).Error; err != nil {
 			return group, errors.New("用户组数据库查询失败")
 		}
 
-		group.Name = params.Name
-		group.ParentId = params.ParentId
+		group.Name = param.Name
+		group.ParentId = param.ParentId
 		// 有标识则写入，没有默认为Null
-		if params.Mark != "" {
-			group.Mark = sql.NullString{String: params.Mark, Valid: true}
+		if param.Mark != "" {
+			group.Mark = sql.NullString{String: param.Mark, Valid: true}
 		}
 		// 入库
 		err = model.DB.Save(&group).Error
@@ -60,11 +60,11 @@ func (s *GroupService) UpdateGroup(params *api.UpdateGroupReq) (groupInfo any, e
 		return result, err
 	} else {
 		group = model.UserGroup{
-			Name:     params.Name,
-			ParentId: params.ParentId,
+			Name:     param.Name,
+			ParentId: param.ParentId,
 		}
-		if params.Mark != "" {
-			group.Mark = sql.NullString{String: params.Mark, Valid: true}
+		if param.Mark != "" {
+			group.Mark = sql.NullString{String: param.Mark, Valid: true}
 		}
 		if err = model.DB.Create(&group).Error; err != nil {
 			logger.Log().Error("Group", "创建用户组失败", err)
@@ -79,20 +79,20 @@ func (s *GroupService) UpdateGroup(params *api.UpdateGroupReq) (groupInfo any, e
 }
 
 // 关联用户
-func (s *GroupService) UpdateUserAss(params *api.UpdateUserAssReq) (err error) {
+func (s *GroupService) UpdateUserAss(param *api.UpdateUserAssReq) (err error) {
 	var group model.UserGroup
 	var user []model.User
 	// 判断用户是否都存在
-	if err = util2.CheckIdsExists(user, params.UserIDs); err != nil {
+	if err = util2.CheckIdsExists(user, param.UserIDs); err != nil {
 		return err
 	}
 
 	tx := model.DB.Begin()
-	if err := tx.First(&group, params.GroupID).Error; err != nil {
+	if err := tx.First(&group, param.GroupID).Error; err != nil {
 		tx.Rollback()
 		return errors.New("用户组不存在")
 	}
-	if err := tx.Find(&user, params.UserIDs).Error; err != nil {
+	if err := tx.Find(&user, param.UserIDs).Error; err != nil {
 		tx.Rollback()
 		return errors.New("用户不存在")
 	}
@@ -132,16 +132,16 @@ func (s *GroupService) DeleteUserGroup(ids []uint) (err error) {
 }
 
 // 获取用户组
-func (s *GroupService) GetGroupList(params *api.GetGroupReq) (groupObj any, total int64, err error) {
+func (s *GroupService) GetGroupList(param *api.GetGroupReq) (groupObj any, total int64, err error) {
 	var group []model.UserGroup
 	db := model.DB.Model(&group)
 	searchReq := &api.SearchReq{
 		Condition: db,
 		Table:     &group,
-		PageInfo:  params.PageInfo,
+		PageInfo:  param.PageInfo,
 	}
-	if params.Name != "" {
-		name := "%" + strings.ToUpper(params.Name) + "%"
+	if param.Name != "" {
+		name := "%" + strings.ToUpper(param.Name) + "%"
 		db = model.DB.Where("UPPER(name) LIKE ?", name)
 		searchReq.Condition = db
 		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
@@ -160,19 +160,19 @@ func (s *GroupService) GetGroupList(params *api.GetGroupReq) (groupObj any, tota
 }
 
 // 获取用户组对应用户
-func (s *GroupService) GetAssUser(params *api.GetPagingByIdReq) (userObj any, total int64, err error) {
+func (s *GroupService) GetAssUser(param *api.GetPagingByIdReq) (userObj any, total int64, err error) {
 	var group model.UserGroup
-	if !util2.CheckIdExists(&group, params.Id) {
+	if !util2.CheckIdExists(&group, param.Id) {
 		return nil, 0, errors.New("组ID不存在")
 	}
-	if err = model.DB.Preload("Users").Where("id = ?", params.Id).First(&group).Error; err != nil {
+	if err = model.DB.Preload("Users").Where("id = ?", param.Id).First(&group).Error; err != nil {
 		return nil, 0, errors.New("组查询失败")
 	}
 	// 分页获取
 	assQueryReq := &api.AssQueryReq{
 		Condition: model.DB.Model(&model.UserGroup{}),
 		Table:     &group.Users,
-		PageInfo:  params.PageInfo,
+		PageInfo:  param.PageInfo,
 	}
 
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
@@ -187,19 +187,19 @@ func (s *GroupService) GetAssUser(params *api.GetPagingByIdReq) (userObj any, to
 }
 
 // 获取用户组对应项目
-func (s *GroupService) GetAssProject(params *api.GetPagingByIdReq) (projectObj any, total int64, err error) {
+func (s *GroupService) GetAssProject(param *api.GetPagingByIdReq) (projectObj any, total int64, err error) {
 	var group model.UserGroup
-	if !util2.CheckIdExists(&group, params.Id) {
+	if !util2.CheckIdExists(&group, param.Id) {
 		return nil, 0, errors.New("组ID不存在")
 	}
-	if err = model.DB.Preload("Users").Where("id = ?", params.Id).First(&group).Error; err != nil {
+	if err = model.DB.Preload("Users").Where("id = ?", param.Id).First(&group).Error; err != nil {
 		return nil, 0, errors.New("组查询失败")
 	}
 	// 分页获取项目
 	assQueryReq := &api.AssQueryReq{
 		Condition: model.DB.Model(&model.UserGroup{}),
 		Table:     &group.Project,
-		PageInfo:  params.PageInfo,
+		PageInfo:  param.PageInfo,
 	}
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err

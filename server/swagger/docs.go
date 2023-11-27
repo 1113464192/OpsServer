@@ -1643,7 +1643,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ops/execTask": {
+        "/api/v1/ops/execSSHTask": {
             "post": {
                 "description": "返回执行结果",
                 "produces": [
@@ -1696,7 +1696,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ops/getExecParam": {
+        "/api/v1/ops/getSSHExecParam": {
             "get": {
                 "description": "返回sftp和ssh的执行参数",
                 "produces": [
@@ -1769,6 +1769,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "页码",
                         "name": "page",
                         "in": "query"
@@ -1781,12 +1786,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "task_name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "tid",
+                        "name": "string",
                         "in": "query"
                     }
                 ],
@@ -2270,6 +2270,157 @@ const docTemplate = `{
                         "type": "integer",
                         "name": "user_id",
                         "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/server/getServerRecord": {
+            "get": {
+                "description": "传入查询所需参数,输了ID就不用Flag和页码以及PID，没传ID的话则必填项目ID，然后flag和name二选一加页码",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务端相关"
+                ],
+                "summary": "查看单服记录列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "flag",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "如果不输入ID则必填",
+                        "name": "pid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "server_name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/server/updateServerRecord": {
+            "put": {
+                "description": "传入更改所需参数",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务端相关"
+                ],
+                "summary": "更改单服记录列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "flag",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "server_name",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -3171,11 +3322,6 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "description": "页码",
                         "name": "page",
@@ -3185,6 +3331,11 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "每页大小",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "string",
                         "in": "query"
                     }
                 ],
@@ -3565,7 +3716,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "args": {
-                    "description": "任意变量, 如: path=/data/a_b_c",
+                    "description": "任意变量, 如: path=/data/a_b_c,sftpPath=/data/a_b_c/server/config",
                     "type": "array",
                     "items": {
                         "type": "string"

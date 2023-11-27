@@ -22,27 +22,27 @@ func Project() *ProjectService {
 }
 
 // 修改或新增项目
-func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInfo any, err error) {
+func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo any, err error) {
 	var project model.Project
 	var count int64
 	// 判断项目名是否已被使用
-	if model.DB.Model(&project).Where("name = ? AND id != ?", params.Name, params.ID).Count(&count); count > 0 {
+	if model.DB.Model(&project).Where("name = ? AND id != ?", param.Name, param.ID).Count(&count); count > 0 {
 		return project, errors.New("项目名已被使用")
 	}
 	// ID查询
-	if params.ID != 0 {
-		if !util2.CheckIdExists(&project, params.ID) {
+	if param.ID != 0 {
+		if !util2.CheckIdExists(&project, param.ID) {
 			return project, errors.New("项目不存在")
 		}
 
-		if err := model.DB.Where("id = ?", params.ID).First(&project).Error; err != nil {
+		if err := model.DB.Where("id = ?", param.ID).First(&project).Error; err != nil {
 			return project, errors.New("项目数据库查询失败")
 		}
 
-		project.Name = params.Name
-		project.Status = params.Status
-		project.UserId = params.UserId
-		project.GroupId = params.GroupId
+		project.Name = param.Name
+		project.Status = param.Status
+		project.UserId = param.UserId
+		project.GroupId = param.GroupId
 		err = model.DB.Save(&project).Error
 		if err != nil {
 			return project, errors.New("数据保存失败")
@@ -54,10 +54,10 @@ func (s *ProjectService) UpdateProject(params *api.UpdateProjectReq) (projectInf
 		return result, err
 	} else {
 		project = model.Project{
-			Name:    params.Name,
-			Status:  params.Status,
-			UserId:  params.UserId,
-			GroupId: params.GroupId,
+			Name:    param.Name,
+			Status:  param.Status,
+			UserId:  param.UserId,
+			GroupId: param.GroupId,
 		}
 		if err = model.DB.Create(&project).Error; err != nil {
 			logger.Log().Error("project", "创建项目失败", err)
@@ -94,22 +94,22 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 }
 
 // 项目关联服务器
-func (s *ProjectService) UpdateHostAss(params *api.UpdateProjectAssHostReq) (err error) {
+func (s *ProjectService) UpdateHostAss(param *api.UpdateProjectAssHostReq) (err error) {
 	var project model.Project
 	var host []model.Host
 	// 判断所有项目是否都存在
-	if err = util2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
+	if err = util2.CheckIdsExists(model.Host{}, param.Hids); err != nil {
 		return err
 	}
 
-	if !util2.CheckIdExists(&project, params.Pid) {
+	if !util2.CheckIdExists(&project, param.Pid) {
 		return errors.New("项目ID不存在")
 	}
 
-	if err = model.DB.Find(&host, params.Hids).Error; err != nil {
+	if err = model.DB.Find(&host, param.Hids).Error; err != nil {
 		return errors.New("服务器数据库查询操作失败")
 	}
-	if err = model.DB.First(&project, params.Pid).Error; err != nil {
+	if err = model.DB.First(&project, param.Pid).Error; err != nil {
 		return errors.New("项目数据库查询操作失败")
 	}
 	if err = model.DB.Model(&project).Association("Hosts").Replace(&host); err != nil {
@@ -122,16 +122,16 @@ func (s *ProjectService) UpdateHostAss(params *api.UpdateProjectAssHostReq) (err
 }
 
 // 获取项目
-func (s *ProjectService) GetProject(params *api.GetProjectReq) (projectObj any, total int64, err error) {
+func (s *ProjectService) GetProject(param *api.GetProjectReq) (projectObj any, total int64, err error) {
 	var project []model.Project
 	db := model.DB.Model(&project)
 	searchReq := &api.SearchReq{
 		Condition: db,
 		Table:     &project,
-		PageInfo:  params.PageInfo,
+		PageInfo:  param.PageInfo,
 	}
-	if params.Name != "" {
-		name := "%" + strings.ToUpper(params.Name) + "%"
+	if param.Name != "" {
+		name := "%" + strings.ToUpper(param.Name) + "%"
 		db = model.DB.Where("UPPER(name) LIKE ?", name)
 		searchReq.Condition = db
 		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
@@ -174,18 +174,18 @@ func (s *ProjectService) GetSelfProjectList(groupList *[]model.UserGroup, page *
 }
 
 // 获取项目关联的服务器
-func (s *ProjectService) GetHostAss(params *api.GetHostAssReq) (hostInfo any, total int64, err error) {
+func (s *ProjectService) GetHostAss(param *api.GetHostAssReq) (hostInfo any, total int64, err error) {
 	var project model.Project
-	if !util2.CheckIdExists(&project, params.ProjectId) {
+	if !util2.CheckIdExists(&project, param.ProjectId) {
 		return nil, 0, errors.New("项目ID不存在")
 	}
-	if err = model.DB.Preload("Hosts").Where("id = ?", params.ProjectId).First(&project).Error; err != nil {
+	if err = model.DB.Preload("Hosts").Where("id = ?", param.ProjectId).First(&project).Error; err != nil {
 		return nil, 0, errors.New("项目查询失败")
 	}
 	assQueryReq := &api.AssQueryReq{
 		Condition: model.DB.Model(&model.Host{}),
 		Table:     &project.Hosts,
-		PageInfo:  params.PageInfo,
+		PageInfo:  param.PageInfo,
 	}
 	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err

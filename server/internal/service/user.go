@@ -25,36 +25,36 @@ func User() *UserService {
 }
 
 // 修改/添加用户
-func (s *UserService) UpdateUser(params *api.UpdateUserReq) (any, string, error) {
+func (s *UserService) UpdateUser(param *api.UpdateUserReq) (any, string, error) {
 	var err error
 	// 判断电话和邮箱是否正确
-	if params.Mobile != "" && !util.CheckMobile(params.Mobile) {
-		return params.Mobile, "", errors.New("电话格式错误")
+	if param.Mobile != "" && !util.CheckMobile(param.Mobile) {
+		return param.Mobile, "", errors.New("电话格式错误")
 	}
 
-	if params.Email != "" && !util.CheckEmail(params.Email) {
-		return params.Email, "", errors.New("邮箱格式错误")
+	if param.Email != "" && !util.CheckEmail(param.Email) {
+		return param.Email, "", errors.New("邮箱格式错误")
 	}
 
 	var user model.User
 	var count int64
-	if params.ID != 0 {
+	if param.ID != 0 {
 		// 修改
-		if !util2.CheckIdExists(&user, params.ID) {
+		if !util2.CheckIdExists(&user, param.ID) {
 			return nil, "", errors.New("用户不存在")
 		}
 
-		if err := model.DB.Where("id = ?", params.ID).Find(&user).Error; err != nil {
+		if err := model.DB.Where("id = ?", param.ID).Find(&user).Error; err != nil {
 			return nil, "", errors.New("用户数据库查询失败")
 		}
-		user.Username = params.Username
-		user.Name = params.Name
-		user.Expiration = params.Expiration
-		user.Mobile = params.Mobile
-		user.Email = params.Email
+		user.Username = param.Username
+		user.Name = param.Name
+		user.Expiration = param.Expiration
+		user.Mobile = param.Mobile
+		user.Email = param.Email
 
 		// 判断username是否和现有用户重复
-		if model.DB.Model(&user).Where("username = ? AND id != ?", params.Username, params.ID).Count(&count); count > 0 {
+		if model.DB.Model(&user).Where("username = ? AND id != ?", param.Username, param.ID).Count(&count); count > 0 {
 			return nil, "", errors.New("用户名已被使用")
 		}
 
@@ -72,16 +72,16 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (any, string, error)
 		return result, "", err
 	} else {
 		// 判断username是否和现有用户重复
-		if model.DB.Model(&user).Where("username = ?", params.Username).Count(&count); count > 0 {
+		if model.DB.Model(&user).Where("username = ?", param.Username).Count(&count); count > 0 {
 			return user, "", errors.New("账号已经注册")
 		}
 		user = model.User{
-			Username:   params.Username,
-			Name:       params.Name,
-			Expiration: params.Expiration,
-			Mobile:     params.Mobile,
-			Email:      params.Email,
-			IsAdmin:    params.IsAdmin,
+			Username:   param.Username,
+			Name:       param.Name,
+			Expiration: param.Expiration,
+			Mobile:     param.Mobile,
+			Email:      param.Email,
+			IsAdmin:    param.IsAdmin,
 		}
 		// 生成初始化密码
 		password := util.RandStringRunes(12)
@@ -103,15 +103,15 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (any, string, error)
 }
 
 // 获取用户切片
-func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total int64, err error) {
+func (s *UserService) GetUserList(param api.SearchStringReq) (list any, total int64, err error) {
 	var user []model.User
 	db := model.DB.Model(&user)
 	// 有ID优先ID
-	if params.Id != 0 {
-		if err = db.Where("id = ?", params.Id).Count(&total).Error; err != nil {
+	if param.Id != 0 {
+		if err = db.Where("id = ?", param.Id).Count(&total).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询ids总数错误: %v", err)
 		}
-		if err = db.Where("id = ?", params.Id).Find(&user).Error; err != nil {
+		if err = db.Where("id = ?", param.Id).Find(&user).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询ids错误: %v", err)
 		}
 	} else {
@@ -119,11 +119,11 @@ func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total in
 		searchReq := &api.SearchReq{
 			Condition: db,
 			Table:     &user,
-			PageInfo:  params.PageInfo,
+			PageInfo:  param.PageInfo,
 		}
 		// 用户名模糊查询
-		if params.Name != "" {
-			name := "%" + strings.ToUpper(params.Name) + "%"
+		if param.String != "" {
+			name := "%" + strings.ToUpper(param.String) + "%"
 			db = model.DB.Model(&user).Where("UPPER(name) LIKE ?", name)
 			searchReq.Condition = db
 			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
@@ -172,11 +172,11 @@ func (s *UserService) DeleteUser(ids []uint) (err error) {
 }
 
 // 修改用户状态
-func (s *UserService) UpdateStatus(params *api.StatusReq) (err error) {
-	if !util2.CheckIdExists(&model.User{}, params.ID) {
+func (s *UserService) UpdateStatus(param *api.StatusReq) (err error) {
+	if !util2.CheckIdExists(&model.User{}, param.ID) {
 		return errors.New("用户不存在")
 	}
-	err = model.DB.Model(&model.User{}).Where("id = ?", params.ID).Update("status", params.Status).Error
+	err = model.DB.Model(&model.User{}).Where("id = ?", param.ID).Update("status", param.Status).Error
 	return err
 }
 

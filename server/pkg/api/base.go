@@ -82,7 +82,7 @@ type IdsReq struct {
 	Ids []uint `json:"ids" form:"ids" binding:"required"`
 }
 
-// IdReq ID单选选请求格式
+// IdReq ID单选请求格式
 type IdReq struct {
 	Id uint `json:"id" form:"id" binding:"required"`
 }
@@ -94,5 +94,12 @@ type GetPagingByIdReq struct {
 
 type GetPagingByIdsReq struct {
 	Ids []uint `json:"ids" form:"ids"`
+	PageInfo
+}
+
+// IdReq ID+String请求格式
+type SearchStringReq struct {
+	Id     uint   `json:"id" form:"id"`
+	String string `json:"string" form:"string"`
 	PageInfo
 }

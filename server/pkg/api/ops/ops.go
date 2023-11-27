@@ -1,17 +1,9 @@
 package ops
 
-import "fqhWeb/pkg/api"
-
 type SubmitTaskReq struct {
 	Tid     uint   `form:"tid" json:"tid"`
 	Uid     uint   `form:"uid" json:"uid"`
 	Auditor []uint `form:"auditorId" json:"auditorId"`
-}
-
-type GetTaskReq struct {
-	Tid      uint   `form:"tid" json:"tid"`
-	TaskName string `form:"task_name" json:"task_name"`
-	api.PageInfo
 }
 
 type TaskRecordRes struct {
@@ -32,7 +24,7 @@ type TaskRecordSSHRes struct {
 	Username    string `json:"username"`
 	SSHPort     string `json:"ssh_port"`
 	Cmd         string `json:"cmd"`
-	Path        string `json:"path"`
+	Path        string `json:"path"` // sftp的
 	FileContent string `json:"file_content"`
 }
 

@@ -106,15 +106,15 @@ func (s *OpsService) SubmitTask(param ops.SubmitTaskReq) (result *[]ops.TaskReco
 }
 
 // 获取工单
-func (s *OpsService) GetTask(param *ops.GetTaskReq) (result *[]ops.TaskRecordRes, total int64, err error) {
+func (s *OpsService) GetTask(param *api.SearchStringReq) (result *[]ops.TaskRecordRes, total int64, err error) {
 	var task []model.TaskRecord
 	db := model.DB.Model(&task)
 	// id存在返回id对应model
-	if param.Tid != 0 {
-		if err = db.Where("id = ?", param.Tid).Count(&total).Error; err != nil {
+	if param.Id != 0 {
+		if err = db.Where("id = ?", param.Id).Count(&total).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询id数错误: %v", err)
 		}
-		if err = db.Where("id = ?", param.Tid).First(&task).Error; err != nil {
+		if err = db.Where("id = ?", param.Id).First(&task).Error; err != nil {
 			return nil, 0, fmt.Errorf("查询id错误: %v", err)
 		}
 	} else {
@@ -124,8 +124,8 @@ func (s *OpsService) GetTask(param *ops.GetTaskReq) (result *[]ops.TaskRecordRes
 			PageInfo:  param.PageInfo,
 		}
 		// 返回name的模糊匹配
-		if param.TaskName != "" {
-			name := "%" + strings.ToUpper(param.TaskName) + "%"
+		if param.String != "" {
+			name := "%" + strings.ToUpper(param.String) + "%"
 			searchReq.Condition = db.Where("UPPER(task_name) LIKE ?", name).Order("id desc")
 			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 				return nil, 0, err
@@ -152,7 +152,7 @@ func (s *OpsService) GetTask(param *ops.GetTaskReq) (result *[]ops.TaskRecordRes
 }
 
 // 获取执行参数
-func (s *OpsService) GetExecParam(tid uint) (*[]api.SSHClientConfigReq, *[]api.SFTPClientConfigReq, error) {
+func (s *OpsService) GetSSHExecParam(tid uint) (*[]api.SSHClientConfigReq, *[]api.SFTPClientConfigReq, error) {
 	var sshReq []api.SSHClientConfigReq
 	var sftpReq []api.SFTPClientConfigReq
 	var err error
@@ -279,15 +279,15 @@ func (s *OpsService) recordServerList(data *string, pid uint) (err error) {
 	}
 	pathCount := len(args["path"])
 	if pathCount == len(args["serverName"]) {
-		var serverList []model.ServerList
-		var server model.ServerList
+		var serverList []model.ServerRecord
+		var server model.ServerRecord
 		var hostIds []uint
 		strHostIds := args["hostId"]
 		if hostIds, err = util.StringSliceToUintSlice(&strHostIds); err != nil {
 			return err
 		}
 		for i := 0; i < pathCount; i++ {
-			server = model.ServerList{
+			server = model.ServerRecord{
 				Flag:       args["flag"][i],
 				Path:       args["path"][i],
 				ServerName: args["serverName"][i],
@@ -306,7 +306,7 @@ func (s *OpsService) recordServerList(data *string, pid uint) (err error) {
 }
 
 // 执行工单操作
-func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error) {
+func (s *OpsService) OpsExecSSHTask(id uint) (map[string][]api.SSHResultRes, error) {
 	var result *[]api.SSHResultRes
 	var err error
 	var task model.TaskRecord
@@ -318,17 +318,9 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 	}
 
 	data := make(map[string][]api.SSHResultRes)
-	sshReq, sftpReq, err := s.GetExecParam(id)
+	sshReq, sftpReq, err := s.GetSSHExecParam(id)
 	if err != nil {
 		return nil, fmt.Errorf("获取执行参数失败: %v", err)
-	}
-	if len(*sftpReq) != 0 {
-		result, err = service.SSH().RunSFTPAsync(sftpReq)
-		data["ssh"] = *result
-		if err != nil {
-			err2 := s.execTaskResultWriteDB(3, id, &data)
-			return nil, fmt.Errorf("SFTP执行失败: %v。%v", err, err2)
-		}
 	}
 	if len(*sshReq) != 0 {
 		result, err = service.SSH().RunSSHCmdAsync(sshReq)
@@ -336,6 +328,14 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 		if err != nil {
 			err2 := s.execTaskResultWriteDB(3, id, &data)
 			return nil, fmt.Errorf("SSH执行失败: %v。%v", err, err2)
+		}
+	}
+	if len(*sftpReq) != 0 {
+		result, err = service.SSH().RunSFTPAsync(sftpReq)
+		data["ssh"] = *result
+		if err != nil {
+			err2 := s.execTaskResultWriteDB(3, id, &data)
+			return nil, fmt.Errorf("SFTP执行失败: %v。%v", err, err2)
 		}
 	}
 	if len(data) == 0 {
@@ -347,6 +347,7 @@ func (s *OpsService) OpsExecTask(id uint) (map[string][]api.SSHResultRes, error)
 
 	// 判断是否属于装服类型
 	if strings.Contains(task.Template.TypeName, consts.OperationInstallServerType) {
+		// 写入单服数据库
 		if err = s.recordServerList(&task.Args, task.Template.Pid); err != nil {
 			return data, fmt.Errorf("操作执行完成, 但写入serverlist报错: %v", err)
 		}

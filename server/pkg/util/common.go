@@ -259,11 +259,11 @@ func GenerateExprResult(rules map[string]string, flag any) ([]float64, error) {
 	return resultList, nil
 }
 
-func ConvertToJson(params []string) (res string, err error) {
+func ConvertToJson(param []string) (res string, err error) {
 	var extraByte []byte
 	var extra = make(map[int]string)
-	if len(params) > 0 {
-		for i, v := range params {
+	if len(param) > 0 {
+		for i, v := range param {
 			extra[i] = v
 		}
 	}
@@ -275,9 +275,9 @@ func ConvertToJson(params []string) (res string, err error) {
 }
 
 // 传x=y切片
-func ConvertToJsonPair(params []string) (res string, err error) {
+func ConvertToJsonPair(param []string) (res string, err error) {
 	data := make(map[string][]string)
-	for _, param := range params {
+	for _, param := range param {
 		pair := strings.SplitN(param, "=", -1)
 		if len(pair) != 2 {
 			return "", fmt.Errorf("invalid key-value pair: %s", param)

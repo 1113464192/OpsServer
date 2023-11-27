@@ -11,7 +11,7 @@ type TaskTemplate struct {
 	Pid        uint         `json:"pid" gorm:"index;comment: 项目ID"`
 	Condition  string       `json:"condition" gorm:"type:text;comment:如: mem=5 代表1个服最少占用5G"`
 	PortRule   string       `json:"port_rule" gorm:"type:text;comment: 端口规则,如: serverPort=10000 + flag % 1000 用模板变量名"`
-	Args       string       `json:"args" gorm:"type: text;comment: 任意变量, 如: path=/data/a_b_c"`
+	Args       string       `json:"args" gorm:"type: text;comment: 任意变量, 如: path=/data/a_b_c,sftpPath=/data/a_b_c/server/config"`
 	Hosts      []Host       `gorm:"many2many:template_host"`
 	Auditor    []User       `gorm:"many2many:auditor_task"`
 	Project    Project      `gorm:"foreignKey:Pid"`
