@@ -3,7 +3,7 @@ package middleware
 import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
-	"fqhWeb/pkg/utils/jwt"
+	"fqhWeb/pkg/util/jwt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

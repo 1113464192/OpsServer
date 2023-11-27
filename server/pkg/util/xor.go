@@ -1,4 +1,4 @@
-package utils
+package util
 
 func XorEncrypt(data []byte, key byte) []byte {
 	encryptedData := make([]byte, len(data))

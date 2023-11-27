@@ -8,7 +8,7 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils/ssh"
+	"fqhWeb/pkg/util/ssh"
 	"os"
 	"sync"
 

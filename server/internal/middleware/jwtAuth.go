@@ -5,7 +5,7 @@ import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils/jwt"
+	"fqhWeb/pkg/util/jwt"
 	"strings"
 
 	"github.com/gin-gonic/gin"

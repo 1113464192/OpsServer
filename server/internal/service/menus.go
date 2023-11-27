@@ -6,7 +6,7 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils2"
+	"fqhWeb/pkg/util2"
 )
 
 type MenuService struct {
@@ -30,7 +30,7 @@ func (s *MenuService) UpdateMenu(params *api.UpdateMenuReq) (menuInfo any, err e
 	}
 	if params.ID != 0 {
 		// 判断菜单是否存在
-		if !utils2.CheckIdExists(&menu, params.ID) {
+		if !util2.CheckIdExists(&menu, params.ID) {
 			return menu, errors.New("该菜单不存在")
 		}
 
@@ -81,10 +81,10 @@ func (s *MenuService) UpdateMenuAss(params *api.UpdateMenuAssReq) (menuObj any, 
 	var menu model.Menus
 	var groups []model.UserGroup
 	// 默认添加管理组
-	// if !utils.IsSliceContain(params.GroupIDs, 1) {
+	// if !util.IsSliceContain(params.GroupIDs, 1) {
 	// 	params.GroupIDs = append(params.GroupIDs, 1)
 	// }
-	if err = utils2.CheckIdsExists(model.UserGroup{}, params.GroupIDs); err != nil {
+	if err = util2.CheckIdsExists(model.UserGroup{}, params.GroupIDs); err != nil {
 		return nil, err
 	}
 
@@ -131,7 +131,7 @@ func (s *MenuService) GetMenuList(gid uint, isAdmin uint8) (menu *[]model.Menus,
 
 // 删除菜单
 func (s *MenuService) DeleteMenu(ids []uint) (err error) {
-	if err = utils2.CheckIdsExists(model.UserGroup{}, ids); err != nil {
+	if err = util2.CheckIdsExists(model.UserGroup{}, ids); err != nil {
 		return err
 	}
 	var menu []model.Menus

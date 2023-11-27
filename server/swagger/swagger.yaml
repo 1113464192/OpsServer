@@ -43,17 +43,6 @@ definitions:
       meta:
         $ref: '#/definitions/api.Meta'
     type: object
-  api.SubmitTaskReq:
-    properties:
-      auditorId:
-        items:
-          type: integer
-        type: array
-      tid:
-        type: integer
-      uid:
-        type: integer
-    type: object
   api.TestSSHReq:
     properties:
       host_id:
@@ -164,6 +153,17 @@ definitions:
     required:
     - group_id
     - user_id
+    type: object
+  ops.SubmitTaskReq:
+    properties:
+      auditorId:
+        items:
+          type: integer
+        type: array
+      tid:
+        type: integer
+      uid:
+        type: integer
     type: object
 info:
   contact: {}
@@ -1376,7 +1376,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api.SubmitTaskReq'
+          $ref: '#/definitions/ops.SubmitTaskReq'
       produces:
       - application/json
       responses:

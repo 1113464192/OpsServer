@@ -7,9 +7,9 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
-	"fqhWeb/pkg/utils"
-	"fqhWeb/pkg/utils/jwt"
-	"fqhWeb/pkg/utils2"
+	"fqhWeb/pkg/util"
+	"fqhWeb/pkg/util/jwt"
+	"fqhWeb/pkg/util2"
 	"io"
 	"mime/multipart"
 	"strings"
@@ -28,11 +28,11 @@ func User() *UserService {
 func (s *UserService) UpdateUser(params *api.UpdateUserReq) (any, string, error) {
 	var err error
 	// 判断电话和邮箱是否正确
-	if params.Mobile != "" && !utils.CheckMobile(params.Mobile) {
+	if params.Mobile != "" && !util.CheckMobile(params.Mobile) {
 		return params.Mobile, "", errors.New("电话格式错误")
 	}
 
-	if params.Email != "" && !utils.CheckEmail(params.Email) {
+	if params.Email != "" && !util.CheckEmail(params.Email) {
 		return params.Email, "", errors.New("邮箱格式错误")
 	}
 
@@ -40,7 +40,7 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (any, string, error)
 	var count int64
 	if params.ID != 0 {
 		// 修改
-		if !utils2.CheckIdExists(&user, params.ID) {
+		if !util2.CheckIdExists(&user, params.ID) {
 			return nil, "", errors.New("用户不存在")
 		}
 
@@ -84,8 +84,8 @@ func (s *UserService) UpdateUser(params *api.UpdateUserReq) (any, string, error)
 			IsAdmin:    params.IsAdmin,
 		}
 		// 生成初始化密码
-		password := utils.RandStringRunes(12)
-		user.Password, err = utils.GenerateFromPassword(password)
+		password := util.RandStringRunes(12)
+		user.Password, err = util.GenerateFromPassword(password)
 		if err != nil {
 			return user, "", errors.New("用户密码bcrypt加密失败")
 		}
@@ -147,7 +147,7 @@ func (s *UserService) GetUserList(params api.GetUserListReq) (list any, total in
 
 // 删除用户
 func (s *UserService) DeleteUser(ids []uint) (err error) {
-	if err = utils2.CheckIdsExists(model.User{}, ids); err != nil {
+	if err = util2.CheckIdsExists(model.User{}, ids); err != nil {
 		return err
 	}
 	var user []model.User
@@ -173,7 +173,7 @@ func (s *UserService) DeleteUser(ids []uint) (err error) {
 
 // 修改用户状态
 func (s *UserService) UpdateStatus(params *api.StatusReq) (err error) {
-	if !utils2.CheckIdExists(&model.User{}, params.ID) {
+	if !util2.CheckIdExists(&model.User{}, params.ID) {
 		return errors.New("用户不存在")
 	}
 	err = model.DB.Model(&model.User{}).Where("id = ?", params.ID).Update("status", params.Status).Error
@@ -182,7 +182,7 @@ func (s *UserService) UpdateStatus(params *api.StatusReq) (err error) {
 
 // 修改密码
 func (s *UserService) UpdatePasswd(passwd *api.PasswordReq) (err error) {
-	if !utils2.CheckIdExists(&model.User{}, passwd.ID) {
+	if !util2.CheckIdExists(&model.User{}, passwd.ID) {
 		return errors.New("用户不存在")
 	}
 	err = model.DB.Model(&model.User{}).Where("id = ?", passwd.ID).Update("password", passwd.Password).Error
@@ -192,7 +192,7 @@ func (s *UserService) UpdatePasswd(passwd *api.PasswordReq) (err error) {
 // 获取用户个人信息
 func (s *UserService) GetSelfInfo(id uint) (userInfo any, err error) {
 	var user model.User
-	if !utils2.CheckIdExists(&model.User{}, id) {
+	if !util2.CheckIdExists(&model.User{}, id) {
 		return nil, errors.New("用户不存在")
 	}
 	if err = model.DB.Where("id in (?)", id).First(&user).Error; err != nil {
@@ -213,7 +213,7 @@ func (s *UserService) GetAssGroup(id uint) (groupInfo any, err error) {
 	if err != nil {
 		return nil, err
 	}
-	if !utils2.CheckIdExists(&model.User{}, id) {
+	if !util2.CheckIdExists(&model.User{}, id) {
 		return nil, errors.New("用户不存在")
 	}
 	if err = model.DB.First(&user, id).Error; err != nil {
@@ -231,7 +231,7 @@ func (s *UserService) Login(u *model.User) (userInfo *api.AuthLoginRes, err erro
 	if err = model.DB.Where("username = ?", u.Username).Preload("UserGroups").First(&user).Error; err != nil {
 		return userInfo, errors.New("获取用户对象失败")
 	}
-	if !utils.CheckPassword(user.Password, u.Password) {
+	if !util.CheckPassword(user.Password, u.Password) {
 		return userInfo, errors.New("账号或密码错误")
 	}
 	if user.Status != 1 {
@@ -278,14 +278,14 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, passphras
 	}
 
 	// 简单xor加密并写入prikey
-	data := utils.XorEncrypt(fileBytes, consts.XorKey)
+	data := util.XorEncrypt(fileBytes, consts.XorKey)
 	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error
 	if err != nil {
 		return errors.New("私钥写入数据库失败")
 	}
 
 	// 简单xor加密并写入passphrase
-	data = utils.XorEncrypt([]byte(passphrase), consts.XorKey)
+	data = util.XorEncrypt([]byte(passphrase), consts.XorKey)
 	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("passphrase", data).Error
 	if err != nil {
 		return errors.New("通行证密码写入数据库失败")
@@ -295,12 +295,12 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, passphras
 
 // 通过字符串更新私钥内容
 func (s *UserService) UpdateKeyContext(key string, passphrase string, id uint) (err error) {
-	data := utils.XorEncrypt([]byte(key), consts.XorKey)
+	data := util.XorEncrypt([]byte(key), consts.XorKey)
 	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error
 	if err != nil {
 		return errors.New("私钥字符串写入数据库失败")
 	}
-	data = utils.XorEncrypt([]byte(passphrase), consts.XorKey)
+	data = util.XorEncrypt([]byte(passphrase), consts.XorKey)
 	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("passphrase", data).Error
 	if err != nil {
 		return errors.New("通行证密码写入数据库失败")

@@ -3,12 +3,12 @@ package service
 import (
 	"errors"
 	"fqhWeb/internal/model"
-	"fqhWeb/pkg/utils"
+	"fqhWeb/pkg/util"
 	"strings"
 	"sync"
 
 	"github.com/casbin/casbin/v2"
-	"github.com/casbin/casbin/v2/util"
+	casbinUtil "github.com/casbin/casbin/v2/util"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 )
 
@@ -100,7 +100,7 @@ var (
 func (s *CasbinService) Casbin() *casbin.SyncedEnforcer {
 	once.Do(func() {
 		a, _ := gormadapter.NewAdapterByDB(model.DB)
-		syncedEnforcer, _ = casbin.NewSyncedEnforcer(utils.GetRootPath()+"/configs/casbin.conf", a)
+		syncedEnforcer, _ = casbin.NewSyncedEnforcer(util.GetRootPath()+"/configs/casbin.conf", a)
 		syncedEnforcer.AddFunction("ParamsMatch", s.ParamsMatchFunc)
 	})
 	_ = syncedEnforcer.LoadPolicy()
@@ -114,7 +114,7 @@ func (s *CasbinService) Casbin() *casbin.SyncedEnforcer {
 func (s *CasbinService) ParamsMatch(fullNameKey1 string, key2 string) bool {
 	key1 := strings.Split(fullNameKey1, "?")[0]
 	// 剥离路径后再使用casbin的keyMatch2
-	return util.KeyMatch2(key1, key2)
+	return casbinUtil.KeyMatch2(key1, key2)
 }
 
 // @function: ParamsMatchFunc

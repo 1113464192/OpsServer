@@ -3,12 +3,14 @@ package ops
 import (
 	"errors"
 	"fmt"
+	"fqhWeb/internal/consts"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
+	"strconv"
 )
 
-func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTemplate, user *model.User, pathCount int, args *map[string][]string) (sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, err error) {
+func (s *OpsService) getInstallServerParam(hostList *[]model.Host, task *model.TaskTemplate, user *model.User, pathCount int, args *map[string][]string) (sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, err error) {
 	// 如果没有端口规则, 那么控制一下hosts数量
 	if len(*hostList) > pathCount {
 		*hostList = (*hostList)[:pathCount]
@@ -77,6 +79,48 @@ func (s *OpsService) getInstallServer(hostList *[]model.Host, task *model.TaskTe
 	}
 	if err = service.SSH().CheckSFTPParam(sftpReq); err != nil {
 		return nil, nil, err
+	}
+	return sshReq, sftpReq, err
+}
+
+// 装服传参请包含path、serverName、端口规则(key要规则名)
+func (s *OpsService) opsInstallServer(pathCount int, task *model.TaskTemplate, hosts *[]model.Host, user *model.User, args *map[string][]string, sshReq *[]api.SSHClientConfigReq) (*[]api.SSHClientConfigReq, *[]api.SFTPClientConfigReq, error) {
+	var err error
+	if pathCount == 0 {
+		return nil, nil, errors.New("path参数数量为0")
+	}
+	if task.CmdTem == "" || task.ConfigTem == "" {
+		return nil, nil, errors.New("任务的命令和传输文件内容都为空")
+	}
+	var hostList *[]model.Host
+	// 如果有设置条件 则筛选符合条件的主机
+	var memSize float32
+	if task.Condition != "" {
+		if err = s.filterConditionHost(hosts, user, task, sshReq, &memSize); err != nil {
+			return nil, nil, fmt.Errorf("筛选符合条件的主机失败: %v", err)
+		}
+	}
+	// 筛选端口规则
+	if task.PortRule != "" {
+		hostList, err = s.filterPortRuleHost(hosts, user, task, sshReq, args, memSize)
+		if err != nil {
+			return nil, nil, fmt.Errorf("端口筛选报错: %v", err)
+		}
+		*hosts = *hostList
+	}
+	// 记录所有hostid
+	var hostIds []string
+	var idString string
+	for i := 0; i < len(*hosts); i++ {
+		idString = strconv.Itoa(int((*hosts)[i].ID))
+		hostIds = append(hostIds, idString)
+	}
+	(*args)["hostId"] = hostIds
+
+	var sftpReq *[]api.SFTPClientConfigReq
+	sshReq, sftpReq, err = s.getInstallServerParam(hosts, task, user, pathCount, args)
+	if err != nil {
+		return nil, nil, fmt.Errorf("获取%s参数报错: %v", consts.OperationInstallServerType, err)
 	}
 	return sshReq, sftpReq, err
 }

@@ -3,7 +3,7 @@ package logger
 import (
 	"fmt"
 	"fqhWeb/internal/consts"
-	"fqhWeb/pkg/utils"
+	"fqhWeb/pkg/util"
 
 	"os"
 )
@@ -48,7 +48,7 @@ func (logvar *Logger) Panic(service string, handler string, m ...any) {
 		return
 	}
 	msg := fmt.Sprint("[Panic] "+"["+handler+"] ", fmt.Sprint(m...))
-	utils.CommonLog(service, msg)
+	util.CommonLog(service, msg)
 	os.Exit(0)
 }
 
@@ -57,7 +57,7 @@ func (logvar *Logger) Error(service string, handler string, m ...any) {
 		return
 	}
 	msg := fmt.Sprint("[Error] "+"["+handler+"] ", fmt.Sprint(m...))
-	utils.CommonLog(service, msg)
+	util.CommonLog(service, msg)
 }
 
 func (logvar *Logger) Warning(service string, handler string, m ...any) {
@@ -65,7 +65,7 @@ func (logvar *Logger) Warning(service string, handler string, m ...any) {
 		return
 	}
 	msg := fmt.Sprint("[Warning] "+"["+handler+"] ", fmt.Sprint(m...))
-	utils.CommonLog(service, msg)
+	util.CommonLog(service, msg)
 }
 
 func (logvar *Logger) Info(service string, handler string, m ...any) {
@@ -73,7 +73,7 @@ func (logvar *Logger) Info(service string, handler string, m ...any) {
 		return
 	}
 	msg := fmt.Sprint("[Info] "+"["+handler+"] ", fmt.Sprint(m...))
-	utils.CommonLog(service, msg)
+	util.CommonLog(service, msg)
 }
 
 func (logvar *Logger) Debug(service string, handler string, m ...any) {
@@ -81,5 +81,5 @@ func (logvar *Logger) Debug(service string, handler string, m ...any) {
 		return
 	}
 	msg := fmt.Sprint("[Debug] "+"["+handler+"] ", fmt.Sprint(m...))
-	utils.CommonLog(service, msg)
+	util.CommonLog(service, msg)
 }

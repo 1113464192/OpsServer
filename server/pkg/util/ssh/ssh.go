@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"fqhWeb/internal/consts"
-	"fqhWeb/pkg/utils"
+	"fqhWeb/pkg/util"
 	"net"
 	"os"
 	"time"
@@ -59,8 +59,8 @@ func SSHNewClient(hostIp string, username string, sshPort string, password strin
 	}
 
 	// 1. private key bytes
-	key := utils.XorDecrypt(priKey, consts.XorKey)
-	passPhrase := utils.XorDecrypt(passphrase, consts.XorKey)
+	key := util.XorDecrypt(priKey, consts.XorKey)
+	passPhrase := util.XorDecrypt(passphrase, consts.XorKey)
 	if priKey != nil {
 		if auth, err := AuthWithPrivateKeyBytes(key, passPhrase); err == nil {
 			clientConfig.Auth = append(clientConfig.Auth, auth)

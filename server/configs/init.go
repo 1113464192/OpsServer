@@ -3,7 +3,7 @@ package configs
 import (
 	"fmt"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils"
+	"fqhWeb/pkg/util"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
@@ -13,8 +13,8 @@ import (
 var Sem *semaphore.Weighted
 
 func Init() {
-	viper.SetConfigFile(utils.GetRootPath() + "/configs/config.yaml")
-	// viper.SetConfigFile(utils.GetRootPath() + "\\configs\\config.yaml")
+	viper.SetConfigFile(util.GetRootPath() + "/configs/config.yaml")
+	// viper.SetConfigFile(util.GetRootPath() + "\\configs\\config.yaml")
 	if err := viper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("读取配置信息失败: %s ", err))
 	}

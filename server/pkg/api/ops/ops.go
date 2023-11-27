@@ -1,4 +1,6 @@
-package api
+package ops
+
+import "fqhWeb/pkg/api"
 
 type SubmitTaskReq struct {
 	Tid     uint   `form:"tid" json:"tid"`
@@ -9,7 +11,7 @@ type SubmitTaskReq struct {
 type GetTaskReq struct {
 	Tid      uint   `form:"tid" json:"tid"`
 	TaskName string `form:"task_name" json:"task_name"`
-	PageInfo
+	api.PageInfo
 }
 
 type TaskRecordRes struct {
@@ -19,6 +21,7 @@ type TaskRecordRes struct {
 	OperatorId  uint
 	Status      uint8
 	Response    string
+	Args        string
 	SSHReqs     []TaskRecordSSHRes
 	NonApprover []uint
 	Auditor     []uint

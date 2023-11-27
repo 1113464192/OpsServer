@@ -1,4 +1,4 @@
-package utils
+package util
 
 import (
 	"encoding/json"
@@ -169,6 +169,18 @@ func StringToUint(idStr *string) (id uint, err error) {
 	}
 	id = uint(oldId)
 	return id, err
+}
+
+// stringslice转换uintslice
+func StringSliceToUintSlice(strSlice *[]string) (uintSlice []uint, err error) {
+	for _, str := range *strSlice {
+		val, err := strconv.ParseUint(str, 10, 0)
+		if err != nil {
+			return nil, fmt.Errorf("字符串切片转换uint切片失败: %v", err)
+		}
+		uintSlice = append(uintSlice, uint(val))
+	}
+	return uintSlice, err
 }
 
 func IntSliceToStringSlice(intSlice []int) []string {

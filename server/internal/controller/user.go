@@ -5,8 +5,8 @@ import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils"
-	"fqhWeb/pkg/utils/jwt"
+	"fqhWeb/pkg/util"
+	"fqhWeb/pkg/util/jwt"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -212,7 +212,7 @@ func UpdatePasswd(c *gin.Context) {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	passwd.Password, err = utils.GenerateFromPassword(passwd.Password)
+	passwd.Password, err = util.GenerateFromPassword(passwd.Password)
 	if err != nil {
 		logger.Log().Error("User", "用户密码加密", err)
 		c.JSON(500, api.Err("密码加密失败", err))
@@ -263,7 +263,7 @@ func UpdateSelfPasswd(c *gin.Context) {
 		return
 	}
 
-	passwd.Password, err = utils.GenerateFromPassword(passwd.Password)
+	passwd.Password, err = util.GenerateFromPassword(passwd.Password)
 	if err != nil {
 		logger.Log().Error("User", "用户密码加密", err)
 		c.JSON(500, api.Err("密码加密失败", err))

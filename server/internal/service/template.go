@@ -5,8 +5,8 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
-	"fqhWeb/pkg/utils"
-	"fqhWeb/pkg/utils2"
+	"fqhWeb/pkg/util"
+	"fqhWeb/pkg/util2"
 )
 
 type TaskService struct {
@@ -27,22 +27,22 @@ func (s *TaskService) UpdateTaskTemplate(params *api.UpdateTaskTemplateReq) (pro
 	if model.DB.Model(&task).Where("pid = ? AND type_name = ? AND task_name = ? AND id != ?", params.Pid, params.TypeName, params.TaskName, params.ID).Count(&count); count > 0 {
 		return task, errors.New("该项目中的 任务类型的 任务名已被使用")
 	}
-	conditionJson, err := utils.ConvertToJsonPair(params.Condition)
+	conditionJson, err := util.ConvertToJsonPair(params.Condition)
 	if err != nil {
 		return nil, err
 	}
-	portRuleJson, err := utils.ConvertToJsonPair(params.PortRule)
+	portRuleJson, err := util.ConvertToJsonPair(params.PortRule)
 	if err != nil {
 		return nil, err
 	}
-	argsJson, err := utils.ConvertToJsonPair(params.Args)
+	argsJson, err := util.ConvertToJsonPair(params.Args)
 	if err != nil {
 		return nil, err
 	}
 
 	if params.ID != 0 {
 		// 修改
-		if !utils2.CheckIdExists(&task, params.ID) {
+		if !util2.CheckIdExists(&task, params.ID) {
 			return task, errors.New("不存在")
 		}
 		if err := model.DB.Model(&task).Where("id = ?", params.ID).First(&task).Error; err != nil {
@@ -134,7 +134,7 @@ func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj 
 		}
 		var result []string
 		for _, record := range task {
-			if !utils.IsSliceContain(result, record) {
+			if !util.IsSliceContain(result, record) {
 				result = append(result, record.TypeName)
 			}
 		}
@@ -167,7 +167,7 @@ func (s *TaskService) GetProjectTask(params *api.GetProjectTaskReq) (projectObj 
 }
 
 func (s *TaskService) DeleteTaskTemplate(ids []uint) (err error) {
-	if err = utils2.CheckIdsExists(model.TaskTemplate{}, ids); err != nil {
+	if err = util2.CheckIdsExists(model.TaskTemplate{}, ids); err != nil {
 		return err
 	}
 	var task []model.TaskTemplate
@@ -192,11 +192,11 @@ func (s *TaskService) UpdateHostAss(params api.UpdateTemplateAssHostReq) (err er
 	var host []model.Host
 	var task model.TaskTemplate
 	// 判断所有项目是否都存在
-	if err = utils2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
+	if err = util2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
 		return err
 	}
 
-	if !utils2.CheckIdExists(&task, params.Tid) {
+	if !util2.CheckIdExists(&task, params.Tid) {
 		return errors.New("任务模板ID不存在")
 	}
 

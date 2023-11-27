@@ -1842,7 +1842,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.SubmitTaskReq"
+                            "$ref": "#/definitions/ops.SubmitTaskReq"
                         }
                     }
                 ],
@@ -3488,23 +3488,6 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SubmitTaskReq": {
-            "type": "object",
-            "properties": {
-                "auditorId": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "tid": {
-                    "type": "integer"
-                },
-                "uid": {
-                    "type": "integer"
-                }
-            }
-        },
         "api.TestSSHReq": {
             "type": "object",
             "properties": {
@@ -3664,6 +3647,23 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "ops.SubmitTaskReq": {
+            "type": "object",
+            "properties": {
+                "auditorId": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "tid": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "integer"
                 }
             }
         }

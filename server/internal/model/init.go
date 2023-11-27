@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"fqhWeb/configs"
 	m_logger "fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils"
+	"fqhWeb/pkg/util"
 	"log"
 	"os"
 	"time"
@@ -19,11 +19,11 @@ var DB *gorm.DB
 var LogFile *os.File
 
 func Database() {
-	if utils.IsDir(utils.GetRootPath() + "/logs/mysql/") {
-		os.Mkdir(utils.GetRootPath()+"/logs/mysql/", 0777)
+	if !util.IsDir(util.GetRootPath() + "/logs/mysql/") {
+		os.Mkdir(util.GetRootPath()+"/logs/mysql/", 0777)
 	}
 
-	logFileName := utils.GetRootPath() + "/logs/mysql/mysql.log"
+	logFileName := util.GetRootPath() + "/logs/mysql/mysql.log"
 
 	var err error
 

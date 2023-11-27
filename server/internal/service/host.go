@@ -8,8 +8,8 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
-	"fqhWeb/pkg/utils"
-	"fqhWeb/pkg/utils2"
+	"fqhWeb/pkg/util"
+	"fqhWeb/pkg/util2"
 	"strconv"
 	"strings"
 )
@@ -35,7 +35,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 	}
 	if params.ID != 0 {
 		// 修改
-		if !utils2.CheckIdExists(host, params.ID) {
+		if !util2.CheckIdExists(host, params.ID) {
 			return nil, errors.New("服务器ID不存在")
 		}
 
@@ -48,7 +48,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 			host.Ipv6 = sql.NullString{String: params.Ipv6, Valid: true}
 		}
 		host.User = params.User
-		host.Password = utils.XorEncrypt([]byte(params.Password), consts.XorKey)
+		host.Password = util.XorEncrypt([]byte(params.Password), consts.XorKey)
 		host.Port = params.Port
 		host.Zone = params.Zone
 		host.ZoneTime = params.ZoneTime
@@ -83,7 +83,7 @@ func (s *HostService) UpdateHost(params *api.UpdateHostReq) (hostInfo any, err e
 		host = &model.Host{
 			Ipv4:        sql.NullString{String: params.Ipv4, Valid: true},
 			User:        params.User,
-			Password:    utils.XorEncrypt([]byte(params.Password), consts.XorKey),
+			Password:    util.XorEncrypt([]byte(params.Password), consts.XorKey),
 			Port:        params.Port,
 			Zone:        params.Zone,
 			ZoneTime:    params.ZoneTime,
@@ -124,13 +124,13 @@ func (s *HostService) GetHostPasswd(id uint) (passwd string, err error) {
 	if err = model.DB.First(&host, id).Error; err != nil {
 		return "", fmt.Errorf("查找服务器失败: %v", err)
 	}
-	passwd = string(utils.XorDecrypt([]byte(host.Password), consts.XorKey))
+	passwd = string(util.XorDecrypt([]byte(host.Password), consts.XorKey))
 	return passwd, err
 }
 
 // 删除服务器
 func (s *HostService) DeleteHost(ids []uint) (err error) {
-	if err = utils2.CheckIdsExists(model.Host{}, ids); err != nil {
+	if err = util2.CheckIdsExists(model.Host{}, ids); err != nil {
 		return err
 	}
 	var host []model.Host
@@ -160,7 +160,7 @@ func (s *HostService) DeleteHost(ids []uint) (err error) {
 
 // 删除域名
 func (s *HostService) DeleteDomain(ids []uint) (err error) {
-	if err = utils2.CheckIdsExists(model.Domain{}, ids); err != nil {
+	if err = util2.CheckIdsExists(model.Domain{}, ids); err != nil {
 		return err
 	}
 	var domain []model.Domain
@@ -215,7 +215,7 @@ func (s *HostService) GetHost(params *api.GetHostReq) (hostInfo any, count int64
 // 获取域名关联的主机
 func (s *HostService) GetDomainAssHost(params *api.GetPagingByIdReq) (hostInfo any, total int64, err error) {
 	var domain model.Domain
-	if !utils2.CheckIdExists(&domain, params.Id) {
+	if !util2.CheckIdExists(&domain, params.Id) {
 		return nil, 0, errors.New("域名ID不存在")
 	}
 	if err = model.DB.Preload("Hosts").Where("id = ?", params.Id).First(&domain).Error; err != nil {
@@ -245,7 +245,7 @@ func (s *HostService) UpdateDomain(params *api.UpdateDomainReq) (domain *model.D
 	}
 	if params.Id != 0 {
 		// 修改
-		if !utils2.CheckIdExists(domain, params.Id) {
+		if !util2.CheckIdExists(domain, params.Id) {
 			return nil, errors.New("域名ID不存在")
 		}
 
@@ -274,11 +274,11 @@ func (s *HostService) UpdateDomainAss(params *api.UpdateDomainAssHostReq) (err e
 	var host []model.Host
 	var domain model.Domain
 	// 判断所有项目是否都存在
-	if err = utils2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
+	if err = util2.CheckIdsExists(model.Host{}, params.Hids); err != nil {
 		return err
 	}
 
-	if !utils2.CheckIdExists(&host, params.Did) {
+	if !util2.CheckIdExists(&host, params.Did) {
 		return errors.New("域名ID不存在")
 	}
 

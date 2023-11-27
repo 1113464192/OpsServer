@@ -3,8 +3,9 @@ package controller
 import (
 	"fqhWeb/internal/service/ops"
 	"fqhWeb/pkg/api"
+	apiOps "fqhWeb/pkg/api/ops"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils/jwt"
+	"fqhWeb/pkg/util/jwt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,14 +17,14 @@ import (
 // @Summary 提交执行工单
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.SubmitTaskReq true "注意Auditor参数: 最先审批的放第一个,因为接入后从第一个到最后一个依次发送信息审批"
+// @Param data body apiOps.SubmitTaskReq true "注意Auditor参数: 最先审批的放第一个,因为接入后从第一个到最后一个依次发送信息审批"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/ops/submitTask [post]
 func SubmitTask(c *gin.Context) {
-	var param api.SubmitTaskReq
+	var param apiOps.SubmitTaskReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -49,14 +50,14 @@ func SubmitTask(c *gin.Context) {
 // @Summary 查看任务工单
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetTaskReq true "传入所需参数,输了ID就不用name和页码"
+// @Param data query apiOps.GetTaskReq true "传入所需参数,输了ID就不用name和页码"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/ops/getTask [get]
 func GetTask(c *gin.Context) {
-	var param api.GetTaskReq
+	var param apiOps.GetTaskReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -121,7 +122,7 @@ func GetExecParam(c *gin.Context) {
 // @Summary 用户审批工单
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.ApproveTaskReq true "传入工单的ID和是否成功"
+// @Param data formData apiOps.ApproveTaskReq true "传入工单的ID和是否成功"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -134,7 +135,7 @@ func ApproveTask(c *gin.Context) {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
 	}
-	var param api.ApproveTaskReq
+	var param apiOps.ApproveTaskReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return

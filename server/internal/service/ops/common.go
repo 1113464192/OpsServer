@@ -9,8 +9,8 @@ import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/utils"
-	"fqhWeb/pkg/utils2"
+	"fqhWeb/pkg/util"
+	"fqhWeb/pkg/util2"
 	"regexp"
 	"strconv"
 	"strings"
@@ -49,7 +49,7 @@ func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][
 	var buf strings.Builder
 	var bufString string
 	// 对map[string][]string进行拆解，以便模板渲染
-	serverInfo := utils.SplitStringMap(*args)
+	serverInfo := util.SplitStringMap(*args)
 	for i := 0; i < len(serverInfo); i++ {
 		if err = cmdTem.Execute(&buf, serverInfo[i]); err != nil {
 			return cmd, config, fmt.Errorf("无法渲染cmd模板: %v", err)
@@ -206,7 +206,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 		return nil, err
 	}
 	// 添加到后续的模板变量映射
-	flagsString := utils.IntSliceToStringSlice(flags)
+	flagsString := util.IntSliceToStringSlice(flags)
 	(*args)["flag"] = flagsString
 
 	// 接收可用host切片
@@ -221,7 +221,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 			}
 			// 获取基于flag的端口
 			var portList []float64
-			portList, err = utils.GenerateExprResult(portRule, flag)
+			portList, err = util.GenerateExprResult(portRule, flag)
 			if len(portList) != len(portRule) {
 				return nil, errors.New("取出端口数量不等于端口规则数量")
 			}
@@ -229,6 +229,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 			var p int
 			for key := range portRule {
 				portString := strconv.FormatFloat(portList[p], 'f', -1, 64)
+				// 记录每一个端口类型变量对应的端口
 				(*args)[key] = append((*args)[key], portString)
 				p += 1
 			}
@@ -281,10 +282,10 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 	return &availHost, err
 }
 
-func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, user *model.User, task *model.TaskTemplate, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
+func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, user *model.User, task *model.TaskTemplate, args *map[string][]string, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
 	// sshReq编码JSON
 	var data []byte
-	if err = utils2.CheckIdsExists(model.User{}, auditorIds); err != nil {
+	if err = util2.CheckIdsExists(model.User{}, auditorIds); err != nil {
 		return nil, err
 	}
 
@@ -292,7 +293,6 @@ func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq
 	if err != nil {
 		return nil, fmt.Errorf("map转换json失败: %v", err)
 	}
-
 	taskRecord = &model.TaskRecord{
 		TaskName:   task.TaskName,
 		TemplateId: task.ID,
@@ -306,6 +306,11 @@ func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq
 		}
 		taskRecord.SFTPJson = string(data)
 	}
+	data, err = json.Marshal(*args)
+	if err != nil {
+		return nil, fmt.Errorf("map转换json失败: %v", err)
+	}
+	taskRecord.Args = string(data)
 	tx := model.DB.Begin()
 	if err = tx.Create(taskRecord).Error; err != nil {
 		tx.Rollback()

@@ -1,4 +1,4 @@
-package utils2
+package util2
 
 // 此文件是为躲避互相import导致报错
 
