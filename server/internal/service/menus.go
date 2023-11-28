@@ -50,9 +50,8 @@ func (s *MenuService) UpdateMenu(param *api.UpdateMenuReq) (menuInfo any, err er
 		menu.Author = param.Author
 		menu.Component = param.Component
 
-		err = model.DB.Save(&menu).Error
-		if err != nil {
-			return menu, errors.New("数据保存失败")
+		if err = model.DB.Save(&menu).Error; err != nil {
+			return menu, fmt.Errorf("数据保存失败: %v", err)
 		}
 		return menu, err
 	} else {

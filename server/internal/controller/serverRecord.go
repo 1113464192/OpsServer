@@ -76,3 +76,35 @@ func GetServerRecord(c *gin.Context) {
 		PageSize: param.PageSize,
 	})
 }
+
+// DeleteServerRecord
+// @Tags 服务端相关
+// @title 删除单服记录
+// @description 删除成功返回success
+// @Summary 删除单服记录
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data body api.IdsReq true "单服记录ID"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/server/serverRecord [delete]
+func DeleteServerRecord(c *gin.Context) {
+	var rid api.IdsReq
+	if err := c.ShouldBind(&rid); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	err := service.Server().DeleteServerRecord(rid.Ids)
+	if err != nil {
+		logger.Log().Error("Server", "删除单服记录", err)
+		c.JSON(500, api.Err("删除单服记录失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}

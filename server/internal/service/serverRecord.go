@@ -6,6 +6,7 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
+	"fqhWeb/pkg/util2"
 	"strings"
 )
 
@@ -21,9 +22,8 @@ func Server() *ServerService {
 }
 
 // 更改单服列表
-func (s *ServerService) UpdateServerRecord(param api.UpdateServerRecordReq) (*model.ServerRecord, error) {
+func (s *ServerService) UpdateServerRecord(param api.UpdateServerRecordReq) (result *[]api.ServerRecordRes, err error) {
 	var server model.ServerRecord
-	var err error
 	var count int64
 
 	if err = model.DB.First(&server, param.Id).Error; err != nil {
@@ -37,18 +37,18 @@ func (s *ServerService) UpdateServerRecord(param api.UpdateServerRecordReq) (*mo
 	server.Flag = param.Flag
 	server.Path = param.Path
 	server.ServerName = param.ServerName
-	err = model.DB.Save(&server).Error
-	if err != nil {
-		return &server, errors.New("数据保存失败")
+	server.HostId = param.HostId
+	server.ProjectId = param.ProjectId
+	if err = model.DB.Save(&server).Error; err != nil {
+		return nil, fmt.Errorf("数据保存失败: %v", err)
 	}
-	return &server, err
+	result, err = s.GetResults(&server)
+	return result, err
 }
 
 // 查询单服列表
-func (s *ServerService) GetServerRecord(param api.GetServerRecordReq) (*[]model.ServerRecord, int64, error) {
+func (s *ServerService) GetServerRecord(param api.GetServerRecordReq) (result *[]api.ServerRecordRes, total int64, err error) {
 	var record []model.ServerRecord
-	var total int64
-	var err error
 	db := model.DB.Model(&record)
 	searchReq := &api.SearchReq{
 		Condition: db,
@@ -92,5 +92,51 @@ func (s *ServerService) GetServerRecord(param api.GetServerRecordReq) (*[]model.
 			return nil, 0, err
 		}
 	}
-	return &record, total, err
+	result, err = s.GetResults(&record)
+	return result, total, err
+}
+
+// 删除单服记录
+func (s *ServerService) DeleteServerRecord(ids []uint) (err error) {
+	if err = util2.CheckIdsExists(model.ServerRecord{}, ids); err != nil {
+		return err
+	}
+	if err = model.DB.Where("id in (?)", ids).Delete(&model.ServerRecord{}).Error; err != nil {
+		return errors.New("删除单服记录失败")
+	}
+	return err
+}
+
+// 返回用户结果
+func (s *ServerService) GetResults(serverInfo any) (*[]api.ServerRecordRes, error) {
+	var res api.ServerRecordRes
+	var result []api.ServerRecordRes
+	var err error
+	if recrods, ok := serverInfo.(*[]model.ServerRecord); ok {
+		for _, recrod := range *recrods {
+			res = api.ServerRecordRes{
+				Id:         recrod.ID,
+				Flag:       recrod.Flag,
+				Path:       recrod.Path,
+				ServerName: recrod.ServerName,
+				HostId:     recrod.HostId,
+				ProjectId:  recrod.ProjectId,
+			}
+			result = append(result, res)
+		}
+		return &result, err
+	}
+	if recrod, ok := serverInfo.(*model.ServerRecord); ok {
+		res = api.ServerRecordRes{
+			Id:         recrod.ID,
+			Flag:       recrod.Flag,
+			Path:       recrod.Path,
+			ServerName: recrod.ServerName,
+			HostId:     recrod.HostId,
+			ProjectId:  recrod.ProjectId,
+		}
+		result = append(result, res)
+		return &result, err
+	}
+	return &result, errors.New("转换server结果失败")
 }

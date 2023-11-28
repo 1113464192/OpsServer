@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -43,9 +44,8 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		project.Status = param.Status
 		project.UserId = param.UserId
 		project.GroupId = param.GroupId
-		err = model.DB.Save(&project).Error
-		if err != nil {
-			return project, errors.New("数据保存失败")
+		if err = model.DB.Save(&project).Error; err != nil {
+			return project, fmt.Errorf("数据保存失败: %v", err)
 		}
 		var result *[]api.ProjectRes
 		if result, err = s.GetResults(&project); err != nil {
@@ -97,7 +97,7 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 func (s *ProjectService) UpdateHostAss(param *api.UpdateProjectAssHostReq) (err error) {
 	var project model.Project
 	var host []model.Host
-	// 判断所有项目是否都存在
+	// 判断所有服务器是否都存在
 	if err = util2.CheckIdsExists(model.Host{}, param.Hids); err != nil {
 		return err
 	}

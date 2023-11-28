@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -57,9 +58,8 @@ func (s *TaskService) UpdateTaskTemplate(param *api.UpdateTaskTemplateReq) (proj
 		task.Pid = param.Pid
 		task.PortRule = portRuleJson
 		task.Args = argsJson
-		err = model.DB.Save(&task).Error
-		if err != nil {
-			return task, errors.New("数据保存失败")
+		if err = model.DB.Save(&task).Error; err != nil {
+			return task, fmt.Errorf("数据保存失败: %v", err)
 		}
 	} else {
 		task = model.TaskTemplate{

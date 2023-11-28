@@ -58,9 +58,8 @@ func (s *UserService) UpdateUser(param *api.UpdateUserReq) (any, string, error) 
 			return nil, "", errors.New("用户名已被使用")
 		}
 
-		err = model.DB.Save(&user).Error
-		if err != nil {
-			return nil, "", errors.New("数据保存失败")
+		if err = model.DB.Save(&user).Error; err != nil {
+			return nil, "", fmt.Errorf("数据保存失败: %v", err)
 		}
 
 		// 返回过滤后的JSON
@@ -277,17 +276,22 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, passphras
 		return err
 	}
 
-	// 简单xor加密并写入prikey
-	data := util.XorEncrypt(fileBytes, consts.XorKey)
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error
+	// AES加密并写入prikey
+	var data []byte
+	data, err = util.EncryptAESCBC(fileBytes, []byte(consts.AesKey), []byte(consts.AesIv))
 	if err != nil {
+		return fmt.Errorf("用户私钥加密失败: %v", err)
+	}
+	if err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error; err != nil {
 		return errors.New("私钥写入数据库失败")
 	}
 
-	// 简单xor加密并写入passphrase
-	data = util.XorEncrypt([]byte(passphrase), consts.XorKey)
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("passphrase", data).Error
+	// AES加密并写入passphrase
+	data, err = util.EncryptAESCBC([]byte(passphrase), []byte(consts.AesKey), []byte(consts.AesIv))
 	if err != nil {
+		return fmt.Errorf("用户passphrase加密失败: %v", err)
+	}
+	if err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("passphrase", data).Error; err != nil {
 		return errors.New("通行证密码写入数据库失败")
 	}
 	return nil
@@ -295,14 +299,22 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, passphras
 
 // 通过字符串更新私钥内容
 func (s *UserService) UpdateKeyContext(key string, passphrase string, id uint) (err error) {
-	data := util.XorEncrypt([]byte(key), consts.XorKey)
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error
+	// AES加密并写入prikey
+	var data []byte
+	data, err = util.EncryptAESCBC([]byte(key), []byte(consts.AesKey), []byte(consts.AesIv))
 	if err != nil {
+		return fmt.Errorf("用户私钥加密失败: %v", err)
+	}
+	if err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("pri_key", data).Error; err != nil {
 		return errors.New("私钥字符串写入数据库失败")
 	}
-	data = util.XorEncrypt([]byte(passphrase), consts.XorKey)
-	err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("passphrase", data).Error
+
+	// AES加密并写入passphrase
+	data, err = util.EncryptAESCBC([]byte(passphrase), []byte(consts.AesKey), []byte(consts.AesIv))
 	if err != nil {
+		return fmt.Errorf("用户passphrase加密失败: %v", err)
+	}
+	if err = model.DB.Model(&model.User{}).Where("id = ?", id).Update("passphrase", data).Error; err != nil {
 		return errors.New("通行证密码写入数据库失败")
 	}
 	return nil

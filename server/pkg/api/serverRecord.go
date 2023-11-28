@@ -13,4 +13,15 @@ type UpdateServerRecordReq struct {
 	Flag       string `form:"flag" json:"flag" binding:"required"`
 	Path       string `form:"path" json:"path" binding:"required"`
 	ServerName string `form:"server_name" json:"server_name" binding:"required"`
+	HostId     uint   `form:"host_id" json:"host_id" binding:"required"`
+	ProjectId  uint   `form:"project_id" json:"project_id" binding:"required"`
+}
+
+type ServerRecordRes struct {
+	Id         uint   `json:"id"`
+	Flag       string `json:"flag"`
+	Path       string `json:"path"`
+	ServerName string `json:"server_name"`
+	HostId     uint   `json:"host_id"`
+	ProjectId  uint   `json:"project_id"`
 }

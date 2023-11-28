@@ -123,6 +123,7 @@ func NewRoute() *gin.Engine {
 		{
 			serverRoute.PUT("updateServerRecord", UpdateServerRecord)
 			serverRoute.GET("getServerRecord", GetServerRecord)
+			serverRoute.DELETE("serverRecord", DeleteServerRecord)
 		}
 	}
 	return r

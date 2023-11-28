@@ -48,7 +48,10 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 			host.Ipv6 = sql.NullString{String: param.Ipv6, Valid: true}
 		}
 		host.User = param.User
-		host.Password = util.XorEncrypt([]byte(param.Password), consts.XorKey)
+		host.Password, err = util.EncryptAESCBC(param.Password, []byte(consts.AesKey), []byte(consts.AesIv))
+		if err != nil {
+			return nil, fmt.Errorf("主机密码加密失败: %v", err)
+		}
 		host.Port = param.Port
 		host.Zone = param.Zone
 		host.ZoneTime = param.ZoneTime
@@ -70,9 +73,8 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		// host.CurrIdle = param.CurrIdle
 		// host.CurrLoad = param.CurrLoad
 		// 入库
-		err = model.DB.Save(host).Error
-		if err != nil {
-			return host, errors.New("数据保存失败")
+		if err = model.DB.Save(host).Error; err != nil {
+			return host, fmt.Errorf("数据保存失败: %v", err)
 		}
 		var result *[]api.HostRes
 		if result, err = s.GetResults(host); err != nil {
@@ -80,10 +82,15 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		}
 		return result, err
 	} else {
+		var aesPassword []byte
+		aesPassword, err = util.EncryptAESCBC(param.Password, []byte(consts.AesKey), []byte(consts.AesIv))
+		if err != nil {
+			return nil, fmt.Errorf("主机密码加密失败: %v", err)
+		}
 		host = &model.Host{
 			Ipv4:        sql.NullString{String: param.Ipv4, Valid: true},
 			User:        param.User,
-			Password:    util.XorEncrypt([]byte(param.Password), consts.XorKey),
+			Password:    aesPassword,
 			Port:        param.Port,
 			Zone:        param.Zone,
 			ZoneTime:    param.ZoneTime,
@@ -119,13 +126,24 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 }
 
 // 获取服务器密码
-func (s *HostService) GetHostPasswd(id uint) (passwd string, err error) {
+func (s *HostService) GetHostPasswd(id uint) (string, error) {
+	var err error
 	var host model.Host
 	if err = model.DB.First(&host, id).Error; err != nil {
 		return "", fmt.Errorf("查找服务器失败: %v", err)
 	}
-	passwd = string(util.XorDecrypt([]byte(host.Password), consts.XorKey))
-	return passwd, err
+
+	if host.Password != nil {
+		var passwd []byte
+		passwd, err = util.DecryptAESCBC(host.Password, []byte(consts.AesKey), []byte(consts.AesIv))
+		if err != nil {
+			return "", fmt.Errorf("主机密码解密失败: %v", err)
+
+		}
+		return string(passwd), err
+	} else {
+		return "", errors.New("密码为空")
+	}
 }
 
 // 删除服务器
@@ -253,9 +271,8 @@ func (s *HostService) UpdateDomain(param *api.UpdateDomainReq) (domain *model.Do
 			return nil, errors.New("服域名在数据库中查询失败")
 		}
 		domain.Value = param.Value
-		err = model.DB.Save(domain).Error
-		if err != nil {
-			return domain, errors.New("数据保存失败")
+		if err = model.DB.Save(domain).Error; err != nil {
+			return domain, fmt.Errorf("数据保存失败: %v", err)
 		}
 		return domain, err
 	} else {

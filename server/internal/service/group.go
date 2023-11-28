@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -48,9 +49,8 @@ func (s *GroupService) UpdateGroup(param *api.UpdateGroupReq) (groupInfo any, er
 			group.Mark = sql.NullString{String: param.Mark, Valid: true}
 		}
 		// 入库
-		err = model.DB.Save(&group).Error
-		if err != nil {
-			return group, errors.New("数据保存失败")
+		if err = model.DB.Save(&group).Error; err != nil {
+			return group, fmt.Errorf("数据保存失败: %v", err)
 		}
 		// 过滤结果
 		var result *[]api.GroupRes

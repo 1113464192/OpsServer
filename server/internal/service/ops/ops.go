@@ -82,11 +82,13 @@ func (s *OpsService) SubmitTask(param ops.SubmitTaskReq) (result *[]ops.TaskReco
 	// 执行指定操作
 	switch typeParam {
 	// 单服装服操作
+	// 此处用ssh模式举例
 	case consts.OperationInstallServerType:
 		if sshReq, sftpReq, err = s.opsInstallServer(pathCount, &task, &hosts, &user, &args, sshReq); err != nil {
 			return nil, fmt.Errorf("提交%s工单失败: %v", consts.OperationInstallServerType, err)
 		}
 	// 服务端更新操作
+	// 此处用http模式举例(更倾向做http的C/S模式，更稳定且反馈也更详细)
 	// case consts.OperationUpdateServerType:
 
 	// 未知类型

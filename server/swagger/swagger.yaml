@@ -1733,6 +1733,43 @@ paths:
       summary: 查看单服记录列表
       tags:
       - 服务端相关
+  /api/v1/server/serverRecord:
+    delete:
+      description: 删除成功返回success
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 单服记录ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 删除单服记录
+      tags:
+      - 服务端相关
   /api/v1/server/updateServerRecord:
     put:
       description: 传入更改所需参数
@@ -1747,6 +1784,10 @@ paths:
         required: true
         type: string
       - in: query
+        name: host_id
+        required: true
+        type: integer
+      - in: query
         name: id
         required: true
         type: integer
@@ -1754,6 +1795,10 @@ paths:
         name: path
         required: true
         type: string
+      - in: query
+        name: project_id
+        required: true
+        type: integer
       - in: query
         name: server_name
         required: true

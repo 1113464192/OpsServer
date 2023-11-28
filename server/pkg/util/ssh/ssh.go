@@ -59,8 +59,19 @@ func SSHNewClient(hostIp string, username string, sshPort string, password strin
 	}
 
 	// 1. private key bytes
-	key := util.XorDecrypt(priKey, consts.XorKey)
-	passPhrase := util.XorDecrypt(passphrase, consts.XorKey)
+	// AES解密私钥
+	var key []byte
+	key, err = util.DecryptAESCBC(priKey, []byte(consts.AesKey), []byte(consts.AesIv))
+	if err != nil {
+		return nil, fmt.Errorf("用户私钥解密失败: %v", err)
+	}
+	// AES解密passphrase
+	var passPhrase []byte
+	passPhrase, err = util.DecryptAESCBC(passphrase, []byte(consts.AesKey), []byte(consts.AesIv))
+	if err != nil {
+		return nil, fmt.Errorf("用户passphrase解密失败: %v", err)
+	}
+
 	if priKey != nil {
 		if auth, err := AuthWithPrivateKeyBytes(key, passPhrase); err == nil {
 			clientConfig.Auth = append(clientConfig.Auth, auth)

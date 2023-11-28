@@ -2381,6 +2381,62 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/server/serverRecord": {
+            "delete": {
+                "description": "删除成功返回success",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务端相关"
+                ],
+                "summary": "删除单服记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "单服记录ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/server/updateServerRecord": {
             "put": {
                 "description": "传入更改所需参数",
@@ -2407,6 +2463,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "name": "host_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -2414,6 +2476,12 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "path",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "project_id",
                         "in": "query",
                         "required": true
                     },
