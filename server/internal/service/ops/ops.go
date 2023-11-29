@@ -88,7 +88,6 @@ func (s *OpsService) SubmitTask(param ops.SubmitTaskReq) (result *[]ops.TaskReco
 			return nil, fmt.Errorf("提交%s工单失败: %v", consts.OperationInstallServerType, err)
 		}
 	// 服务端更新操作
-	// 此处用http模式举例(更倾向做http的C/S模式，更稳定且反馈也更详细)
 	// case consts.OperationUpdateServerType:
 
 	// 未知类型

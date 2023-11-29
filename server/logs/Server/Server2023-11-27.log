@@ -1,4 +1,0 @@
-[Server][2023-11-27 14:07:02] 2023/11/27 14:07:02 [Error] [查询单服记录列表] 请选择项目ID
-[Server][2023-11-27 17:06:14] 2023/11/27 17:06:14 [Error] [查询单服记录列表] 请选择项目ID
-[Server][2023-11-27 17:26:31] 2023/11/27 17:26:31 [Error] [更改单服记录列表] 数据保存失败: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`fqhWeb`.`fqh_server_record`, CONSTRAINT `fk_fqh_server_list_server_host` FOREIGN KEY (`host_id`) REFERENCES `fqh_host` (`id`))
-[Server][2023-11-27 17:35:10] 2023/11/27 17:35:10 [Error] [删除单服记录] [4] id不存在

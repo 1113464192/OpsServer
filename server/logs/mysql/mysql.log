@@ -1,0 +1,2280 @@
+
+2023/11/29 11:43:29 [35mD:/fqhWeb/fqhWeb/server/internal/model/init.go:49
+[0m[31m[error] [0mfailed to initialize database, got error dial tcp 192.168.18.65:20001: connectex: No connection could be made because the target machine actively refused it.
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[6.128ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.909ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.717ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[17.715ms] [34;1m[rows:-][0m SELECT * FROM `fqh_user` LIMIT 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.111ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.843ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.489ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND index_name = 'idx_fqh_user_username'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.376ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.637ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.419ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND index_name = 'idx_fqh_user_deleted_at'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.743ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.370ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.295ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.315ms] [34;1m[rows:-][0m SELECT * FROM `fqh_user_group` LIMIT 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.472ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.505ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.478ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.495ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND index_name = 'idx_fqh_user_group_deleted_at'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.787ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.272ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND index_name = 'idx_fqh_user_group_name'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.504ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.833ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.647ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.638ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.832ms] [34;1m[rows:-][0m SELECT * FROM `fqh_permit_users` LIMIT 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.849ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.105ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.837ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND constraint_name = 'fk_fqh_permit_users_user_group'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.170ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.508ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.789ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND constraint_name = 'fk_fqh_permit_users_user'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.065ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.682ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.603ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.621ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.115ms] [34;1m[rows:-][0m SELECT * FROM `fqh_menus` LIMIT 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.899ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.350ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.280ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' AND index_name = 'idx_fqh_menus_deleted_at'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.609ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.272ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.126ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:57 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.789ms] [34;1m[rows:-][0m SELECT * FROM `fqh_permit_menus` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.914ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.638ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.212ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND constraint_name = 'fk_fqh_permit_menus_menus'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.523ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.198ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.589ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND constraint_name = 'fk_fqh_permit_menus_user_group'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.146ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.746ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.264ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.534ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.562ms] [34;1m[rows:-][0m SELECT * FROM `fqh_jwt_blacklist` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.390ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.379ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.338ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' AND index_name = 'idx_fqh_jwt_blacklist_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.436ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.459ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.604ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_api` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.803ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.606ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.229ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' AND index_name = 'idx_fqh_api_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.445ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.504ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.604ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.519ms] [34;1m[rows:-][0m SELECT * FROM `fqh_act_record` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.465ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.499ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.673ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND index_name = 'idx_fqh_act_record_user_id'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.173ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.143ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.287ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND index_name = 'idx_fqh_act_record_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.117ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.462ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.306ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.518ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.910ms] [34;1m[rows:-][0m SELECT * FROM `fqh_project` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.664ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.595ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.239ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project' AND constraint_name = 'fk_fqh_user_group_project'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.702ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.418ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project' AND constraint_name = 'fk_fqh_user_project'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.134ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.124ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.828ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.153ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.475ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.208ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_name'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.359ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.094ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_user_id'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.956ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.711ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_group_id'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.775ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.573ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.257ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.451ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.120ms] [34;1m[rows:-][0m SELECT * FROM `fqh_task_template` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.458ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.005ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.695ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND constraint_name = 'fk_fqh_project_task_template'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.284ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.160ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.185ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND index_name = 'idx_fqh_task_template_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.686ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.129ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND index_name = 'idx_fqh_task_template_pid'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.592ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.290ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.689ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_task_record` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.228ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[79.183ms] [34;1m[rows:0][0m ALTER TABLE `fqh_task_record` MODIFY COLUMN `status` varchar(10) COMMENT ' 状态(0: 待审核 1: 待执行 2: 执行成功 3: 执行失败 4: 已驳回)'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.513ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.648ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.546ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND constraint_name = 'fk_fqh_task_template_task_record'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.277ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.786ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND constraint_name = 'fk_fqh_user_task_record'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.181ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.208ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND index_name = 'idx_fqh_task_record_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.228ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.639ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.153ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND index_name = 'idx_fqh_task_record_task_name'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.525ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.231ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.303ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.889ms] [34;1m[rows:-][0m SELECT * FROM `fqh_auditor_task` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.407ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.560ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.405ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND constraint_name = 'fk_fqh_auditor_task_task_record'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.174ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.109ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.228ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND constraint_name = 'fk_fqh_auditor_task_user'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.182ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.519ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.360ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.177ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.741ms] [34;1m[rows:-][0m SELECT * FROM `fqh_host` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.299ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.326ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.180ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND index_name = 'idx_fqh_host_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.586ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.153ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND index_name = 'idx_fqh_host_ipv4'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.649ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.190ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.966ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_template_host` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.232ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_template_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.497ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.101ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND constraint_name = 'fk_fqh_template_host_host'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.494ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.396ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND constraint_name = 'fk_fqh_template_host_task_template'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.060ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.351ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.157ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.556ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.512ms] [34;1m[rows:-][0m SELECT * FROM `fqh_domain` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.401ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.368ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.142ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' AND index_name = 'idx_fqh_domain_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.521ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.320ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.346ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.633ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.531ms] [34;1m[rows:-][0m SELECT * FROM `fqh_host_domain` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.621ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.864ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.204ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND constraint_name = 'fk_fqh_host_domain_host'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.759ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.176ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND constraint_name = 'fk_fqh_host_domain_domain'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.531ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.235ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.435ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.601ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.043ms] [34;1m[rows:-][0m SELECT * FROM `fqh_project_host` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.237ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.461ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.445ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND constraint_name = 'fk_fqh_project_host_host'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.508ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.106ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.254ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND constraint_name = 'fk_fqh_project_host_project'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.945ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.369ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.691ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.877ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.600ms] [34;1m[rows:-][0m SELECT * FROM `fqh_server_record` LIMIT 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.869ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.828ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.509ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND constraint_name = 'fk_fqh_server_record_server_project'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.820ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.123ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND constraint_name = 'fk_fqh_server_record_server_host'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.342ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.123ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_deleted_at'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.433ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.404ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_flag'
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.202ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.799ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:44:58 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.197ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_server_name'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.995ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.215ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.331ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_user` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.647ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.283ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.420ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND index_name = 'idx_fqh_user_deleted_at'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.262ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.205ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND index_name = 'idx_fqh_user_username'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.537ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.404ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.151ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_user_group` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.930ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.129ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.234ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND index_name = 'idx_fqh_user_group_deleted_at'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.686ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.220ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND index_name = 'idx_fqh_user_group_name'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.615ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.956ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.675ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.011ms] [34;1m[rows:-][0m SELECT * FROM `fqh_permit_users` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.702ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.210ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.115ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND constraint_name = 'fk_fqh_permit_users_user_group'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.312ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.312ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND constraint_name = 'fk_fqh_permit_users_user'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.828ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.961ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.143ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.409ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.608ms] [34;1m[rows:-][0m SELECT * FROM `fqh_menus` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.437ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.733ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.196ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' AND index_name = 'idx_fqh_menus_deleted_at'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.311ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.859ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.567ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.209ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.981ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_permit_menus` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.984ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.114ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.453ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND constraint_name = 'fk_fqh_permit_menus_menus'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.521ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.300ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND constraint_name = 'fk_fqh_permit_menus_user_group'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.308ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.624ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.429ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.125ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.772ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_jwt_blacklist` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.252ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.137ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.506ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' AND index_name = 'idx_fqh_jwt_blacklist_deleted_at'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.561ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.294ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.264ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.619ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_api` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.889ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.134ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.687ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' AND index_name = 'idx_fqh_api_deleted_at'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.569ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.279ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.558ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.312ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_act_record` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.879ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.482ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.280ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND index_name = 'idx_fqh_act_record_deleted_at'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.505ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.314ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.199ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND index_name = 'idx_fqh_act_record_user_id'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.549ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.392ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.530ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_project` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.877ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.639ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.846ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project' AND constraint_name = 'fk_fqh_user_project'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.089ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.619ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.459ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project' AND constraint_name = 'fk_fqh_user_group_project'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.164ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.735ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.351ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_group_id'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.585ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.243ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.332ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_deleted_at'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.757ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.276ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_name'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.542ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.118ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_user_id'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.618ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.299ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.508ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.507ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_task_template` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.412ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.437ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.189ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.623ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND constraint_name = 'fk_fqh_project_task_template'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.188ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.055ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.225ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND index_name = 'idx_fqh_task_template_deleted_at'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.470ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.300ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND index_name = 'idx_fqh_task_template_pid'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.763ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.298ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.381ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.576ms] [34;1m[rows:-][0m SELECT * FROM `fqh_task_record` LIMIT 1
+
+2023/11/29 11:45:25 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.707ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[550.308ms] [34;1m[rows:0][0m ALTER TABLE `fqh_task_record` MODIFY COLUMN `status` varchar(10) COMMENT ' 状态(0: 待审核 1: 待执行 2: 执行成功 3: 执行失败 4: 已驳回)'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.563ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.510ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.408ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND constraint_name = 'fk_fqh_task_template_task_record'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.507ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.279ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.303ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND constraint_name = 'fk_fqh_user_task_record'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.508ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.507ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.429ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND index_name = 'idx_fqh_task_record_deleted_at'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.606ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.269ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND index_name = 'idx_fqh_task_record_task_name'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.773ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.115ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.412ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.381ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.526ms] [34;1m[rows:-][0m SELECT * FROM `fqh_auditor_task` LIMIT 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.643ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.694ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.229ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND constraint_name = 'fk_fqh_auditor_task_task_record'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.728ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.190ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND constraint_name = 'fk_fqh_auditor_task_user'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.190ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.058ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.829ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.645ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.225ms] [34;1m[rows:-][0m SELECT * FROM `fqh_host` LIMIT 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.499ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.073ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.520ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.250ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND index_name = 'idx_fqh_host_deleted_at'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.667ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.163ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND index_name = 'idx_fqh_host_ipv4'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.301ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.746ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.416ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.643ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_template_host` LIMIT 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.862ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_template_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.657ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.169ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND constraint_name = 'fk_fqh_template_host_host'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.508ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.321ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.207ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND constraint_name = 'fk_fqh_template_host_task_template'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.644ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.317ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.211ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.502ms] [34;1m[rows:-][0m SELECT * FROM `fqh_domain` LIMIT 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.318ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.060ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.790ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' AND index_name = 'idx_fqh_domain_deleted_at'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.012ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.999ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.229ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.724ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_host_domain` LIMIT 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.881ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.786ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.228ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND constraint_name = 'fk_fqh_host_domain_host'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.508ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.047ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.256ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND constraint_name = 'fk_fqh_host_domain_domain'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.746ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.339ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.360ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.250ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_project_host` LIMIT 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.831ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.610ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.431ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND constraint_name = 'fk_fqh_project_host_host'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.542ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.170ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND constraint_name = 'fk_fqh_project_host_project'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.249ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.887ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.513ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.339ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_server_record` LIMIT 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.284ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.702ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.178ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND constraint_name = 'fk_fqh_server_record_server_host'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.241ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.559ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND constraint_name = 'fk_fqh_server_record_server_project'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.178ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.390ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_deleted_at'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.562ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.365ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.375ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_flag'
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.508ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.270ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:26 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.365ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_server_name'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.998ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.997ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.758ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.806ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_user` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.260ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.446ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.586ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND index_name = 'idx_fqh_user_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.366ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.403ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user' AND index_name = 'idx_fqh_user_username'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.507ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.232ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.498ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.735ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.639ms] [34;1m[rows:-][0m SELECT * FROM `fqh_user_group` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.222ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.389ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.516ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND index_name = 'idx_fqh_user_group_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.278ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.597ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_user_group' AND index_name = 'idx_fqh_user_group_name'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.507ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.316ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.621ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.315ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.521ms] [34;1m[rows:-][0m SELECT * FROM `fqh_permit_users` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.018ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.338ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[3.364ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND constraint_name = 'fk_fqh_permit_users_user'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.133ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.898ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_users' AND constraint_name = 'fk_fqh_permit_users_user_group'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.507ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.266ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.427ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.218ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.590ms] [34;1m[rows:-][0m SELECT * FROM `fqh_menus` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.429ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.782ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.195ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_menus' AND index_name = 'idx_fqh_menus_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.230ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.475ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.318ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_permit_menus` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.697ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.766ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.888ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND constraint_name = 'fk_fqh_permit_menus_menus'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.543ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.416ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.697ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_permit_menus' AND constraint_name = 'fk_fqh_permit_menus_user_group'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.237ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.434ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.275ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_jwt_blacklist` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.346ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.767ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.462ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_jwt_blacklist' AND index_name = 'idx_fqh_jwt_blacklist_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.179ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.287ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.266ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_api` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.364ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.599ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.438ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.210ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_api' AND index_name = 'idx_fqh_api_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.546ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.296ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.582ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.508ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.170ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT * FROM `fqh_act_record` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.920ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.658ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.245ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND index_name = 'idx_fqh_act_record_user_id'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.751ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.508ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.321ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_act_record' AND index_name = 'idx_fqh_act_record_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.216ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.748ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.900ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.548ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.339ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.512ms] [34;1m[rows:-][0m SELECT * FROM `fqh_project` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.298ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.502ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.113ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.742ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project' AND constraint_name = 'fk_fqh_user_group_project'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.233ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.168ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project' AND constraint_name = 'fk_fqh_user_project'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.609ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.244ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_user_id'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.196ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.247ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_group_id'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.504ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.222ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.188ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.207ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.323ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project' AND index_name = 'idx_fqh_project_name'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.232ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.316ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.581ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_task_template` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.431ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.010ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.152ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND constraint_name = 'fk_fqh_project_task_template'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.556ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.201ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.288ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND index_name = 'idx_fqh_task_template_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.715ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.370ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_template' AND index_name = 'idx_fqh_task_template_pid'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.654ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.563ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.339ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_host` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.272ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.018ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.342ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND index_name = 'idx_fqh_host_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.218ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.388ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host' AND index_name = 'idx_fqh_host_ipv4'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.800ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.537ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.780ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_template_host` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.842ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_template_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.640ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.445ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND constraint_name = 'fk_fqh_template_host_host'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.248ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.135ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_template_host' AND constraint_name = 'fk_fqh_template_host_task_template'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.339ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.427ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.768ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.529ms] [34;1m[rows:-][0m SELECT * FROM `fqh_task_record` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.309ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[82.848ms] [34;1m[rows:0][0m ALTER TABLE `fqh_task_record` MODIFY COLUMN `status` varchar(10) COMMENT ' 状态(0: 待审核 1: 待执行 2: 执行成功 3: 执行失败 4: 已驳回)'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.071ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.977ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.873ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND constraint_name = 'fk_fqh_task_template_task_record'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.185ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.899ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.846ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND constraint_name = 'fk_fqh_user_task_record'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.448ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.258ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND index_name = 'idx_fqh_task_record_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.500ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.321ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_task_record' AND index_name = 'idx_fqh_task_record_task_name'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.558ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.461ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.659ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT * FROM `fqh_auditor_task` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.308ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.362ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.122ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND constraint_name = 'fk_fqh_auditor_task_task_record'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.529ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.070ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_auditor_task' AND constraint_name = 'fk_fqh_auditor_task_user'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.667ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.205ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.231ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_domain` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.095ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.230ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.377ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_domain' AND index_name = 'idx_fqh_domain_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.491ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.177ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.690ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_host_domain` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.137ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.791ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.359ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND constraint_name = 'fk_fqh_host_domain_host'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.590ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.467ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_host_domain' AND constraint_name = 'fk_fqh_host_domain_domain'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.530ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.416ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.326ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.205ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_project_host` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.267ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_project_host' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.571ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.102ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.554ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND constraint_name = 'fk_fqh_project_host_host'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.074ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.049ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.688ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_project_host' AND constraint_name = 'fk_fqh_project_host_project'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.093ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.330ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND table_type = 'BASE TABLE'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.513ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT * FROM `fqh_server_record` LIMIT 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.873ms] [34;1m[rows:-][0m SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' ORDER BY ORDINAL_POSITION
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.111ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.255ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND constraint_name = 'fk_fqh_server_record_server_host'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.522ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.338ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[2.431ms] [34;1m[rows:-][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE constraint_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND constraint_name = 'fk_fqh_server_record_server_project'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.255ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.345ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_deleted_at'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.512ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.056ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.275ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_flag'
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[0.000ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.140ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'fqhWeb%' ORDER BY SCHEMA_NAME='fqhWeb' DESC,SCHEMA_NAME limit 1
+
+2023/11/29 11:45:32 [32mD:/fqhWeb/fqhWeb/server/cmd/main.go:18
+[0m[33m[1.128ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.statistics WHERE table_schema = 'fqhWeb' AND table_name = 'fqh_server_record' AND index_name = 'idx_fqh_server_record_server_name'

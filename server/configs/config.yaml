@@ -10,7 +10,10 @@ logger:
 concurrency:
   number: 5000
 
-
+# webhook的secret
+webhookSecret:
+  github: "fanqihang"
+  gitlab: "fanqihang"
 
 system:
   # mode: "product"

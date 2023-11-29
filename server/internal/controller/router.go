@@ -22,6 +22,9 @@ func NewRoute() *gin.Engine {
 	v1.GET("ping", Test)
 	// ---------登录----------
 	v1.POST("login", UserLogin)
+	// ---------Webhook相关----------
+	v1.POST("/webhook/github")
+	v1.POST("/webhook/gitlab")
 	// ------------验证相关------------
 	v1.Use(middleware.JWTAuthMiddleware()).Use(middleware.CasbinHandler()).Use(middleware.UserActionRecord())
 	{
@@ -111,7 +114,7 @@ func NewRoute() *gin.Engine {
 		opsRoute := v1.Group("ops")
 		{
 			// 工单相关
-			opsRoute.POST("submitTask", SubmitTask)
+			opsRoute.POST("submitTask", SubmitTask) // 装服是SSH模式，更倾向做http的C/S模式，更稳定且反馈也更详细
 			opsRoute.GET("getTask", GetTask)
 			opsRoute.GET("getSSHExecParam", GetSSHExecParam)
 			opsRoute.PUT("approveTask", ApproveTask)

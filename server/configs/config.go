@@ -1,10 +1,11 @@
 package configs
 
 type Config struct {
-	Mysql       Mysql       `json:"mysql"`
-	Logger      Logger      `json:"logger"`
-	System      System      `json:"system"`
-	Concurrency Concurrency `json:"concurrency"`
+	Mysql         Mysql         `json:"mysql"`
+	Logger        Logger        `json:"logger"`
+	System        System        `json:"system"`
+	Concurrency   Concurrency   `json:"concurrency"`
+	WebhookSecret WebhookSecret `json:"webhook_secret"`
 }
 
 type Mysql struct {
@@ -22,6 +23,11 @@ type Concurrency struct {
 
 type System struct {
 	Mode string
+}
+
+type WebhookSecret struct {
+	Github string
+	Gitlab string
 }
 
 var Conf = new(Config)
