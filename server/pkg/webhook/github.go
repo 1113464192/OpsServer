@@ -641,12 +641,11 @@ type GithubPRHook struct {
 // github push 执行 CI 所需字段
 type HandleGithubPushJson struct {
 	Repository struct {
-		Name      string    `json:"name"`
 		FullName  string    `json:"full_name"`
 		UpdatedAt time.Time `json:"updated_at"`
 		GitUrl    string    `json:"git_url"`
 		SshUrl    string    `json:"ssh_url"`
-		CloneUrl  string    `json:"clone_url"`
+		CloneUrl  string    `json:"clone_url"` // cloneurl就是htpps
 	} `json:"repository"`
 }
 
@@ -654,7 +653,6 @@ type HandleGithubPushJson struct {
 type HandleGithubPRJson struct {
 	Action     string `json:"action"`
 	Repository struct {
-		Name      string    `json:"name"`
 		FullName  string    `json:"full_name"`
 		UpdatedAt time.Time `json:"updated_at"`
 		GitUrl    string    `json:"git_url"`

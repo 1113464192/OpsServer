@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *WebhookService) HandleGithubWebhook(c *gin.Context) {
+func HandleGithubWebhook(c *gin.Context) {
 	data, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		fmt.Println("获取数据的错误处理(入库)")
@@ -20,7 +20,7 @@ func (s *WebhookService) HandleGithubWebhook(c *gin.Context) {
 
 	// 判断sign是否正确
 	sign := c.GetHeader(consts.GITHUB_SECRET_SIGN)
-	if !webhook.ValidatePrefix(data, []byte(s.GithubSecret), sign) {
+	if !webhook.ValidatePrefix(data, []byte(Webhook().GithubSecret), sign) {
 		fmt.Println("验证数据的错误处理(入库)")
 		return
 	}
@@ -29,10 +29,10 @@ func (s *WebhookService) HandleGithubWebhook(c *gin.Context) {
 	eventType := c.GetHeader(consts.GITHUB_EVENT)
 	switch eventType {
 	case consts.GITHUB_EVENT_PUSH:
-		res, err := s.handleGithubPushReq(data)
+		res, err := Webhook().handleGithubPushReq(data)
 		fmt.Printf("\n github的push处理 \n %s \n %v \n", *res, err)
 	case consts.GITHUB_EVENT_PR:
-		res, err := s.handleGithubPRReq(data)
+		res, err := Webhook().handleGithubPRReq(data)
 		fmt.Printf("\n github的pull-request处理 \n %s \n %v \n", *res, err)
 	default:
 		fmt.Println("处理范围外的请求: " + eventType)

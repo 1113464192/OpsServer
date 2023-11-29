@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fqhWeb/internal/middleware"
+	"fqhWeb/internal/service/webhook"
 	_ "fqhWeb/swagger"
 
 	"github.com/gin-gonic/gin"
@@ -23,8 +24,8 @@ func NewRoute() *gin.Engine {
 	// ---------登录----------
 	v1.POST("login", UserLogin)
 	// ---------Webhook相关----------
-	v1.POST("/webhook/github")
-	v1.POST("/webhook/gitlab")
+	v1.POST("webhook/github", webhook.HandleGithubWebhook)
+	v1.POST("webhook/gitlab", webhook.HandleGitlabWebhook)
 	// ------------验证相关------------
 	v1.Use(middleware.JWTAuthMiddleware()).Use(middleware.CasbinHandler()).Use(middleware.UserActionRecord())
 	{
