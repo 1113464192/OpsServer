@@ -15,223 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/api/delApi": {
-            "delete": {
-                "description": "删除API",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api相关"
-                ],
-                "summary": "删除API",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 登录返回的用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "id",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.IdsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/api/fresh": {
-            "post": {
-                "description": "刷新casbin缓存",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api相关"
-                ],
-                "summary": "刷新casbin缓存",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 登录返回的用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/api/getApiList": {
-            "get": {
-                "description": "获取Api列表 可分页",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api相关"
-                ],
-                "summary": "获取Api列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 登录返回的用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页大小",
-                        "name": "page_size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/api/getCasbinList": {
-            "get": {
-                "description": "获取用户已有的API权限列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api相关"
-                ],
-                "summary": "获取用户已有的API权限列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 登录返回的用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "组ID",
-                        "name": "gid",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/api/updateApi": {
+        "/api/v1/api/api": {
             "post": {
                 "description": "新增或者修改Api",
                 "produces": [
@@ -309,18 +93,16 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/api/updateCasbin": {
-            "post": {
-                "description": "为用户分配API权限",
+            },
+            "delete": {
+                "description": "删除API",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Api相关"
                 ],
-                "summary": "为用户分配API权限",
+                "summary": "删除API",
                 "parameters": [
                     {
                         "type": "string",
@@ -330,120 +112,8 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "为用户分配API权限的请求",
+                        "description": "传删除的API的id切片",
                         "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.CasbinInReceiveReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/group/association": {
-            "put": {
-                "description": "关联用户，关联成功data返回组和关联用户信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户组相关"
-                ],
-                "summary": "关联用户",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "输入组ID和对应用户IDs",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.UpdateUserAssReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/group/delete": {
-            "delete": {
-                "description": "删除成功返回sucess",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户组相关"
-                ],
-                "summary": "删除用户组",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "要删除的组ID",
-                        "name": "ids",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -479,28 +149,23 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/group/getGroups": {
+        "/api/v1/api/apis": {
             "get": {
-                "description": "返回指定用户组/不传Name返回所有用户组",
+                "description": "获取Api列表 可分页",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "用户组相关"
+                    "Api相关"
                 ],
-                "summary": "获取用户组",
+                "summary": "获取Api列表",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
+                        "description": "格式为：Bearer 登录返回的用户令牌",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -543,16 +208,63 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/group/getProjectAss": {
-            "get": {
-                "description": "返回组关联的项目",
+        "/api/v1/api/fresh": {
+            "post": {
+                "description": "刷新casbin缓存",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "用户组相关"
+                    "Api相关"
                 ],
-                "summary": "获取组关联项目",
+                "summary": "刷新casbin缓存",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 登录返回的用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/domain/ass-host": {
+            "get": {
+                "description": "返回服务器切片",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "域名相关"
+                ],
+                "summary": "查询域名对应服务器",
                 "parameters": [
                     {
                         "type": "string",
@@ -605,9 +317,476 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "域名关联服务器",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "域名相关"
+                ],
+                "summary": "域名关联服务器",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "关联传入参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateDomainAssHostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
             }
         },
-        "/api/v1/group/getUserAss": {
+        "/api/v1/domain/domain": {
+            "post": {
+                "description": "返回新增或修改的指定域名",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "域名相关"
+                ],
+                "summary": "新增/修改域名",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "domain",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "返回success",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "域名相关"
+                ],
+                "summary": "删除域名",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除域名ID切片",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/group/apis": {
+            "get": {
+                "description": "由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3\u0026ids=4",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "获取用户组的API权限列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 登录返回的用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "为用户组分配API权限",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "为用户组分配API权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 登录返回的用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "传为用户组分配的API切片",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateCasbinReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/group/ass-menus": {
+            "get": {
+                "description": "返回组关联的菜单",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "获取组关联菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "关联菜单",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "关联菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "输入菜单IDs和对应用户组ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateGroupAssMenusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/group/ass-project": {
+            "get": {
+                "description": "由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3\u0026ids=4",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "获取组关联项目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/group/ass-user": {
             "get": {
                 "description": "返回组关联的用户",
                 "produces": [
@@ -669,9 +848,63 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "关联用户，关联成功data返回组和关联用户信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "关联用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "传组ID和对应用户切片",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateGroupAssUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
             }
         },
-        "/api/v1/group/update": {
+        "/api/v1/group/group": {
             "post": {
                 "description": "新增不用传ID，修改才传ID",
                 "produces": [
@@ -741,7 +974,130 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/host/Host": {
+        "/api/v1/group/groups": {
+            "get": {
+                "description": "获取用户组列表(ID直接取用户组无需其他参数，否则需要name和pageinfo)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "获取用户组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "string",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除成功返回sucess",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户组相关"
+                ],
+                "summary": "删除用户组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "传待删除的组ID切片",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/host/host": {
             "get": {
                 "description": "全部查询不传Ip",
                 "produces": [
@@ -792,182 +1148,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/host/assDomain": {
-            "put": {
-                "description": "服务器ID[多选]",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "服务器相关"
-                ],
-                "summary": "域名关联服务器",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "关联传入参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.UpdateDomainAssHostReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/host/domainAssHost": {
-            "get": {
-                "description": "返回服务器切片",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "服务器相关"
-                ],
-                "summary": "查询域名对应服务器",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页大小",
-                        "name": "page_size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/host/getPasswd": {
-            "get": {
-                "description": "返回服务器的密码",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "服务器相关"
-                ],
-                "summary": "返回服务器的密码",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/host/update": {
+            },
             "post": {
                 "description": "返回新增/修改的指定服务器",
                 "produces": [
@@ -1135,18 +1316,16 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/host/updateDomain": {
-            "post": {
-                "description": "返回新增或修改的指定域名",
+            },
+            "delete": {
+                "description": "返回success",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "服务器相关"
                 ],
-                "summary": "新增/修改域名",
+                "summary": "删除服务器",
                 "parameters": [
                     {
                         "type": "string",
@@ -1156,15 +1335,66 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "description": "删除服务器ID切片",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/host/password": {
+            "get": {
+                "description": "返回服务器的密码",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务器相关"
+                ],
+                "summary": "返回服务器的密码",
+                "parameters": [
+                    {
                         "type": "string",
-                        "name": "domain",
-                        "in": "formData",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "name": "id",
-                        "in": "formData"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1251,171 +1481,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/menu/association": {
-            "put": {
-                "description": "关联用户组，关联成功data返回组和关联用户信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "关联用户组",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "输入菜单ID和对应用户组IDs",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.UpdateMenuAssReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/menu/delete": {
-            "delete": {
-                "description": "删除成功返回success",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "删除菜单",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "菜单ID",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.IdsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/menu/getMenus": {
-            "get": {
-                "description": "返回关联的菜单",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "获取用户组对应菜单信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/menu/update": {
+        "/api/v1/menu/menu": {
             "post": {
                 "description": "新增不用传ID，修改才传ID",
                 "produces": [
@@ -1527,7 +1593,130 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ops/approveTask": {
+        "/api/v1/menu/menus": {
+            "get": {
+                "description": "返回菜单信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单相关"
+                ],
+                "summary": "获取菜单信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "string",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除成功返回success",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单相关"
+                ],
+                "summary": "删除菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "菜单ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ops/approve-task": {
             "put": {
                 "description": "传入工单的ID",
                 "produces": [
@@ -1587,63 +1776,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ops/delete": {
-            "delete": {
-                "description": "传入工单的ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Ops相关"
-                ],
-                "summary": "工单删除",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "传入工单的ID",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.IdsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/ops/execSSHTask": {
+        "/api/v1/ops/exec-ssh-task": {
             "post": {
                 "description": "返回执行结果",
                 "produces": [
@@ -1652,7 +1785,7 @@ const docTemplate = `{
                 "tags": [
                     "Ops相关"
                 ],
-                "summary": "工单操作执行",
+                "summary": "执行人执行工单操作",
                 "parameters": [
                     {
                         "type": "string",
@@ -1696,7 +1829,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ops/getSSHExecParam": {
+        "/api/v1/ops/ssh-exec-param": {
             "get": {
                 "description": "返回sftp和ssh的执行参数",
                 "produces": [
@@ -1705,7 +1838,7 @@ const docTemplate = `{
                 "tags": [
                     "Ops相关"
                 ],
-                "summary": "提取执行参数",
+                "summary": "提取SSH执行参数",
                 "parameters": [
                     {
                         "type": "string",
@@ -1749,7 +1882,63 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ops/getTask": {
+        "/api/v1/ops/submit-task": {
+            "post": {
+                "description": "传入模板id，返回ssh执行所需参数并自动写入任务工单库",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ops相关"
+                ],
+                "summary": "提交执行工单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "注意Auditor参数: 最先审批的放第一个,因为接入后从第一个到最后一个依次发送信息审批",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ops.SubmitTaskReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ops/task": {
             "get": {
                 "description": "传入查询所需参数,输了ID就不用name和页码",
                 "produces": [
@@ -1816,18 +2005,16 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/ops/submitTask": {
-            "post": {
-                "description": "传入模板id，返回ssh执行所需参数并自动写入任务工单库",
+            },
+            "delete": {
+                "description": "传入工单的ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Ops相关"
                 ],
-                "summary": "提交执行工单",
+                "summary": "工单删除",
                 "parameters": [
                     {
                         "type": "string",
@@ -1837,12 +2024,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "注意Auditor参数: 最先审批的放第一个,因为接入后从第一个到最后一个依次发送信息审批",
+                        "description": "传入工单的ID",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ops.SubmitTaskReq"
+                            "$ref": "#/definitions/api.IdsReq"
                         }
                     }
                 ],
@@ -1923,119 +2110,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/project/association": {
-            "put": {
-                "description": "服务器ID[多选]",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "项目相关"
-                ],
-                "summary": "关联服务器",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "关联传入参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.UpdateProjectAssHostReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/project/delete": {
-            "delete": {
-                "description": "返回success",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "项目相关"
-                ],
-                "summary": "删除项目",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "删除project所需参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.IdsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/project/getAssHost": {
+        "/api/v1/project/ass-host": {
             "get": {
                 "description": "返回服务器切片",
                 "produces": [
@@ -2098,9 +2173,63 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "服务器ID[多选]",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "项目相关"
+                ],
+                "summary": "关联服务器",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "关联传入参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateProjectAssHostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
             }
         },
-        "/api/v1/project/getProject": {
+        "/api/v1/project/project": {
             "get": {
                 "description": "返回指定项目",
                 "produces": [
@@ -2163,68 +2292,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/project/getSelfProject": {
-            "get": {
-                "description": "返回自身所属项目",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "项目相关"
-                ],
-                "summary": "获取自身所属项目",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页大小",
-                        "name": "page_size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/project/update": {
+            },
             "post": {
                 "description": "返回新增/修改的指定项目",
                 "produces": [
@@ -2299,9 +2367,63 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "返回success",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "项目相关"
+                ],
+                "summary": "删除项目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除project的IDs切片",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
             }
         },
-        "/api/v1/server/getServerRecord": {
+        "/api/v1/server/record": {
             "get": {
                 "description": "传入查询所需参数,输了ID就不用Flag和页码以及PID，没传ID的话则必填项目ID，然后flag和name二选一加页码",
                 "produces": [
@@ -2379,65 +2501,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/server/serverRecord": {
-            "delete": {
-                "description": "删除成功返回success",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "服务端相关"
-                ],
-                "summary": "删除单服记录",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "单服记录ID",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.IdsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/server/updateServerRecord": {
+            },
             "put": {
                 "description": "传入更改所需参数",
                 "produces": [
@@ -2518,9 +2582,63 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "删除成功返回success",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务端相关"
+                ],
+                "summary": "删除单服记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "单服记录ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
             }
         },
-        "/api/v1/ssh/testSSH": {
+        "/api/v1/ssh/test-ssh": {
             "post": {
                 "description": "传入SSH命令所需参数",
                 "produces": [
@@ -2576,7 +2694,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/task/association": {
+        "/api/v1/template/ass-host": {
             "put": {
                 "description": "服务器ID[多选](如果直接使用对应项目关联主机则无需关联主机)",
                 "produces": [
@@ -2632,7 +2750,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/task/conditionSet": {
+        "/api/v1/template/condition-set": {
             "get": {
                 "description": "可不选或多选,有需要再让运维从代码中添加功能(opsservice也要添加)",
                 "produces": [
@@ -2679,63 +2797,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/task/deleteTemplate": {
-            "delete": {
-                "description": "删除的任务模板",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "模板相关"
-                ],
-                "summary": "删除任务模板",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "所需参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.IdsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/task/getTemplate": {
+        "/api/v1/template/template": {
             "get": {
                 "description": "传ID(Task)返回模板内容/只传项目ID返回包含任务类型/传任务类型和项目ID返回包含模板名",
                 "produces": [
@@ -2810,9 +2872,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/task/template": {
+            },
             "post": {
                 "description": "运营点击发出工单/运维审批最后确认 都可以修改",
                 "produces": [
@@ -2836,7 +2896,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UpdateTaskTemplateReq"
+                            "$ref": "#/definitions/api.UpdateTemplateReq"
                         }
                     }
                 ],
@@ -2866,18 +2926,16 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/user/delete": {
+            },
             "delete": {
-                "description": "删除用户",
+                "description": "删除的任务模板",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "用户相关"
+                    "模板相关"
                 ],
-                "summary": "删除用户",
+                "summary": "删除任务模板",
                 "parameters": [
                     {
                         "type": "string",
@@ -2887,7 +2945,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "用户IDs",
+                        "description": "所需参数",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -2924,7 +2982,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/getActLog": {
+        "/api/v1/user/action-log": {
             "get": {
                 "description": "获取用户操作记录，不包含get",
                 "produces": [
@@ -2988,7 +3046,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/getAssGroup": {
+        "/api/v1/user/ass-group": {
             "get": {
                 "description": "返回用户关联的组",
                 "produces": [
@@ -3041,101 +3099,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/getSelfAssGroup": {
-            "get": {
-                "description": "返回用户本身关联的组",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户相关"
-                ],
-                "summary": "获取用户本身关联的组",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/user/getSelfInfo": {
-            "get": {
-                "description": "获取用户个人信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户相关"
-                ],
-                "summary": "用户个人信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
-                        "schema": {
-                            "$ref": "#/definitions/api.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/user/keyFile": {
+        "/api/v1/user/key-file": {
             "post": {
                 "description": "是私钥不要提交公钥！私钥如: id_rsa",
                 "produces": [
@@ -3196,7 +3160,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/keyStr": {
+        "/api/v1/user/key-str": {
             "post": {
                 "description": "是私钥字符串不要提交公钥文件！私钥如: id_rsa的内容",
                 "produces": [
@@ -3324,6 +3288,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "用户ID",
                         "name": "id",
                         "in": "formData",
                         "required": true
@@ -3366,16 +3331,16 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/search": {
+        "/api/v1/user/self-ass-group": {
             "get": {
-                "description": "获取用户列表(IDs直接取用户无需其他参数，否则需要name和pageinfo)",
+                "description": "返回用户本身关联的组",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "用户相关"
                 ],
-                "summary": "获取用户列表",
+                "summary": "获取用户本身关联的组",
                 "parameters": [
                     {
                         "type": "string",
@@ -3383,28 +3348,6 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页大小",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "string",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3435,7 +3378,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/selfPassword": {
+        "/api/v1/user/self-password": {
             "patch": {
                 "description": "修改用户自己的密码",
                 "produces": [
@@ -3489,9 +3432,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/user/self-user": {
+            "get": {
+                "description": "获取用户个人信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关"
+                ],
+                "summary": "用户个人信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/status": {
             "patch": {
-                "description": "status参数：恢复用户传1，禁用用户传2",
+                "description": "修改用户状态",
                 "produces": [
                     "application/json"
                 ],
@@ -3548,9 +3538,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/update": {
+        "/api/v1/user/user": {
             "post": {
-                "description": "新增不用传用户ID，修改才传用户ID",
+                "description": "新增不用传用户ID，修改才传用户ID，返回用户密码",
                 "produces": [
                     "application/json"
                 ],
@@ -3638,27 +3628,132 @@ const docTemplate = `{
                     }
                 }
             }
-        }
-    },
-    "definitions": {
-        "api.CasbinInReceiveReq": {
-            "type": "object",
-            "required": [
-                "group_id"
-            ],
-            "properties": {
-                "group_id": {
-                    "description": "组id",
-                    "type": "string"
-                },
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
+        },
+        "/api/v1/user/users": {
+            "get": {
+                "description": "获取用户列表(ID直接取用户无需其他参数，否则需要name和pageinfo)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关"
+                ],
+                "summary": "获取用户列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "string",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除用户",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关"
+                ],
+                "summary": "删除用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "待删除的用户ID切片",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.IdsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
                     }
                 }
             }
-        },
+        }
+    },
+    "definitions": {
         "api.IdsReq": {
             "type": "object",
             "required": [
@@ -3721,6 +3816,24 @@ const docTemplate = `{
                 }
             }
         },
+        "api.UpdateCasbinReq": {
+            "type": "object",
+            "required": [
+                "group_id"
+            ],
+            "properties": {
+                "group_id": {
+                    "description": "组id",
+                    "type": "string"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "api.UpdateDomainAssHostReq": {
             "type": "object",
             "required": [
@@ -3738,21 +3851,39 @@ const docTemplate = `{
                 }
             }
         },
-        "api.UpdateMenuAssReq": {
+        "api.UpdateGroupAssMenusReq": {
             "type": "object",
             "required": [
                 "group_id",
-                "menu_id"
+                "menu_ids"
             ],
             "properties": {
                 "group_id": {
+                    "type": "integer"
+                },
+                "menu_ids": {
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
-                },
-                "menu_id": {
+                }
+            }
+        },
+        "api.UpdateGroupAssUserReq": {
+            "type": "object",
+            "required": [
+                "group_id",
+                "user_id"
+            ],
+            "properties": {
+                "group_id": {
                     "type": "integer"
+                },
+                "user_id": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -3773,7 +3904,24 @@ const docTemplate = `{
                 }
             }
         },
-        "api.UpdateTaskTemplateReq": {
+        "api.UpdateTemplateAssHostReq": {
+            "type": "object",
+            "required": [
+                "hid"
+            ],
+            "properties": {
+                "hid": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "tid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.UpdateTemplateReq": {
             "type": "object",
             "required": [
                 "cmd_tem",
@@ -3831,41 +3979,6 @@ const docTemplate = `{
                 "type_name": {
                     "description": "模板类型名",
                     "type": "string"
-                }
-            }
-        },
-        "api.UpdateTemplateAssHostReq": {
-            "type": "object",
-            "required": [
-                "hid"
-            ],
-            "properties": {
-                "hid": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "tid": {
-                    "type": "integer"
-                }
-            }
-        },
-        "api.UpdateUserAssReq": {
-            "type": "object",
-            "required": [
-                "group_id",
-                "user_id"
-            ],
-            "properties": {
-                "group_id": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
                 }
             }
         },

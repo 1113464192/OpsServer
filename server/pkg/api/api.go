@@ -9,12 +9,6 @@ type UpdateApiReq struct {
 	Description string `json:"description" form:"description"`              // api中文描述
 }
 
-// CasbinInReceiveReq 分配用户API权限的请求格式
-type CasbinInReceiveReq struct {
-	GroupId string `json:"group_id"  binding:"required"` // 组id
-	Ids     []uint `json:"ids"`
-}
-
 // CasbinGroupIds 用户组id
 type CasbinGroupIds struct {
 	GroupIds []uint `form:"group_id" json:"group_id"  binding:"required"`

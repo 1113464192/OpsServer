@@ -20,7 +20,7 @@ import (
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/server/updateServerRecord [put]
+// @Router /api/v1/server/record [put]
 func UpdateServerRecord(c *gin.Context) {
 	var param api.UpdateServerRecordReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -53,7 +53,7 @@ func UpdateServerRecord(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/server/getServerRecord [get]
+// @Router /api/v1/server/record [get]
 func GetServerRecord(c *gin.Context) {
 	var param api.GetServerRecordReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -72,8 +72,8 @@ func GetServerRecord(c *gin.Context) {
 			Msg: "Success",
 		},
 		Total:    total,
-		Page:     param.Page,
-		PageSize: param.PageSize,
+		Page:     param.PageInfo.Page,
+		PageSize: param.PageInfo.PageSize,
 	})
 }
 
@@ -89,7 +89,7 @@ func GetServerRecord(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/server/serverRecord [delete]
+// @Router /api/v1/server/record [delete]
 func DeleteServerRecord(c *gin.Context) {
 	var rid api.IdsReq
 	if err := c.ShouldBind(&rid); err != nil {

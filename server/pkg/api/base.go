@@ -97,8 +97,15 @@ type GetPagingByIdsReq struct {
 	PageInfo
 }
 
+// type GetPagingByIdsReq struct {
+type SearchIdsStringReq struct {
+	Ids    []uint `json:"ids" form:"ids"`
+	String string `json:"string" form:"string"`
+	PageInfo
+}
+
 // IdReq ID+String请求格式
-type SearchStringReq struct {
+type SearchIdStringReq struct {
 	Id     uint   `json:"id" form:"id"`
 	String string `json:"string" form:"string"`
 	PageInfo

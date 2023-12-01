@@ -101,7 +101,7 @@ func (s *ServerService) DeleteServerRecord(ids []uint) (err error) {
 	if err = util2.CheckIdsExists(model.ServerRecord{}, ids); err != nil {
 		return err
 	}
-	if err = model.DB.Where("id in (?)", ids).Delete(&model.ServerRecord{}).Error; err != nil {
+	if err = model.DB.Where("id IN (?)", ids).Delete(&model.ServerRecord{}).Error; err != nil {
 		return errors.New("删除单服记录失败")
 	}
 	return err

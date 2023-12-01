@@ -8,26 +8,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// UpdateTaskTemplate
+// UpdateTemplate
 // @Tags 模板相关
 // @title 新增/修改任务模板
 // @description 运营点击发出工单/运维审批最后确认 都可以修改
 // @Summary 新增/修改任务模板
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.UpdateTaskTemplateReq true "更新taskTem所需参数"
+// @Param data body api.UpdateTemplateReq true "更新taskTem所需参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/task/template [post]
-func UpdateTaskTemplate(c *gin.Context) {
-	var taskReq api.UpdateTaskTemplateReq
+// @Router /api/v1/template/template [post]
+func UpdateTemplate(c *gin.Context) {
+	var taskReq api.UpdateTemplateReq
 	if err := c.ShouldBind(&taskReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	result, err := service.Task().UpdateTaskTemplate(&taskReq)
+	result, err := service.Template().UpdateTemplate(&taskReq)
 	if err != nil {
 		logger.Log().Error("Task", "创建/修改任务模板", err)
 		c.JSON(500, api.Err("创建/修改任务模板失败", err))
@@ -41,26 +41,26 @@ func UpdateTaskTemplate(c *gin.Context) {
 	})
 }
 
-// GetProjectTask
+// GetProjectTemplate
 // @Tags 模板相关
 // @title 获取任务模板
 // @description 传ID(Task)返回模板内容/只传项目ID返回包含任务类型/传任务类型和项目ID返回包含模板名
 // @Summary 获取任务模板
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetProjectTaskReq true "查询taskTem所需参数"
+// @Param data query api.GetProjectTemplateReq true "传ID(Template)返回模板内容/只传项目ID返回包含任务类型/传任务类型和项目ID返回包含模板名"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/task/getTemplate [get]
-func GetProjectTask(c *gin.Context) {
-	var taskReq api.GetProjectTaskReq
-	if err := c.ShouldBind(&taskReq); err != nil {
+// @Router /api/v1/template/template [get]
+func GetProjectTemplate(c *gin.Context) {
+	var templateReq api.GetProjectTemplateReq
+	if err := c.ShouldBind(&templateReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	result, total, err := service.Task().GetProjectTask(&taskReq)
+	result, total, err := service.Template().GetProjectTemplate(&templateReq)
 	if err != nil {
 		logger.Log().Error("Task", "创建/修改任务模板", err)
 		c.JSON(500, api.Err("创建/修改任务模板失败", err))
@@ -72,12 +72,12 @@ func GetProjectTask(c *gin.Context) {
 			Msg: "Success",
 		},
 		Total:    total,
-		Page:     taskReq.PageInfo.Page,
-		PageSize: taskReq.PageInfo.PageSize,
+		Page:     templateReq.PageInfo.Page,
+		PageSize: templateReq.PageInfo.PageSize,
 	})
 }
 
-// DeleteTaskTemplate
+// DeleteTemplate
 // @Tags 模板相关
 // @title 删除任务模板
 // @description 删除的任务模板
@@ -89,14 +89,14 @@ func GetProjectTask(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/task/deleteTemplate [delete]
-func DeleteTaskTemplate(c *gin.Context) {
+// @Router /api/v1/template/template [delete]
+func DeleteTemplate(c *gin.Context) {
 	var taskReq api.IdsReq
 	if err := c.ShouldBind(&taskReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	err := service.Task().DeleteTaskTemplate(taskReq.Ids)
+	err := service.Template().DeleteTemplate(taskReq.Ids)
 	if err != nil {
 		logger.Log().Error("Task", "创建/修改任务模板", err)
 		c.JSON(500, api.Err("创建/修改任务模板失败", err))
@@ -109,7 +109,7 @@ func DeleteTaskTemplate(c *gin.Context) {
 	})
 }
 
-// UpdateTaskAssHost
+// UpdateTemplateAssHost
 // @Tags 模板相关
 // @title 关联服务器
 // @description 服务器ID[多选](如果直接使用对应项目关联主机则无需关联主机)
@@ -121,14 +121,14 @@ func DeleteTaskTemplate(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/task/association [put]
-func UpdateTaskAssHost(c *gin.Context) {
+// @Router /api/v1/template/ass-host [put]
+func UpdateTemplateAssHost(c *gin.Context) {
 	var TaskReq api.UpdateTemplateAssHostReq
 	if err := c.ShouldBind(&TaskReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	err := service.Task().UpdateHostAss(TaskReq)
+	err := service.Template().UpdateTemplateAssHost(TaskReq)
 	if err != nil {
 		logger.Log().Error("Task", "关联服务器", err)
 		c.JSON(500, api.Err("关联服务器失败", err))
@@ -152,7 +152,7 @@ func UpdateTaskAssHost(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/task/conditionSet [get]
+// @Router /api/v1/template/condition-set [get]
 func GetConditionSet(c *gin.Context) {
 	m := map[uint]string{
 		1: "data_disk",

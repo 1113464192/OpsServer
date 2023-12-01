@@ -4,9 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"fqhWeb/internal/model"
+	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/util2"
+	"strings"
 )
 
 type MenuService struct {
@@ -75,57 +77,44 @@ func (s *MenuService) UpdateMenu(param *api.UpdateMenuReq) (menuInfo any, err er
 	}
 }
 
-// 关联用户组
-func (s *MenuService) UpdateMenuAss(param *api.UpdateMenuAssReq) (menuObj any, err error) {
-	var menu model.Menus
-	var groups []model.UserGroup
-	// 默认添加管理组
-	// if !util.IsSliceContain(param.GroupIDs, 1) {
-	// 	param.GroupIDs = append(param.GroupIDs, 1)
+// 获取菜单
+func (s *MenuService) GetMenuList(param api.SearchIdStringReq) (*[]model.Menus, int64, error) {
+	var err error
+	var total int64
+	var menus []model.Menus
+	db := model.DB.Model(&menus)
+	searchReq := &api.SearchReq{
+		Condition: db,
+		Table:     &menus,
+		PageInfo:  param.PageInfo,
+	}
+	if param.Id != 0 {
+		if err = db.Where("id IN (?)", param.Id).Count(&total).Error; err != nil {
+			return nil, 0, fmt.Errorf("查询ids总数错误: %v", err)
+		}
+		if err = db.Where("id IN (?)", param.Id).Find(&menus).Error; err != nil {
+			return nil, 0, fmt.Errorf("查询ids错误: %v", err)
+		}
+	} else {
+		if param.String != "" {
+			title := "%" + strings.ToUpper(param.String) + "%"
+			db = model.DB.Where("UPPER(title) LIKE ?", title)
+			searchReq.Condition = db
+			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+				return nil, 0, err
+			}
+		} else {
+			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+				return nil, 0, err
+			}
+		}
+	}
+
+	// var result *[]api.GroupRes
+	// if result, err = s.get(&group); err != nil {
+	// 	return nil, 0, err
 	// }
-	if err = util2.CheckIdsExists(model.UserGroup{}, param.GroupIDs); err != nil {
-		return nil, err
-	}
-
-	tx := model.DB.Begin()
-	if err := tx.First(&menu, param.MenuID).Error; err != nil {
-		tx.Rollback()
-		return menu, errors.New("菜单不存在")
-	}
-
-	if err := tx.Find(&groups, param.GroupIDs).Error; err != nil {
-		tx.Rollback()
-		return groups, errors.New("用户不存在")
-	}
-
-	if err := tx.Model(&menu).Association("UserGroups").Replace(&groups); err != nil {
-		tx.Rollback()
-		return menu, err
-	}
-	tx.Commit()
-
-	return menu, err
-}
-
-// 获取用户组对应菜单
-func (s *MenuService) GetMenuList(gid uint, isAdmin uint8) (menu *[]model.Menus, err error) {
-	var group []model.UserGroup
-	if gid != 0 {
-		if err = model.DB.First(&group, gid).Error; err != nil {
-			return menu, fmt.Errorf("查找gid的用户组失败: %v", err)
-		}
-		if err = model.DB.Model(&group).Association("Menus").Find(&menu); err != nil {
-			return menu, fmt.Errorf("查找用户组关联的菜单失败: %v", err)
-		}
-		return menu, err
-	}
-	if isAdmin == 1 {
-		if err := model.DB.Find(&menu).Error; err != nil {
-			return menu, err
-		}
-		return menu, err
-	}
-	return nil, errors.New("如果不是管理员, 请输入菜单ID")
+	return &menus, total, err
 }
 
 // 删除菜单
@@ -143,7 +132,7 @@ func (s *MenuService) DeleteMenu(ids []uint) (err error) {
 		return errors.New("清除表信息 菜单与用户组关联 失败")
 	}
 
-	if err = tx.Where("id in (?)", ids).Delete(&model.Menus{}).Error; err != nil {
+	if err = tx.Where("id IN (?)", ids).Delete(&model.Menus{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除菜单失败")
 	}

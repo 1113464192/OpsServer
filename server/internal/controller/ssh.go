@@ -20,7 +20,7 @@ import (
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ssh/testSSH [post]
+// @Router /api/v1/ssh/test-ssh [post]
 func TestSSH(c *gin.Context) {
 	var param api.TestSSHReq
 	if err := c.ShouldBind(&param); err != nil {

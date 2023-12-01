@@ -4,7 +4,6 @@ import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/util/jwt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,12 +15,12 @@ import (
 // @Summary 新增/修改项目
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.UpdateProjectReq true "更新project所需参数"
+// @Param data formData api.UpdateProjectReq true "新增/修改project所需参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/update [post]
+// @Router /api/v1/project/project [post]
 func UpdateProject(c *gin.Context) {
 	var projectReq api.UpdateProjectReq
 	if err := c.ShouldBind(&projectReq); err != nil {
@@ -49,12 +48,12 @@ func UpdateProject(c *gin.Context) {
 // @Summary 删除项目
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.IdsReq true "删除project所需参数"
+// @Param data body api.IdsReq true "删除project的IDs切片"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/delete [delete]
+// @Router /api/v1/project/project [delete]
 func DeleteProject(c *gin.Context) {
 	var projectReq api.IdsReq
 	if err := c.ShouldBind(&projectReq); err != nil {
@@ -86,7 +85,7 @@ func DeleteProject(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/association [put]
+// @Router /api/v1/project/ass-host [put]
 func UpdateHostAss(c *gin.Context) {
 	var ProjectReq api.UpdateProjectAssHostReq
 	if err := c.ShouldBind(&ProjectReq); err != nil {
@@ -118,7 +117,7 @@ func UpdateHostAss(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/getProject [get]
+// @Router /api/v1/project/project [get]
 func GetProject(c *gin.Context) {
 	var projectReq api.GetProjectReq
 	if err := c.ShouldBind(&projectReq); err != nil {
@@ -142,51 +141,6 @@ func GetProject(c *gin.Context) {
 	})
 }
 
-// GetSelfProjectList
-// @Tags 项目相关
-// @title 获取自身所属项目
-// @description 返回自身所属项目
-// @Summary 获取自身所属项目
-// @Produce  application/json
-// @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.PageInfo true "页码"
-// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/getSelfProject [get]
-func GetSelfProjectList(c *gin.Context) {
-	var err error
-	cClaims, _ := c.Get("claims")
-	claims, ok := cClaims.(*jwt.CustomClaims)
-	if !ok {
-		c.JSON(401, api.Err("token携带的claims不合法", nil))
-		c.Abort()
-		return
-	}
-	var pageReq api.PageInfo
-	if err := c.ShouldBind(&pageReq); err != nil {
-		c.JSON(500, api.ErrorResponse(err))
-		return
-	}
-	groupList := claims.User.UserGroups
-	project, total, err := service.Project().GetSelfProjectList(&groupList, &pageReq)
-	if err != nil {
-		logger.Log().Error("Project", "获取项目", err)
-		c.JSON(500, api.Err("获取项目失败", err))
-		return
-	}
-	c.JSON(200, api.PageResult{
-		Data: project,
-		Meta: api.Meta{
-			Msg: "Success",
-		},
-		Total:    total,
-		Page:     pageReq.Page,
-		PageSize: pageReq.PageSize,
-	})
-}
-
 // GetHostAss
 // @Tags 项目相关
 // @title 获取项目对应服务器
@@ -199,14 +153,14 @@ func GetSelfProjectList(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/project/getAssHost [get]
+// @Router /api/v1/project/ass-host [get]
 func GetHostAss(c *gin.Context) {
 	var projectReq api.GetHostAssReq
 	if err := c.ShouldBind(&projectReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	// 后面补total
+
 	hostList, total, err := service.Project().GetHostAss(&projectReq)
 	if err != nil {
 		logger.Log().Error("Project", "获取项目拥有机器", err)

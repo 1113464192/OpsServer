@@ -46,12 +46,14 @@ func (s *OpsService) SubmitTask(param ops.SubmitTaskReq) (result *[]ops.TaskReco
 	var hosts []model.Host
 	count := model.DB.Model(&task).Where("id = ?", task.ID).Association("Hosts").Count()
 	if count == 0 {
+		// 模板没有关联数据则直接返回关联项目的主机
 		var project model.Project
 		if err = model.DB.Preload("Hosts").Where("id = ?", task.Pid).First(&project).Error; err != nil {
 			return nil, errors.New("查询项目关联主机失败")
 		}
 		hosts = project.Hosts
 	} else {
+		// 返回模板关联的主机
 		if err = model.DB.Preload("Hosts").Where("id = ?", task.ID).Find(&task).Error; err != nil {
 			return nil, errors.New("查询task关联主机失败")
 		}
@@ -107,7 +109,7 @@ func (s *OpsService) SubmitTask(param ops.SubmitTaskReq) (result *[]ops.TaskReco
 }
 
 // 获取工单
-func (s *OpsService) GetTask(param *api.SearchStringReq) (result *[]ops.TaskRecordRes, total int64, err error) {
+func (s *OpsService) GetTask(param *api.SearchIdStringReq) (result *[]ops.TaskRecordRes, total int64, err error) {
 	var task []model.TaskRecord
 	db := model.DB.Model(&task)
 	// id存在返回id对应model
@@ -238,7 +240,7 @@ func (s *OpsService) DeleteTask(ids []uint) (err error) {
 		tx.Rollback()
 		return errors.New("清除表信息 工单与用户关联 失败")
 	}
-	if err = tx.Where("id IN ?", ids).Delete(&model.TaskRecord{}).Error; err != nil {
+	if err = tx.Where("id IN (?)", ids).Delete(&model.TaskRecord{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除工单失败")
 	}

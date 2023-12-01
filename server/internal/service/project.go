@@ -85,7 +85,7 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 		tx.Rollback()
 		return errors.New("清除表信息 项目与服务器关联 失败")
 	}
-	if err = tx.Where("id in (?)", ids).Delete(&model.Project{}).Error; err != nil {
+	if err = tx.Where("id IN (?)", ids).Delete(&model.Project{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除项目失败")
 	}
@@ -149,45 +149,29 @@ func (s *ProjectService) GetProject(param *api.GetProjectReq) (projectObj any, t
 	return result, total, err
 }
 
-// 获取用户对应项目
-func (s *ProjectService) GetSelfProjectList(groupList *[]model.UserGroup, page *api.PageInfo) (projectObj any, total int64, err error) {
-	var idList []uint
-	var projectList []model.Project
-	for _, group := range *groupList {
-		idList = append(idList, group.ID)
-	}
-
-	db := model.DB.Model(&projectList).Where("group_id IN ?", idList)
-	searchReq := &api.SearchReq{
-		Condition: db,
-		Table:     &projectList,
-		PageInfo:  *page,
-	}
-	if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
-		return nil, 0, err
-	}
-	var result *[]api.ProjectRes
-	if result, err = s.GetResults(&projectList); err != nil {
-		return nil, total, err
-	}
-	return result, total, err
-}
-
 // 获取项目关联的服务器
 func (s *ProjectService) GetHostAss(param *api.GetHostAssReq) (hostInfo any, total int64, err error) {
 	var project model.Project
+
 	if !util2.CheckIdExists(&project, param.ProjectId) {
 		return nil, 0, errors.New("项目ID不存在")
 	}
-	if err = model.DB.Preload("Hosts").Where("id = ?", param.ProjectId).First(&project).Error; err != nil {
-		return nil, 0, errors.New("项目查询失败")
+
+	// 统计被关联个数
+	if err = model.DB.Find(&project, param.ProjectId).Error; err != nil {
+		return nil, 0, errors.New("查询项目报错")
 	}
+	if total = model.DB.Model(&project).Association("Hosts").Count(); total == 0 {
+		return "没有关联数据", 0, nil
+	}
+
 	assQueryReq := &api.AssQueryReq{
-		Condition: model.DB.Model(&model.Host{}),
-		Table:     &project.Hosts,
+		Condition: model.DB.Model(&project).Preload("Hosts").Where("id = ?", param.ProjectId),
+		Table:     &project,
+		AssTable:  &project.Hosts,
 		PageInfo:  param.PageInfo,
 	}
-	if total, err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
+	if err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
 		return nil, 0, err
 	}
 	var result *[]api.HostRes

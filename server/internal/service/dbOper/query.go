@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"fqhWeb/pkg/api"
+	"reflect"
+	"sort"
 )
 
 type DbOperService struct {
@@ -24,7 +26,7 @@ func (s *DbOperService) DbFind(param *api.SearchReq) (int64, error) {
 		return 0, fmt.Errorf("记录数查询失败: %v", err)
 	}
 	if count < 1 {
-		return 0, fmt.Errorf("查询到的记录为0: %v", err)
+		return 0, nil
 	}
 	if param.PageInfo.PageSize != 0 && param.PageInfo.Page != 0 {
 		limit := param.PageInfo.PageSize
@@ -34,35 +36,37 @@ func (s *DbOperService) DbFind(param *api.SearchReq) (int64, error) {
 		}
 	} else {
 		if err = param.Condition.Find(param.Table).Error; err != nil {
-			return 0, fmt.Errorf("数据库查询失败: %v", err)
+			return 0, fmt.Errorf("数据库操作失败: %v", err)
 		}
 	}
 	if err != nil {
-		return 0, errors.New("数据库操作失败")
+		return 0, fmt.Errorf("数据库操作失败: %v", err)
 	}
 	return count, err
 }
 
-func (s *DbOperService) AssDbFind(param *api.AssQueryReq) (int64, error) {
-	var count int64
-	var err error
-	if err = param.Condition.Count(&count).Error; err != nil {
-		return 0, errors.New("记录数查询失败")
+func (s *DbOperService) PaginateAndSortModels(menusPtr interface{}, pageInfo api.PageInfo, lessFunc func(i, j int) bool) error {
+	v := reflect.ValueOf(menusPtr)
+	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Slice {
+		return errors.New("传入的值不是一个切片")
 	}
-	if count < 1 {
-		return 0, errors.New("查询到的记录为0")
-	}
-	if param.PageInfo.PageSize != 0 && param.PageInfo.Page != 0 {
-		limit := param.PageInfo.PageSize
-		offset := (param.PageInfo.Page - 1) * param.PageInfo.PageSize
-		if err = param.Condition.Offset(offset).Limit(limit).Find(param.Table).Error; err != nil {
-			return 0, errors.New("数据库关联查询失败")
-		}
-	} else {
-		if err = param.Condition.Find(param.Table).Error; err != nil {
-			return 0, errors.New("数据库关联查询失败")
-		}
-	}
-	return count, err
 
+	if pageInfo.PageSize != 0 && pageInfo.Page != 0 {
+		// 获取到menusPtr的元素并变成interface类型做排序
+		sort.Slice(v.Elem().Interface(), lessFunc)
+
+		// 反射到原本指针指向的内容
+		sliceValue := v.Elem()
+		limit := pageInfo.PageSize
+		offset := (pageInfo.Page - 1) * pageInfo.PageSize
+		start := offset
+		end := offset + limit
+		if end > sliceValue.Len() {
+			end = sliceValue.Len()
+		}
+		paginatedSlice := sliceValue.Slice(start, end)
+		v.Elem().Set(paginatedSlice)
+	}
+
+	return nil
 }

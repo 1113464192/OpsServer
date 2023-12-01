@@ -21,7 +21,7 @@ import (
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/api/getApiList [get]
+// @Router /api/v1/api/apis [get]
 func GetApiList(c *gin.Context) {
 	var param api.PageInfo
 	if err := c.ShouldBind(&param); err != nil {
@@ -53,12 +53,12 @@ func GetApiList(c *gin.Context) {
 // @Summary 新增或者修改Api
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
-// @Param     data  formData      api.UpdateApiReq  true  "新增或者修改Api"
+// @Param     data  formData      api.UpdateApiReq  true  "传API新增或者修改的所需参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router    /api/v1/api/updateApi [post]
+// @Router    /api/v1/api/api [post]
 func UpdateApi(c *gin.Context) {
 	var param api.UpdateApiReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -87,12 +87,12 @@ func UpdateApi(c *gin.Context) {
 // @Summary 删除API
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
-// @Param     data  body      api.IdsReq   true  "id"
+// @Param     data  body      api.IdsReq   true  "传删除的API的id切片"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/api/delApi [delete]
+// @Router /api/v1/api/api [delete]
 func DeleteApi(c *gin.Context) {
 	var param api.IdsReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -136,66 +136,4 @@ func FreshCasbin(c *gin.Context) {
 			Msg: "Success",
 		},
 	})
-}
-
-// GetCasbinList
-// @Tags Api相关
-// @title 获取用户已有的API权限列表
-// @description 获取用户已有的API权限列表
-// @Summary 获取用户已有的API权限列表
-// @Produce   application/json
-// @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
-// @Param gid query uint true "组ID"
-// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router    /api/v1/api/getCasbinList [get]
-func GetCasbinList(c *gin.Context) {
-	idStr := c.Query("gid")
-	paths, err := service.CasbinServiceApp().GetPolicyPathByGroupId(idStr)
-	if err != nil {
-		logger.Log().Error("API", "获取用户API列表失败", err)
-		c.JSON(500, api.Err("获取用户API列表失败", nil))
-		return
-	}
-	c.JSON(200, api.Response{
-		Meta: api.Meta{
-			Msg: "Success",
-		},
-		Data: paths,
-	})
-}
-
-// UpdateCasbin
-// @Tags Api相关
-// @title 为用户分配API权限
-// @description 为用户分配API权限
-// @Summary 为用户分配API权限
-// @Produce  application/json
-// @Param Authorization header string true "格式为：Bearer 登录返回的用户令牌"
-// @Param     data  body      api.CasbinInReceiveReq  true  "为用户分配API权限的请求"
-// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
-// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router    /api/v1/api/updateCasbin [post]
-func UpdateCasbin(c *gin.Context) {
-	var param api.CasbinInReceiveReq
-	if err := c.ShouldBind(&param); err != nil {
-		c.JSON(500, api.ErrorResponse(err))
-		return
-	}
-	err := service.CasbinServiceApp().UpdateCasbin(param.GroupId, param.Ids)
-	if err != nil {
-		logger.Log().Error("API", "分配API权限错误", err)
-		c.JSON(500, api.Err("分配API权限错误", nil))
-		return
-	} else {
-		c.JSON(200, api.Response{
-			Meta: api.Meta{
-				Msg: "Success",
-			},
-		})
-	}
 }

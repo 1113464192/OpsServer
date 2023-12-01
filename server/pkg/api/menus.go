@@ -14,11 +14,6 @@ type UpdateMenuReq struct {
 	Component string `form:"component" json:"component"` // 组件
 }
 
-type UpdateMenuAssReq struct {
-	MenuID   uint   `form:"menu_id" json:"menu_id" binding:"required"`
-	GroupIDs []uint `form:"group_id" json:"group_id" binding:"required"`
-}
-
 type GetMenuListReq struct {
 	Id uint `json:"id" form:"id"`
 }

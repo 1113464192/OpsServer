@@ -7,7 +7,7 @@ type UpdateGroupReq struct {
 	Mark     string `form:"mark" json:"mark"`
 }
 
-type UpdateUserAssReq struct {
+type UpdateGroupAssUserReq struct {
 	GroupID uint   `form:"group_id" json:"group_id" binding:"required"`
 	UserIDs []uint `form:"user_id" json:"user_id" binding:"required"`
 }
@@ -21,7 +21,14 @@ type GroupRes struct {
 	User     []any
 }
 
-type GetGroupReq struct {
-	Name string `json:"name" form:"name"`
-	PageInfo
+// UpdateCasbinReq 分配用户API权限的请求格式
+type UpdateCasbinReq struct {
+	GroupId string `json:"group_id"  binding:"required"` // 组id
+	Ids     []uint `json:"ids"`
+}
+
+// 用户组关联菜单格式
+type UpdateGroupAssMenusReq struct {
+	GroupID uint   `form:"group_id" json:"group_id" binding:"required"`
+	MenuIDs []uint `form:"menu_ids" json:"menu_ids" binding:"required"`
 }

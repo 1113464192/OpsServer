@@ -153,7 +153,7 @@ func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, 
 	if len(fields) > 0 {
 		conditions := strings.Join(fields, " AND ")
 		// 从关联的主机中获取符合条件的单服
-		if err = model.DB.Where("ipv4 IN ?", hostsIp).Where(conditions, values...).Order("curr_mem").Find(hosts).Error; err != nil {
+		if err = model.DB.Where("ipv4 IN (?)", hostsIp).Where(conditions, values...).Order("curr_mem").Find(hosts).Error; err != nil {
 			return fmt.Errorf("%s%v", "筛选符合条件的主机操作报错: ", err)
 		}
 	}
@@ -207,7 +207,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 	}
 	// 判断当前项目下是否有重复Flag
 	var count int64
-	if err = model.DB.Model(&model.ServerRecord{}).Where("project_id = ? AND flag IN ?", task.Pid, flags).Count(&count).Error; err != nil {
+	if err = model.DB.Model(&model.ServerRecord{}).Where("project_id = ? AND flag IN (?)", task.Pid, flags).Count(&count).Error; err != nil {
 		return nil, fmt.Errorf("查询单服flag信息失败: %v", err)
 	}
 	if count != 0 {

@@ -3,7 +3,9 @@ package service
 import (
 	"errors"
 	"fqhWeb/internal/model"
+	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/util"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -25,17 +27,17 @@ func CasbinServiceApp() *CasbinService {
 
 // @function: UpdateCasbin
 // @description: 更新casbin权限
-// @param: authorityId string, casbinInfos []request.CasbinInfo
+// @param: api.UpdateCasbinReq
 // @return: error
-func (s *CasbinService) UpdateCasbin(groupId string, casbinIds []uint) error {
-	s.ClearCasbin(0, groupId)
+func (s *CasbinService) UpdateCasbin(param api.UpdateCasbinReq) error {
+	s.ClearCasbin(0, param.GroupId)
 	var apiList []model.Api
-	if err := model.DB.Where("id in (?)", casbinIds).Find(&apiList).Error; err != nil {
+	if err := model.DB.Where("id IN (?)", param.Ids).Find(&apiList).Error; err != nil {
 		return err
 	}
 	var rules [][]string
 	for _, v := range apiList {
-		rules = append(rules, []string{groupId, v.Path, v.Method})
+		rules = append(rules, []string{param.GroupId, v.Path, v.Method})
 	}
 	e := s.Casbin()
 	success, _ := e.AddPolicies(rules)
@@ -57,26 +59,53 @@ func (s *CasbinService) UpdateCasbinApi(oldPath string, newPath string, oldMetho
 	return err
 }
 
-// @function: GetPolicyPathByGroupId
+// @function: GetPolicyPathByGroupIds
 // @description: 获取权限列表
 // @param: groupId string
 // @return: res []any
-func (s *CasbinService) GetPolicyPathByGroupId(groupId string) (res []any, err error) {
+func (s *CasbinService) GetPolicyPathByGroupIds(groupIds []uint) (res []any, err error) {
 	e := s.Casbin()
-	list := e.GetFilteredPolicy(0, groupId)
 	var pathList []string
-	for _, v := range list {
-		pathList = append(pathList, v[1])
+
+	for _, groupId := range groupIds {
+		// 0是从0开始，全部检索
+		list := e.GetFilteredPolicy(0, strconv.FormatUint(uint64(groupId), 10))
+		for _, v := range list {
+			pathList = append(pathList, v[1])
+		}
 	}
+
+	// 去重
+	uniquePaths := util.StringSliceRemoveDuplicat(pathList)
+
 	var apiList []model.Api
-	if err := model.DB.Where("path in (?)", pathList).Find(&apiList).Error; err != nil {
+	if err := model.DB.Where("path IN (?)", uniquePaths).Find(&apiList).Error; err != nil {
 		return nil, err
 	}
+
 	for _, v := range apiList {
 		res = append(res, v.ID)
 	}
+
 	return res, nil
 }
+
+// func (s *CasbinService) GetPolicyPathByGroupIds(groupIds string) (res []any, err error) {
+// 	e := s.Casbin()
+// 	list := e.GetFilteredPolicy(0, groupId)
+// 	var pathList []string
+// 	for _, v := range list {
+// 		pathList = append(pathList, v[1])
+// 	}
+// 	var apiList []model.Api
+// 	if err := model.DB.Where("path IN (?)", pathList).Find(&apiList).Error; err != nil {
+// 		return nil, err
+// 	}
+// 	for _, v := range apiList {
+// 		res = append(res, v.ID)
+// 	}
+// 	return res, nil
+// }
 
 // @function: ClearCasbin
 // @description: 清除匹配的权限

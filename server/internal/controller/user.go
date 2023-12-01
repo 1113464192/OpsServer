@@ -80,16 +80,16 @@ func UserLogout(c *gin.Context) {
 // UpdateUser
 // @Tags 用户相关
 // @title 新增/修改用户信息
-// @description 新增不用传用户ID，修改才传用户ID
+// @description 新增不用传用户ID，修改才传用户ID，返回用户密码
 // @Summary 新增/修改用户信息
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.UpdateUserReq true "创建成功，data返回密码"
+// @Param data formData api.UpdateUserReq true "传新增或者修改用户的所需参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/update [post]
+// @Router /api/v1/user/user [post]
 func UpdateUser(c *gin.Context) {
 	var userReq api.UpdateUserReq
 	if err := c.ShouldBind(&userReq); err != nil {
@@ -125,18 +125,18 @@ func UpdateUser(c *gin.Context) {
 // GetUserList
 // @Tags 用户相关
 // @title 用户列表
-// @description 获取用户列表(IDs直接取用户无需其他参数，否则需要name和pageinfo)
+// @description 获取用户列表(ID直接取用户无需其他参数，否则需要name和pageinfo)
 // @Summary 获取用户列表
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.SearchStringReq true "所需参数,输入了ids则不再需要输入其他参数"
+// @Param data query api.SearchIdStringReq true "所需参数,输入了ids则不再需要输入其他参数；全部留空则全部返回"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/search [get]
+// @Router /api/v1/user/users [get]
 func GetUserList(c *gin.Context) {
-	var param api.SearchStringReq
+	var param api.SearchIdStringReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -149,13 +149,13 @@ func GetUserList(c *gin.Context) {
 		return
 	} else {
 		c.JSON(200, api.PageResult{
+			Data:  user,
+			Total: total,
 			Meta: api.Meta{
 				Msg: "Success",
 			},
-			Data:     user,
-			Page:     param.Page,
-			PageSize: param.PageSize,
-			Total:    total,
+			Page:     param.PageInfo.Page,
+			PageSize: param.PageInfo.PageSize,
 		})
 	}
 }
@@ -167,12 +167,12 @@ func GetUserList(c *gin.Context) {
 // @Summary 删除用户
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data body api.IdsReq true "用户IDs"
+// @Param data body api.IdsReq true "待删除的用户ID切片"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/delete [delete]
+// @Router /api/v1/user/users [delete]
 func DeleteUser(c *gin.Context) {
 	var param api.IdsReq
 	if err := c.ShouldBindJSON(&param); err != nil {
@@ -199,7 +199,7 @@ func DeleteUser(c *gin.Context) {
 // @Summary 修改用户密码
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.PasswordReq true "创建成功，data返回密码"
+// @Param data formData api.PasswordReq true "用户IP和密码"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -244,7 +244,7 @@ func UpdatePasswd(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/selfPassword [patch]
+// @Router /api/v1/user/self-password [patch]
 func UpdateSelfPasswd(c *gin.Context) {
 	var passwd api.PasswordReq
 	var err error
@@ -286,7 +286,7 @@ func UpdateSelfPasswd(c *gin.Context) {
 // UpdateStatus
 // @Tags 用户相关
 // @title 修改用户状态
-// @description status参数：恢复用户传1，禁用用户传2
+// @description 修改用户状态
 // @Summary 修改用户状态
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
@@ -327,7 +327,7 @@ func UpdateStatus(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/getSelfInfo [get]
+// @Router /api/v1/user/self-user [get]
 func GetSelfInfo(c *gin.Context) {
 	cClaims, _ := c.Get("claims")
 	claims, ok := cClaims.(*jwt.CustomClaims)
@@ -358,12 +358,12 @@ func GetSelfInfo(c *gin.Context) {
 // @Summary 获取关联组
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.IdReq true "用户的ID"
+// @Param data query api.IdReq true "传用户的ID"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/getAssGroup [get]
+// @Router /api/v1/user/ass-group [get]
 func GetAssGroup(c *gin.Context) {
 	var id api.IdReq
 	if err := c.ShouldBind(&id); err != nil {
@@ -396,7 +396,7 @@ func GetAssGroup(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/getSelfAssGroup [get]
+// @Router /api/v1/user/self-ass-group [get]
 func GetSelfAssGroup(c *gin.Context) {
 	cClaims, _ := c.Get("claims")
 	claims, ok := cClaims.(*jwt.CustomClaims)
@@ -433,7 +433,7 @@ func GetSelfAssGroup(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/getActLog [get]
+// @Router /api/v1/user/action-log [get]
 func GetRecordList(c *gin.Context) {
 	var param api.GetPagingByIdReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -471,7 +471,7 @@ func GetRecordList(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/keyFile [post]
+// @Router /api/v1/user/key-file [post]
 func UpdateKeyFileContext(c *gin.Context) {
 	file, err := c.FormFile("keyFile")
 	if err != nil {
@@ -513,7 +513,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/user/keyStr [post]
+// @Router /api/v1/user/key-str [post]
 func UpdateKeyContext(c *gin.Context) {
 	keyStr := c.PostForm("keyStr")
 	passphrase := c.PostForm("Passphrase")

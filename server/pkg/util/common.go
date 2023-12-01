@@ -11,6 +11,7 @@ import (
 	"os"
 	"reflect"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -171,7 +172,7 @@ func StringToUint(idStr *string) (id uint, err error) {
 	return id, err
 }
 
-// stringslice转换uintslice
+// stringSlice转换uintSlice
 func StringSliceToUintSlice(strSlice *[]string) (uintSlice []uint, err error) {
 	for _, str := range *strSlice {
 		val, err := strconv.ParseUint(str, 10, 0)
@@ -183,6 +184,7 @@ func StringSliceToUintSlice(strSlice *[]string) (uintSlice []uint, err error) {
 	return uintSlice, err
 }
 
+// intSlice转换stringSlice
 func IntSliceToStringSlice(intSlice []int) []string {
 	stringSlice := make([]string, len(intSlice))
 	for i, v := range intSlice {
@@ -191,6 +193,7 @@ func IntSliceToStringSlice(intSlice []int) []string {
 	return stringSlice
 }
 
+// float64Slice转换stringSlice
 func Float64SliceToStringSlice(floatSlice []float64) []string {
 	stringSlice := make([]string, len(floatSlice))
 	for i, v := range floatSlice {
@@ -199,7 +202,7 @@ func Float64SliceToStringSlice(floatSlice []float64) []string {
 	return stringSlice
 }
 
-// 有最大对应取最大，否则只取[0]
+// 拆分map，有最高位值对应取最高位，否则只取[0]
 func SplitStringMap(originalMap map[string][]string) []map[string]string {
 	maxLength := 0
 	for _, values := range originalMap {
@@ -232,7 +235,7 @@ func SplitStringMap(originalMap map[string][]string) []map[string]string {
 	return splitMaps
 }
 
-// 用flag map类型, 做表达式中flag字符串的变量替换，生成结果为float64 slice类型
+// flag位值变量: map类型, 做表达式中flag字符串的变量替换，生成结果为float64 slice类型
 func GenerateExprResult(rules map[string]string, flag any) ([]float64, error) {
 	var resultList []float64
 	for _, rule := range rules {
@@ -259,6 +262,7 @@ func GenerateExprResult(rules map[string]string, flag any) ([]float64, error) {
 	return resultList, nil
 }
 
+// 传 uint=y的切片
 func ConvertToJson(param []string) (res string, err error) {
 	var extraByte []byte
 	var extra = make(map[int]string)
@@ -294,6 +298,7 @@ func ConvertToJsonPair(param []string) (res string, err error) {
 	return string(jsonData), err
 }
 
+// uint切片中删除元素
 func DeleteUintSlice(s []uint, elem uint) []uint {
 	j := 0
 	for _, v := range s {
@@ -306,6 +311,7 @@ func DeleteUintSlice(s []uint, elem uint) []uint {
 	return s[:j]
 }
 
+// 切片中删除元素
 func DeleteAnySlice(s any, elem any) (any, error) {
 	sliceValue := reflect.ValueOf(s)
 	if sliceValue.Kind() != reflect.Slice {
@@ -320,4 +326,96 @@ func DeleteAnySlice(s any, elem any) (any, error) {
 		}
 	}
 	return sliceValue.Slice(0, j).Interface(), nil
+}
+
+// uint切片取交集
+func UintSliceIntersect(slice1, slice2 []uint) []uint {
+	set := make(map[uint]bool)
+	var intersect []uint
+
+	for _, num := range slice1 {
+		set[num] = true
+	}
+
+	for _, num := range slice2 {
+		if set[num] {
+			intersect = append(intersect, num)
+		}
+	}
+
+	sort.Slice(intersect, func(i, j int) bool {
+		return intersect[i] < intersect[j]
+	})
+	return intersect
+}
+
+// uint切片取并集
+func UintSliceUnion(slice1, slice2 []uint) []uint {
+	set := make(map[uint]bool)
+	var union []uint
+
+	for _, num := range slice1 {
+		set[num] = true
+		union = append(union, num)
+	}
+
+	for _, num := range slice2 {
+		if !set[num] {
+			set[num] = true
+			union = append(union, num)
+		}
+	}
+	sort.Slice(union, func(i, j int) bool {
+		return union[i] < union[j]
+	})
+
+	return union
+}
+
+// uint切片取差集
+func UintSliceDifference(slice1, slice2 []uint) []uint {
+	set := make(map[uint]bool)
+	var difference []uint
+
+	for _, num := range slice2 {
+		set[num] = true
+	}
+
+	for _, num := range slice1 {
+		if !set[num] {
+			difference = append(difference, num)
+		}
+	}
+	sort.Slice(difference, func(i, j int) bool {
+		return difference[i] < difference[j]
+	})
+
+	return difference
+}
+
+// string切片去重
+func StringSliceRemoveDuplicat(stringSlice []string) (result []string) {
+	unique := make(map[string]bool)
+	for _, v := range stringSlice {
+		if !unique[v] {
+			unique[v] = true
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+// 转换切片为空切片
+func ConvertToInterfaceSlice(slice any) ([]any, error) {
+	v := reflect.ValueOf(slice)
+	if v.Kind() != reflect.Slice {
+		return nil, errors.New("传入参数不是切片类型")
+	}
+
+	result := make([]any, v.Len())
+	for i := 0; i < v.Len(); i++ {
+		result[i] = v.Index(i).Interface()
+	}
+
+	return result, nil
 }

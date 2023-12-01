@@ -102,7 +102,7 @@ func (s *UserService) UpdateUser(param *api.UpdateUserReq) (any, string, error) 
 }
 
 // 获取用户切片
-func (s *UserService) GetUserList(param api.SearchStringReq) (list any, total int64, err error) {
+func (s *UserService) GetUserList(param api.SearchIdStringReq) (list any, total int64, err error) {
 	var user []model.User
 	db := model.DB.Model(&user)
 	// 有ID优先ID
@@ -162,7 +162,7 @@ func (s *UserService) DeleteUser(ids []uint) (err error) {
 		return errors.New("清除表信息 用户与用户组关联 失败")
 	}
 	// 伪删除用户
-	if err = tx.Where("id in (?)", ids).Delete(&model.User{}).Error; err != nil {
+	if err = tx.Where("id IN (?)", ids).Delete(&model.User{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除用户失败")
 	}
@@ -194,7 +194,7 @@ func (s *UserService) GetSelfInfo(id uint) (userInfo any, err error) {
 	if !util2.CheckIdExists(&model.User{}, id) {
 		return nil, errors.New("用户不存在")
 	}
-	if err = model.DB.Where("id in (?)", id).First(&user).Error; err != nil {
+	if err = model.DB.Where("id IN (?)", id).First(&user).Error; err != nil {
 		return user, errors.New("查询用户个人信息失败")
 	}
 	var result *[]api.UserRes
@@ -206,7 +206,8 @@ func (s *UserService) GetSelfInfo(id uint) (userInfo any, err error) {
 }
 
 // 获取用户关联组信息
-func (s *UserService) GetAssGroup(id uint) (groupInfo any, err error) {
+func (s *UserService) GetAssGroup(id uint) (any, error) {
+	var err error
 	var user model.User
 	var group []model.UserGroup
 	if err != nil {
@@ -221,7 +222,11 @@ func (s *UserService) GetAssGroup(id uint) (groupInfo any, err error) {
 	if err = model.DB.Model(&user).Association("UserGroups").Find(&group); err != nil {
 		return user, err
 	}
-	return group, err
+	var result *[]api.GroupRes
+	if result, err = Group().GetResults(&group); err != nil {
+		return nil, err
+	}
+	return result, err
 }
 
 // 登录

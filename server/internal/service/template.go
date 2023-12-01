@@ -10,19 +10,19 @@ import (
 	"fqhWeb/pkg/util2"
 )
 
-type TaskService struct {
+type TemplateService struct {
 }
 
 var (
-	insTask = &TaskService{}
+	insTemplate = &TemplateService{}
 )
 
-func Task() *TaskService {
-	return insTask
+func Template() *TemplateService {
+	return insTemplate
 }
 
 // 修改或新增任务模板
-func (s *TaskService) UpdateTaskTemplate(param *api.UpdateTaskTemplateReq) (projectInfo any, err error) {
+func (s *TemplateService) UpdateTemplate(param *api.UpdateTemplateReq) (projectInfo any, err error) {
 	var task model.TaskTemplate
 	var count int64
 	if model.DB.Model(&task).Where("pid = ? AND type_name = ? AND task_name = ? AND id != ?", param.Pid, param.TypeName, param.TaskName, param.ID).Count(&count); count > 0 {
@@ -85,12 +85,12 @@ func (s *TaskService) UpdateTaskTemplate(param *api.UpdateTaskTemplateReq) (proj
 }
 
 // 获取任务模板
-func (s *TaskService) GetProjectTask(param *api.GetProjectTaskReq) (projectObj any, total int64, err error) {
-	var task []model.TaskTemplate
-	db := model.DB.Model(&task)
+func (s *TemplateService) GetProjectTemplate(param *api.GetProjectTemplateReq) (projectObj any, total int64, err error) {
+	var template []model.TaskTemplate
+	db := model.DB.Model(&template)
 	searchReq := &api.SearchReq{
 		Condition: db,
-		Table:     &task,
+		Table:     &template,
 		PageInfo:  param.PageInfo,
 	}
 	// 如果传了模板ID
@@ -102,7 +102,7 @@ func (s *TaskService) GetProjectTask(param *api.GetProjectTaskReq) (projectObj a
 			return nil, 0, err
 		}
 		var result []api.TaskTemRes
-		if result, err = s.GetTemplateResults(&task); err != nil {
+		if result, err = s.GetTemplateResults(&template); err != nil {
 			return nil, total, err
 		}
 		return result, total, err
@@ -116,7 +116,7 @@ func (s *TaskService) GetProjectTask(param *api.GetProjectTaskReq) (projectObj a
 		}
 		// 返回模板名切片
 		var result []api.TaskInfo
-		for _, record := range task {
+		for _, record := range template {
 			taskInfo := api.TaskInfo{
 				TaskName: record.TaskName,
 				ID:       record.ID,
@@ -133,7 +133,7 @@ func (s *TaskService) GetProjectTask(param *api.GetProjectTaskReq) (projectObj a
 			return nil, 0, err
 		}
 		var result []string
-		for _, record := range task {
+		for _, record := range template {
 			if !util.IsSliceContain(result, record) {
 				result = append(result, record.TypeName)
 			}
@@ -166,7 +166,7 @@ func (s *TaskService) GetProjectTask(param *api.GetProjectTaskReq) (projectObj a
 
 }
 
-func (s *TaskService) DeleteTaskTemplate(ids []uint) (err error) {
+func (s *TemplateService) DeleteTemplate(ids []uint) (err error) {
 	if err = util2.CheckIdsExists(model.TaskTemplate{}, ids); err != nil {
 		return err
 	}
@@ -179,7 +179,7 @@ func (s *TaskService) DeleteTaskTemplate(ids []uint) (err error) {
 		tx.Rollback()
 		return errors.New("清除表信息 任务与服务器关联 失败")
 	}
-	if err = tx.Where("id in (?)", ids).Delete(&model.TaskTemplate{}).Error; err != nil {
+	if err = tx.Where("id IN (?)", ids).Delete(&model.TaskTemplate{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除任务失败")
 	}
@@ -188,7 +188,7 @@ func (s *TaskService) DeleteTaskTemplate(ids []uint) (err error) {
 }
 
 // 任务关联主机
-func (s *TaskService) UpdateHostAss(param api.UpdateTemplateAssHostReq) (err error) {
+func (s *TemplateService) UpdateTemplateAssHost(param api.UpdateTemplateAssHostReq) (err error) {
 	var host []model.Host
 	var task model.TaskTemplate
 	// 判断所有项目是否都存在
@@ -217,7 +217,7 @@ func (s *TaskService) UpdateHostAss(param api.UpdateTemplateAssHostReq) (err err
 }
 
 // 返回模板JSON结果
-func (s *TaskService) GetTemplateResults(taskInfo any) (result []api.TaskTemRes, err error) {
+func (s *TemplateService) GetTemplateResults(taskInfo any) (result []api.TaskTemRes, err error) {
 	var res api.TaskTemRes
 	if task, ok := taskInfo.(*[]model.TaskTemplate); ok {
 		for _, task := range *task {

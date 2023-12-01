@@ -22,7 +22,7 @@ import (
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/submitTask [post]
+// @Router /api/v1/ops/submit-task [post]
 func SubmitTask(c *gin.Context) {
 	var param apiOps.SubmitTaskReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -50,14 +50,14 @@ func SubmitTask(c *gin.Context) {
 // @Summary 查看任务工单
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.SearchStringReq true "传入所需参数,输了ID就不用name和页码"
+// @Param data query api.SearchIdStringReq true "传入所需参数,输了ID就不用name和页码"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/getTask [get]
+// @Router /api/v1/ops/task [get]
 func GetTask(c *gin.Context) {
-	var param api.SearchStringReq
+	var param api.SearchIdStringReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -74,16 +74,16 @@ func GetTask(c *gin.Context) {
 			Msg: "Success",
 		},
 		Total:    total,
-		Page:     param.Page,
-		PageSize: param.PageSize,
+		Page:     param.PageInfo.Page,
+		PageSize: param.PageInfo.PageSize,
 	})
 }
 
 // GetSSHExecParam
 // @Tags Ops相关
-// @title 提取执行参数
+// @title 提取SSH执行参数
 // @description 返回sftp和ssh的执行参数
-// @Summary 提取执行参数
+// @Summary 提取SSH执行参数
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data query api.IdReq true "传入所需参数"
@@ -91,7 +91,7 @@ func GetTask(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/getSSHExecParam [get]
+// @Router /api/v1/ops/ssh-exec-param [get]
 func GetSSHExecParam(c *gin.Context) {
 	var param api.IdReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -127,7 +127,7 @@ func GetSSHExecParam(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/approveTask [put]
+// @Router /api/v1/ops/approve-task [put]
 func ApproveTask(c *gin.Context) {
 	cClaims, _ := c.Get("claims")
 	claims, ok := cClaims.(*jwt.CustomClaims)
@@ -167,7 +167,7 @@ func ApproveTask(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/delete [delete]
+// @Router /api/v1/ops/task [delete]
 func DeleteTask(c *gin.Context) {
 	var param api.IdsReq
 	if err := c.ShouldBind(&param); err != nil {
@@ -189,9 +189,9 @@ func DeleteTask(c *gin.Context) {
 
 // OpsExecSSHTask
 // @Tags Ops相关
-// @title 工单操作执行
+// @title 执行人执行工单操作
 // @description 返回执行结果
-// @Summary 工单操作执行
+// @Summary 执行人执行工单操作
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Param data formData api.IdReq true "传入工单的ID"
@@ -199,7 +199,7 @@ func DeleteTask(c *gin.Context) {
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
-// @Router /api/v1/ops/execSSHTask [post]
+// @Router /api/v1/ops/exec-ssh-task [post]
 func OpsExecSSHTask(c *gin.Context) {
 	var param api.IdReq
 	if err := c.ShouldBind(&param); err != nil {

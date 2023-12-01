@@ -11,7 +11,7 @@ type UpdateUserReq struct {
 }
 
 type PasswordReq struct {
-	ID       uint   `form:"id" json:"id" binding:"required"`
+	ID       uint   `form:"id" json:"id" binding:"required"`                          // 用户ID
 	Password string `form:"password" json:"password" binding:"required,min=8,max=20"` // 要求密码长度不小于8不大于20
 }
 
