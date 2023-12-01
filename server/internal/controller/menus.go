@@ -62,8 +62,8 @@ func GetMenuList(c *gin.Context) {
 	}
 	menus, total, err := service.Menu().GetMenuList(param)
 	if err != nil {
-		logger.Log().Error("Menu", "获取菜单对应用户组", err)
-		c.JSON(500, api.Err("获取菜单对应用户组失败", err))
+		logger.Log().Error("Menu", "获取菜单信息", err)
+		c.JSON(500, api.Err("获取菜单信息失败", err))
 		return
 	}
 	c.JSON(200, api.PageResult{

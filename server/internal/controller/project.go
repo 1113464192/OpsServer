@@ -148,14 +148,14 @@ func GetProject(c *gin.Context) {
 // @Summary 获取项目对应的服务器
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetHostAssReq true "获取关联host的参数"
+// @Param data query api.GetPagingMustByIdReq true "获取关联host的参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/project/ass-host [get]
 func GetHostAss(c *gin.Context) {
-	var projectReq api.GetHostAssReq
+	var projectReq api.GetPagingMustByIdReq
 	if err := c.ShouldBind(&projectReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return

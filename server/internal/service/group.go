@@ -170,41 +170,53 @@ func (s *GroupService) GetGroupList(param *api.SearchIdStringReq) (groupObj any,
 }
 
 // 获取用户组对应用户
-func (s *GroupService) GetAssUser(param *api.GetPagingByIdReq) (userObj any, total int64, err error) {
-	var group model.UserGroup
-	if !util2.CheckIdExists(&group, param.Id) {
-		return nil, 0, errors.New("组ID不存在")
+func (s *GroupService) GetAssUser(param *api.GetPagingMustByIdsReq) (userObj any, total int64, err error) {
+	var groups []model.UserGroup
+	if err = util2.CheckIdsExists(&groups, param.Ids); err != nil {
+		return nil, 0, err
+	}
+
+	// 获取组数据
+	if err = model.DB.Find(&groups, param.Ids).Error; err != nil {
+		return nil, 0, errors.New("查询用户组报错")
 	}
 
 	// 统计被关联个数
-	if err = model.DB.Find(&group, param.Id).Error; err != nil {
-		return nil, 0, errors.New("查询用户组报错")
-	}
-	if total = model.DB.Model(&group).Association("Users").Count(); total == 0 {
+	if total = model.DB.Model(&groups).Association("Users").Count(); total == 0 {
 		return "没有关联数据", 0, nil
 	}
-	// 分页获取
 
-	assQueryReq := &api.AssQueryReq{
-		Condition: model.DB.Model(&group).Preload("Users").Where("id = ?", param.Id),
-		Table:     &group,
-		AssTable:  &group.Users,
-		PageInfo:  param.PageInfo,
+	// 取出关联数据
+	var users []model.User
+	if err = model.DB.Model(&groups).Order("id asc").Association("Users").Find(&users); err != nil {
+		return &users, total, fmt.Errorf("获取关联的数据失败: %v", err)
 	}
 
-	if err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
+	// 取出所有预加载的表并去重
+	var dedupliusers []model.User
+	userMap := make(map[uint]struct{})
+	for _, user := range users {
+		if _, ok := userMap[user.ID]; !ok {
+			dedupliusers = append(dedupliusers, user)
+			userMap[user.ID] = struct{}{}
+		}
+	}
+
+	// 分页
+	if err = dbOper.DbOper().PaginateModels(&dedupliusers, param.PageInfo); err != nil {
 		return nil, 0, err
 	}
+
 	// 过滤结果
 	var result *[]api.UserRes
-	if result, err = User().GetResults(&group.Users); err != nil {
+	if result, err = User().GetResults(&dedupliusers); err != nil {
 		return nil, total, err
 	}
 	return result, total, err
 }
 
 // 获取用户组对应项目
-func (s *GroupService) GetAssProject(param *api.GetPagingByIdsReq) (result *[]api.ProjectRes, total int64, err error) {
+func (s *GroupService) GetAssProject(param *api.GetPagingMustByIdsReq) (result *[]api.ProjectRes, total int64, err error) {
 	var group model.UserGroup
 	// 判断是否有不存在的ID
 	if err = util2.CheckIdsExists(group, param.Ids); err != nil {
@@ -260,12 +272,12 @@ func (s *MenuService) UpdateGroupAssMenus(param *api.UpdateGroupAssMenusReq) (an
 }
 
 // 获取用户组对应菜单
-func (s *GroupService) GetGroupAssMenus(param *api.GetPagingByIdsReq) (MenuObj any, total int64, err error) {
+func (s *GroupService) GetGroupAssMenus(param *api.GetPagingMustByIdsReq) (MenuObj any, total int64, err error) {
 	var groups []model.UserGroup
 	if err = util2.CheckIdsExists(&groups, param.Ids); err != nil {
 		return nil, 0, err
 	}
-	//
+	// 获取组数据
 	if err = model.DB.Find(&groups, param.Ids).Error; err != nil {
 		return nil, 0, errors.New("查询用户组报错")
 	}
@@ -273,10 +285,10 @@ func (s *GroupService) GetGroupAssMenus(param *api.GetPagingByIdsReq) (MenuObj a
 	if total = model.DB.Model(&groups).Association("Menus").Count(); total == 0 {
 		return "没有关联数据", 0, nil
 	}
-	// 取出数据和关联数据预加载
+	// 取出关联数据
 	var menus []model.Menus
 	if err = model.DB.Model(&groups).Order("id asc").Association("Menus").Find(&menus); err != nil {
-		return &menus, total, fmt.Errorf("获取关联的数据: %v", err)
+		return &menus, total, fmt.Errorf("获取关联的数据失败: %v", err)
 	}
 
 	// 取出所有预加载的表并去重
@@ -289,10 +301,8 @@ func (s *GroupService) GetGroupAssMenus(param *api.GetPagingByIdsReq) (MenuObj a
 		}
 	}
 
-	// 排序加分页
-	if err = dbOper.DbOper().PaginateAndSortModels(&deduplimenus, param.PageInfo, func(i, j int) bool {
-		return deduplimenus[i].ID < deduplimenus[j].ID
-	}); err != nil {
+	// 分页
+	if err = dbOper.DbOper().PaginateModels(&deduplimenus, param.PageInfo); err != nil {
 		return nil, 0, err
 	}
 	return &deduplimenus, total, err

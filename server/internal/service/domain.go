@@ -103,7 +103,7 @@ func (s *DomainService) DeleteDomain(ids []uint) (err error) {
 }
 
 // 获取域名关联的主机
-func (s *DomainService) GetDomainAssHost(param *api.GetPagingByIdReq) (hostInfo any, total int64, err error) {
+func (s *DomainService) GetDomainAssHost(param *api.GetPagingMustByIdReq) (hostInfo any, total int64, err error) {
 	var domain model.Domain
 	if !util2.CheckIdExists(&domain, param.Id) {
 		return nil, 0, errors.New("域名ID不存在")
@@ -117,18 +117,18 @@ func (s *DomainService) GetDomainAssHost(param *api.GetPagingByIdReq) (hostInfo 
 		return "没有关联数据", 0, nil
 	}
 
-	assQueryReq := &api.AssQueryReq{
-		Condition: model.DB.Model(&domain).Preload("Hosts").Where("id = ?", param.Id),
-		Table:     &domain,
-		AssTable:  &domain.Hosts,
-		PageInfo:  param.PageInfo,
+	// 取出关联数据
+	var hosts []model.Host
+	if err = model.DB.Model(&domain).Order("id asc").Association("Hosts").Find(&hosts); err != nil {
+		return &hosts, total, fmt.Errorf("获取关联的数据失败: %v", err)
 	}
 
-	if err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
+	// 分页
+	if err = dbOper.DbOper().PaginateModels(&hosts, param.PageInfo); err != nil {
 		return nil, 0, err
 	}
 	var result *[]api.HostRes
-	if result, err = Host().GetResults(&domain.Hosts); err != nil {
+	if result, err = Host().GetResults(&hosts); err != nil {
 		return nil, total, err
 	}
 	return result, total, err

@@ -148,18 +148,18 @@ func GetGroup(c *gin.Context) {
 // GetAssUser
 // @Tags 用户组相关
 // @title 获取组关联用户
-// @description 返回组关联的用户
+// @description 由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3&ids=4
 // @Summary 获取组关联用户
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetPagingByIdReq true "传参数"
+// @Param data query api.GetPagingMustByIdsReq true "传参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/ass-user [get]
 func GetAssUser(c *gin.Context) {
-	var groupReq api.GetPagingByIdReq
+	var groupReq api.GetPagingMustByIdsReq
 	if err := c.ShouldBind(&groupReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -188,14 +188,14 @@ func GetAssUser(c *gin.Context) {
 // @Summary 获取组关联项目
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetPagingByIdsReq true "传参数"
+// @Param data query api.GetPagingMustByIdsReq true "传参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/ass-project [get]
 func GetAssProject(c *gin.Context) {
-	var groupReq api.GetPagingByIdsReq
+	var groupReq api.GetPagingMustByIdsReq
 	if err := c.ShouldBind(&groupReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -253,18 +253,18 @@ func UpdateGroupAssMenus(c *gin.Context) {
 // GetGroupAssMenus
 // @Tags 用户组相关
 // @title 获取组关联菜单
-// @description 返回组关联的菜单
+// @description 由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3&ids=4
 // @Summary 获取组关联菜单
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetPagingByIdsReq true "传组id，空页码则全部返回"
+// @Param data query api.GetPagingMustByIdsReq true "传组id，空页码则全部返回"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/group/ass-menus [get]
 func GetGroupAssMenus(c *gin.Context) {
-	var groupReq api.GetPagingByIdsReq
+	var groupReq api.GetPagingMustByIdsReq
 	if err := c.ShouldBind(&groupReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return

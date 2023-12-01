@@ -112,14 +112,14 @@ func DeleteDomain(c *gin.Context) {
 // @Summary 查询域名对应服务器
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetPagingByIdReq true "传所需参数"
+// @Param data query api.GetPagingMustByIdReq true "传所需参数"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/domain/ass-host [get]
 func GetDomainAssHost(c *gin.Context) {
-	var domainReq api.GetPagingByIdReq
+	var domainReq api.GetPagingMustByIdReq
 	if err := c.ShouldBind(&domainReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return

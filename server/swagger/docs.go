@@ -598,7 +598,7 @@ const docTemplate = `{
         },
         "/api/v1/group/ass-menus": {
             "get": {
-                "description": "返回组关联的菜单",
+                "description": "由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3\u0026ids=4",
                 "produces": [
                     "application/json"
                 ],
@@ -788,7 +788,7 @@ const docTemplate = `{
         },
         "/api/v1/group/ass-user": {
             "get": {
-                "description": "返回组关联的用户",
+                "description": "由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3\u0026ids=4",
                 "produces": [
                     "application/json"
                 ],
@@ -805,8 +805,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "id",
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "ids",
                         "in": "query"
                     },
                     {
@@ -2130,6 +2134,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "页码",
                         "name": "page",
                         "in": "query"
@@ -2139,12 +2148,6 @@ const docTemplate = `{
                         "description": "每页大小",
                         "name": "page_size",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "project_id",
-                        "in": "query",
-                        "required": true
                     }
                 ],
                 "responses": {

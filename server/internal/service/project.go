@@ -150,32 +150,33 @@ func (s *ProjectService) GetProject(param *api.GetProjectReq) (projectObj any, t
 }
 
 // 获取项目关联的服务器
-func (s *ProjectService) GetHostAss(param *api.GetHostAssReq) (hostInfo any, total int64, err error) {
+func (s *ProjectService) GetHostAss(param *api.GetPagingMustByIdReq) (hostInfo any, total int64, err error) {
 	var project model.Project
 
-	if !util2.CheckIdExists(&project, param.ProjectId) {
+	if !util2.CheckIdExists(&project, param.Id) {
 		return nil, 0, errors.New("项目ID不存在")
 	}
 
 	// 统计被关联个数
-	if err = model.DB.Find(&project, param.ProjectId).Error; err != nil {
+	if err = model.DB.Find(&project, param.Id).Error; err != nil {
 		return nil, 0, errors.New("查询项目报错")
 	}
 	if total = model.DB.Model(&project).Association("Hosts").Count(); total == 0 {
 		return "没有关联数据", 0, nil
 	}
 
-	assQueryReq := &api.AssQueryReq{
-		Condition: model.DB.Model(&project).Preload("Hosts").Where("id = ?", param.ProjectId),
-		Table:     &project,
-		AssTable:  &project.Hosts,
-		PageInfo:  param.PageInfo,
+	// 取出关联数据
+	var hosts []model.Host
+	if err = model.DB.Model(&project).Order("id asc").Association("Hosts").Find(&hosts); err != nil {
+		return &hosts, total, fmt.Errorf("获取关联的数据失败: %v", err)
 	}
-	if err = dbOper.DbOper().AssDbFind(assQueryReq); err != nil {
+
+	// 分页
+	if err = dbOper.DbOper().PaginateModels(&hosts, param.PageInfo); err != nil {
 		return nil, 0, err
 	}
 	var result *[]api.HostRes
-	if result, err = Host().GetResults(&project.Hosts); err != nil {
+	if result, err = Host().GetResults(&hosts); err != nil {
 		return nil, total, err
 	}
 	return result, total, err

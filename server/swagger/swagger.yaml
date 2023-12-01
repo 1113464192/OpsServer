@@ -556,7 +556,7 @@ paths:
       - 用户组相关
   /api/v1/group/ass-menus:
     get:
-      description: 返回组关联的菜单
+      description: 由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3&ids=4
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
@@ -682,16 +682,19 @@ paths:
       - 用户组相关
   /api/v1/group/ass-user:
     get:
-      description: 返回组关联的用户
+      description: 由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3&ids=4
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
         name: Authorization
         required: true
         type: string
-      - in: query
-        name: id
-        type: integer
+      - collectionFormat: csv
+        in: query
+        items:
+          type: integer
+        name: ids
+        type: array
       - description: 页码
         in: query
         name: page
@@ -1567,6 +1570,9 @@ paths:
         name: Authorization
         required: true
         type: string
+      - in: query
+        name: id
+        type: integer
       - description: 页码
         in: query
         name: page
@@ -1574,10 +1580,6 @@ paths:
       - description: 每页大小
         in: query
         name: page_size
-        type: integer
-      - in: query
-        name: project_id
-        required: true
         type: integer
       produces:
       - application/json

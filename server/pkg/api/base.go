@@ -92,6 +92,16 @@ type GetPagingByIdReq struct {
 	PageInfo
 }
 
+type GetPagingMustByIdReq struct {
+	Id uint `json:"id" form:"id" binding:"required"`
+	PageInfo
+}
+
+type GetPagingMustByIdsReq struct {
+	Ids []uint `json:"ids" form:"ids" binding:"required"`
+	PageInfo
+}
+
 type GetPagingByIdsReq struct {
 	Ids []uint `json:"ids" form:"ids"`
 	PageInfo
