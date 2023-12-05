@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"fqhWeb/internal/consts"
+	"fqhWeb/configs"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -48,7 +48,7 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 			host.Ipv6 = sql.NullString{String: param.Ipv6, Valid: true}
 		}
 		host.User = param.User
-		host.Password, err = util.EncryptAESCBC(param.Password, []byte(consts.AesKey), []byte(consts.AesIv))
+		host.Password, err = util.EncryptAESCBC(param.Password, []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 		if err != nil {
 			return nil, fmt.Errorf("主机密码加密失败: %v", err)
 		}
@@ -83,7 +83,7 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		return result, err
 	} else {
 		var aesPassword []byte
-		aesPassword, err = util.EncryptAESCBC(param.Password, []byte(consts.AesKey), []byte(consts.AesIv))
+		aesPassword, err = util.EncryptAESCBC(param.Password, []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 		if err != nil {
 			return nil, fmt.Errorf("主机密码加密失败: %v", err)
 		}
@@ -135,7 +135,7 @@ func (s *HostService) GetHostPasswd(id uint) (string, error) {
 
 	if host.Password != nil {
 		var passwd []byte
-		passwd, err = util.DecryptAESCBC(host.Password, []byte(consts.AesKey), []byte(consts.AesIv))
+		passwd, err = util.DecryptAESCBC(host.Password, []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesKey))
 		if err != nil {
 			return "", fmt.Errorf("主机密码解密失败: %v", err)
 

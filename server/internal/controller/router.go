@@ -2,7 +2,6 @@ package controller
 
 import (
 	"fqhWeb/internal/middleware"
-	"fqhWeb/internal/service/webhook"
 	_ "fqhWeb/swagger"
 
 	"github.com/gin-gonic/gin"
@@ -23,9 +22,13 @@ func NewRoute() *gin.Engine {
 	v1.GET("ping", Test)
 	// ---------登录----------
 	v1.POST("login", UserLogin)
-	// ---------Webhook相关----------
-	v1.POST("webhook/github", webhook.HandleGithubWebhook)
-	v1.POST("webhook/gitlab", webhook.HandleGitlabWebhook)
+	// ---------Git-Webhook相关----------
+	gitWebhookRouter := v1.Group("git-gitWebhook")
+	{
+		gitWebhookRouter.POST("github/:pid/:hid", HandleGithubWebhook)          // 接收github的webhook做处理
+		gitWebhookRouter.POST("gitlab/:pid/:hid", HandleGitlabWebhook)          // 接收gitlab的webhook做处理
+		gitWebhookRouter.PATCH("project-update-status", UpdateGitWebhookStatus) // 更改git-webhook记录的状态码
+	}
 	// ------------验证相关------------
 	v1.Use(middleware.JWTAuthMiddleware()).Use(middleware.CasbinHandler()).Use(middleware.UserActionRecord())
 	{
@@ -86,6 +89,12 @@ func NewRoute() *gin.Engine {
 			projectRoute.GET("ass-host", GetHostAss)      // 查询项目关联的服务器
 			projectRoute.PUT("ass-host", UpdateHostAss)   // 项目关联服务器
 			projectRoute.DELETE("project", DeleteProject) // 删除项目
+		}
+		// --------------Git-Webhook相关---------------------
+		{
+			gitWebhookRouter.PUT("git-webhook", UpdateGitWebhook)    // 修改git-webhook记录的数据
+			gitWebhookRouter.GET("git-webhook", GetGitWebhook)       // 查询git-webhook记录
+			gitWebhookRouter.DELETE("git-webhook", DeleteGitWebhook) // 删除git-webhook记录
 		}
 		// -----------主机相关-------------
 		hostRoute := v1.Group("host")

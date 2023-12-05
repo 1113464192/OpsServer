@@ -3,6 +3,7 @@ package ssh
 import (
 	"errors"
 	"fmt"
+	"fqhWeb/configs"
 	"fqhWeb/internal/consts"
 	"fqhWeb/pkg/util"
 	"net"
@@ -61,13 +62,13 @@ func SSHNewClient(hostIp string, username string, sshPort string, password strin
 	// 1. private key bytes
 	// AES解密私钥
 	var key []byte
-	key, err = util.DecryptAESCBC(priKey, []byte(consts.AesKey), []byte(consts.AesIv))
+	key, err = util.DecryptAESCBC(priKey, []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 	if err != nil {
 		return nil, fmt.Errorf("用户私钥解密失败: %v", err)
 	}
 	// AES解密passphrase
 	var passPhrase []byte
-	passPhrase, err = util.DecryptAESCBC(passphrase, []byte(consts.AesKey), []byte(consts.AesIv))
+	passPhrase, err = util.DecryptAESCBC(passphrase, []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 	if err != nil {
 		return nil, fmt.Errorf("用户passphrase解密失败: %v", err)
 	}

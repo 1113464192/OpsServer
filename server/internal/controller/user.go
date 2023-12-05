@@ -129,7 +129,7 @@ func UpdateUser(c *gin.Context) {
 // @Summary 获取用户列表
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.SearchIdStringReq true "所需参数,输入了ids则不再需要输入其他参数；全部留空则全部返回"
+// @Param data query api.SearchIdStringReq true "所需参数,输入了id则不再需要输入其他参数；全部留空则全部返回"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"

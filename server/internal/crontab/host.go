@@ -21,7 +21,7 @@ func CronWrittenHostInfo() {
 		return
 	}
 
-	sshParam := []api.SSHClientConfigReq{}
+	var sshParam []api.SSHClientConfigReq
 	var req api.SSHClientConfigReq
 	for i := 0; i < len(hosts); i++ {
 		req = api.SSHClientConfigReq{

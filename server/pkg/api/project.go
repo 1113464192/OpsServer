@@ -18,11 +18,6 @@ type UpdateProjectAssHostReq struct {
 	Hids []uint `form:"hid" json:"hid" binding:"required"`
 }
 
-type GetProjectReq struct {
-	Name string `form:"name" json:"name" binding:"required"`
-	PageInfo
-}
-
 type GetHostAssReq struct {
 	ProjectId uint `form:"project_id" json:"project_id" binding:"required"`
 	PageInfo

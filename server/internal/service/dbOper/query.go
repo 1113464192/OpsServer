@@ -45,6 +45,7 @@ func (s *DbOperService) DbFind(param *api.SearchReq) (int64, error) {
 	return count, err
 }
 
+// 排序并分页
 func (s *DbOperService) PaginateAndSortModels(menusPtr interface{}, pageInfo api.PageInfo, lessFunc func(i, j int) bool) error {
 	v := reflect.ValueOf(menusPtr)
 	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Slice {
@@ -71,6 +72,7 @@ func (s *DbOperService) PaginateAndSortModels(menusPtr interface{}, pageInfo api
 	return nil
 }
 
+// 分页
 func (s *DbOperService) PaginateModels(menusPtr interface{}, pageInfo api.PageInfo) error {
 	v := reflect.ValueOf(menusPtr)
 	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Slice {

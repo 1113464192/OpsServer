@@ -7,7 +7,6 @@ import (
 	"fqhWeb/configs"
 	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
-	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/util/ssh"
 	"os"
 	"sync"
@@ -26,8 +25,7 @@ func SSH() *SSHServer {
 	return insSSH
 }
 
-func (s *SSHServer) TestSSH(param api.TestSSHReq) (*[]api.SSHResultRes, error) {
-	var result *[]api.SSHResultRes
+func (s *SSHServer) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, err error) {
 	var user model.User
 	var hosts []model.Host
 	if err := model.DB.First(&user, param.UserId).Error; err != nil {
@@ -50,15 +48,15 @@ func (s *SSHServer) TestSSH(param api.TestSSHReq) (*[]api.SSHResultRes, error) {
 		sshReq = append(sshReq, req)
 	}
 
-	hostInfo, err := Host().GetHostCurrData(&sshReq)
-	if err != nil {
-		logger.Log().Error("Host", "机器数据采集——数据结构有错误", err)
-		return nil, fmt.Errorf("机器数据采集——数据结构有错误: %v", err)
-	}
-	if err := Host().WritieToDatabase(hostInfo); err != nil {
-		logger.Log().Error("Host", "机器数据采集——数据写入数据库失败", err)
-		return nil, fmt.Errorf("机器数据采集——数据写入数据库失败: %v", err)
-	}
+	//hostInfo, err := Host().GetHostCurrData(&sshReq)
+	//if err != nil {
+	//	logger.Log().Error("Host", "机器数据采集——数据结构有错误", err)
+	//	return nil, fmt.Errorf("机器数据采集——数据结构有错误: %v", err)
+	//}
+	//if err := Host().WritieToDatabase(hostInfo); err != nil {
+	//	logger.Log().Error("Host", "机器数据采集——数据写入数据库失败", err)
+	//	return nil, fmt.Errorf("机器数据采集——数据写入数据库失败: %v", err)
+	//}
 	result, err = s.RunSSHCmdAsync(&sshReq)
 	if err != nil {
 		return nil, fmt.Errorf("测试执行失败: %v", err)

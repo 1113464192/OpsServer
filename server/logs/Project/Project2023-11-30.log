@@ -1,5 +1,0 @@
-[Project][2023-11-30 19:23:06] 2023/11/30 19:23:06 [Error] [获取项目拥有机器] 记录数查询失败: unsupported data type: 0xc001329ca8: Table not set, please set it like: db.Model(&user) or db.Table("users")
-[Project][2023-11-30 19:34:23] 2023/11/30 19:34:23 [Error] [获取项目拥有机器] 记录数查询失败: unsupported data type: 0xc00139d928: Table not set, please set it like: db.Model(&user) or db.Table("users")
-[Project][2023-11-30 19:35:30] 2023/11/30 19:35:30 [Error] [获取项目拥有机器] 记录数查询失败: unsupported data type: 0xc0003b1a38: Table not set, please set it like: db.Model(&user) or db.Table("users")
-[Project][2023-11-30 19:35:50] 2023/11/30 19:35:50 [Error] [获取项目拥有机器] 记录数查询失败: unsupported data type: 0xc001405598: Table not set, please set it like: db.Model(&user) or db.Table("users")
-[Project][2023-11-30 19:36:26] 2023/11/30 19:36:26 [Error] [获取项目拥有机器] 数据库关联查询失败: Error 1054 (42S22): Unknown column 'fqh_project.ipv4' in 'field list'

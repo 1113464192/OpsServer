@@ -39,7 +39,7 @@ func IsDir(path string) bool {
 func tmpLogWrite(msg string) bool {
 	filePath := GetRootPath() + "/logs/tmp.log"
 
-	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println("临时文件打开失败")
 		return false
@@ -72,7 +72,7 @@ func CommonLog(service string, msg string) bool {
 			}
 		}
 	}
-	logFile, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
+	logFile, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0755)
 	if err != nil {
 		tmpBool := tmpLogWrite(time.Now().Local().Format("2006-01-02 15:04:05") + "打开日志文件失败！ " + err.Error())
 		if !tmpBool {

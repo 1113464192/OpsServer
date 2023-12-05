@@ -11,10 +11,24 @@ concurrency:
   number: 5000
 
 # webhook的secret
-webhookSecret:
-  github: "fanqihang"
-  gitlab: "fanqihang"
+gitWebhook:
+  githubSecret: "fanqihang"
+  gitlabSecret: "fanqihang"
+  # 只是临时测试一下，一般情况下可以用/data/git_ci_script和/data/git_ci_repo
+  gitCiScriptDir: "/tmp"
+  gitCiRepo: "/tmp"
 
 system:
   # mode: "product"
   mode: "develop"
+
+securityVars:
+  # AES的KEY与IV
+  aesKey: "0388f9c2cd9e83960fe64589"
+  aesIv: "b0bddbefd6ac81ca"
+  # tokentime  1h就是1小时，1m就是一分钟等,最大只能是h
+  tokenExpireDuration: "168h"
+  # token key
+  tokenKey: "52995df076de0cf040055a9e932687209c148e75cc283f5a22c341a84e4e33dc"
+  # Client Ci md5 Key
+  ciMd5Key: "5a9042bc95e4d56d940"

@@ -1,4 +1,4 @@
-package webhook
+package gitWebhook
 
 import "time"
 
@@ -642,10 +642,9 @@ type GithubPRHook struct {
 type HandleGithubPushJson struct {
 	Repository struct {
 		FullName  string    `json:"full_name"`
+		Name      string    `json:"name"`
 		UpdatedAt time.Time `json:"updated_at"`
-		GitUrl    string    `json:"git_url"`
 		SshUrl    string    `json:"ssh_url"`
-		CloneUrl  string    `json:"clone_url"` // cloneurl就是htpps
 	} `json:"repository"`
 }
 
@@ -654,6 +653,7 @@ type HandleGithubPRJson struct {
 	Action     string `json:"action"`
 	Repository struct {
 		FullName  string    `json:"full_name"`
+		Name      string    `json:"name"`
 		UpdatedAt time.Time `json:"updated_at"`
 		GitUrl    string    `json:"git_url"`
 		SshUrl    string    `json:"ssh_url"`

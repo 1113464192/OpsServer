@@ -1,5 +1,4 @@
 //go:build windows
-// +build windows
 
 package main
 
@@ -8,6 +7,7 @@ import (
 	"fqhWeb/internal/controller"
 	"fqhWeb/internal/crontab"
 	"fqhWeb/internal/model"
+	"log"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	model.Database()
 	crontab.Cron()
 	if configs.Conf.System.Mode != "product" {
-		model.DB.AutoMigrate(
+		err := model.DB.AutoMigrate(
 			&model.User{},
 			&model.UserGroup{},
 			&model.Menus{},
@@ -28,10 +28,19 @@ func main() {
 			&model.Host{},
 			&model.TaskRecord{},
 			&model.ServerRecord{},
+			&model.GitWebhookRecord{},
 		)
+		if err != nil {
+			log.Fatalf("自动迁移报错: \n%v", err)
+			return
+		}
 	}
 
 	r := controller.NewRoute()
 
-	r.Run(":9081")
+	err := r.Run(":9081")
+	if err != nil {
+		log.Fatalf("启动报错: \n%v", err)
+		return
+	}
 }

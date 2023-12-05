@@ -19,13 +19,15 @@ var DB *gorm.DB
 var LogFile *os.File
 
 func Database() {
+	var err error
 	if !util.IsDir(util.GetRootPath() + "/logs/mysql/") {
-		os.Mkdir(util.GetRootPath()+"/logs/mysql/", 0777)
+		if err = os.Mkdir(util.GetRootPath()+"/logs/mysql/", 0777); err != nil {
+			fmt.Printf("启动失败：创建mysql目录失败 %v", err)
+			return
+		}
 	}
 
 	logFileName := util.GetRootPath() + "/logs/mysql/mysql.log"
-
-	var err error
 
 	LogFile, err = os.OpenFile(logFileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {

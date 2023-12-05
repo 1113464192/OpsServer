@@ -2,7 +2,8 @@ package jwt
 
 import (
 	"errors"
-	"fqhWeb/internal/consts"
+	"fmt"
+	"fqhWeb/configs"
 	"fqhWeb/internal/model"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 )
 
 // CustomSecret 用于加盐的字符串
-var CustomSecret = []byte(consts.CustomSecretKey)
+var CustomSecret = []byte(configs.Conf.SecurityVars.TokenKey)
 
 type CustomClaims struct {
 	// 可根据需要自行添加字段
@@ -20,11 +21,15 @@ type CustomClaims struct {
 
 // GenToken 生成JWT
 func GenToken(user model.User) (string, error) {
+	duration, err := time.ParseDuration(configs.Conf.SecurityVars.TokenExpireDuration)
+	if err != nil {
+		return "", fmt.Errorf("生成Token过期时间失败: %v", err)
+	}
 	// 创建一个我们自己的声明
 	claims := CustomClaims{
 		User: user,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(consts.TokenExpireDuration)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
 			Issuer:    "fqh", // 签发人
 		},
 	}

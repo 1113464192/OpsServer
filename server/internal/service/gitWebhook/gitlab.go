@@ -1,26 +1,25 @@
-package webhook
+package gitWebhook
 
 import (
+	"errors"
 	"fmt"
 	"fqhWeb/internal/consts"
-	"fqhWeb/pkg/webhook"
-	"io"
-	"net/http"
-
+	"fqhWeb/pkg/util"
 	"github.com/gin-gonic/gin"
+	"io"
 )
 
-func HandleGitlabWebhook(c *gin.Context) {
-	data, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		fmt.Println("获取数据的错误处理(入库)")
-		return
+func (s *GitWebhookService) HandleGitlabWebhook(pid uint, hid uint, c *gin.Context) (err error) {
+	fmt.Println(pid, hid)
+	var data []byte
+	if data, err = io.ReadAll(c.Request.Body); err != nil {
+		return fmt.Errorf("获取数据的错误处理(入库): %v", err)
 	}
+
 	// 判断sign是否正确
 	sign := c.GetHeader(consts.GITHUB_SECRET_SIGN)
-	if !webhook.ValidatePrefix(data, []byte(Webhook().GithubSecret), sign) {
-		fmt.Println("验证数据的错误处理(入库)")
-		return
+	if !util.ValidatePrefix(data, []byte(GitWebhook().GitlabSecret), sign) {
+		return errors.New("验证数据的错误处理(入库)")
 	}
 	// 判断类型执行命令————最终结果入库处理
 	eventType := c.GetHeader(consts.GITHUB_EVENT)
@@ -32,5 +31,5 @@ func HandleGitlabWebhook(c *gin.Context) {
 	default:
 		fmt.Println("处理范围外的请求: " + eventType)
 	}
-	c.Status(http.StatusOK)
+	return err
 }

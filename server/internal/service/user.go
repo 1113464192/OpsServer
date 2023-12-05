@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
-	"fqhWeb/internal/consts"
+	"fqhWeb/configs"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
@@ -107,11 +107,8 @@ func (s *UserService) GetUserList(param api.SearchIdStringReq) (list any, total 
 	db := model.DB.Model(&user)
 	// 有ID优先ID
 	if param.Id != 0 {
-		if err = db.Where("id = ?", param.Id).Count(&total).Error; err != nil {
-			return nil, 0, fmt.Errorf("查询ids总数错误: %v", err)
-		}
 		if err = db.Where("id = ?", param.Id).Find(&user).Error; err != nil {
-			return nil, 0, fmt.Errorf("查询ids错误: %v", err)
+			return nil, 0, fmt.Errorf("查询id错误: %v", err)
 		}
 	} else {
 		// 分页查询
@@ -283,7 +280,7 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, passphras
 
 	// AES加密并写入prikey
 	var data []byte
-	data, err = util.EncryptAESCBC(fileBytes, []byte(consts.AesKey), []byte(consts.AesIv))
+	data, err = util.EncryptAESCBC(fileBytes, []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 	if err != nil {
 		return fmt.Errorf("用户私钥加密失败: %v", err)
 	}
@@ -292,7 +289,7 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, passphras
 	}
 
 	// AES加密并写入passphrase
-	data, err = util.EncryptAESCBC([]byte(passphrase), []byte(consts.AesKey), []byte(consts.AesIv))
+	data, err = util.EncryptAESCBC([]byte(passphrase), []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 	if err != nil {
 		return fmt.Errorf("用户passphrase加密失败: %v", err)
 	}
@@ -306,7 +303,7 @@ func (s *UserService) UpdateKeyFileContext(file *multipart.FileHeader, passphras
 func (s *UserService) UpdateKeyContext(key string, passphrase string, id uint) (err error) {
 	// AES加密并写入prikey
 	var data []byte
-	data, err = util.EncryptAESCBC([]byte(key), []byte(consts.AesKey), []byte(consts.AesIv))
+	data, err = util.EncryptAESCBC([]byte(key), []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 	if err != nil {
 		return fmt.Errorf("用户私钥加密失败: %v", err)
 	}
@@ -315,7 +312,7 @@ func (s *UserService) UpdateKeyContext(key string, passphrase string, id uint) (
 	}
 
 	// AES加密并写入passphrase
-	data, err = util.EncryptAESCBC([]byte(passphrase), []byte(consts.AesKey), []byte(consts.AesIv))
+	data, err = util.EncryptAESCBC([]byte(passphrase), []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 	if err != nil {
 		return fmt.Errorf("用户passphrase加密失败: %v", err)
 	}

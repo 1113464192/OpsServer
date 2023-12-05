@@ -112,19 +112,19 @@ func UpdateHostAss(c *gin.Context) {
 // @Summary 获取项目
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetProjectReq false "输入项目ID，获取项目,不输入返回所有项目"
+// @Param data query api.SearchIdStringReq false "所需参数,输入了id则不再需要输入其他参数；全部留空则全部返回"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/project/project [get]
 func GetProject(c *gin.Context) {
-	var projectReq api.GetProjectReq
+	var projectReq api.SearchIdStringReq
 	if err := c.ShouldBind(&projectReq); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	project, total, err := service.Project().GetProject(&projectReq)
+	project, total, err := service.Project().GetProject(projectReq)
 	if err != nil {
 		logger.Log().Error("Project", "获取项目", err)
 		c.JSON(500, api.Err("获取项目失败", err))

@@ -154,6 +154,37 @@ definitions:
     - task_name
     - type_name
     type: object
+  gitWebhook.UpdateGitWebhookReq:
+    properties:
+      full_name:
+        description: git仓库全名
+        type: string
+      host_id:
+        description: 服务器ID
+        type: integer
+      id:
+        description: ID
+        type: integer
+      project_id:
+        description: 项目ID
+        type: integer
+      rec_data:
+        description: 从git仓库接受的webhook json
+        items:
+          type: integer
+        type: array
+      ssh_url:
+        description: git的ssh_url
+        type: string
+      status:
+        description: '状态(0: 获取hook 1: 拉取包成功 2: 编译成功 3: 测试成功 4: 推送包到存储机器成功 5: 失败执行)'
+        type: integer
+      webhook_update_at:
+        description: 仓库接收对应信号的更新时间
+        type: string
+    required:
+    - id
+    type: object
   ops.SubmitTaskReq:
     properties:
       auditorId:
@@ -339,6 +370,7 @@ paths:
         type: string
       - in: query
         name: id
+        required: true
         type: integer
       - description: 页码
         in: query
@@ -480,6 +512,241 @@ paths:
       summary: 新增/修改域名
       tags:
       - 域名相关
+  /api/v1/git-gitWebhook/git-webhook:
+    delete:
+      description: 删除GitWebhook记录
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 输入需要删除的GitWebhook记录的IDs
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 删除GitWebhook记录
+      tags:
+      - GitWebhook相关
+    get:
+      description: 查询GitWebhook记录
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: string
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{}, "meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 查询GitWebhook记录
+      tags:
+      - GitWebhook相关
+    put:
+      description: 修改GitWebhook记录
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 输入修改GitWebhook记录所需参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/gitWebhook.UpdateGitWebhookReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{}, "meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 修改GitWebhook记录
+      tags:
+      - GitWebhook相关
+  /api/v1/git-gitWebhook/github/{pid}/{hid}:
+    post:
+      description: 接收github的Webhook进行处理
+      parameters:
+      - description: 项目ID
+        in: path
+        name: pid
+        required: true
+        type: integer
+      - description: 服务器ID
+        in: path
+        name: hid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 接收github的Webhook进行处理
+      tags:
+      - GitWebhook相关
+  /api/v1/git-gitWebhook/gitlab/{pid}/{hid}:
+    post:
+      description: 接收gitlab的Webhook进行处理
+      parameters:
+      - description: 项目ID
+        in: path
+        name: pid
+        required: true
+        type: integer
+      - description: 服务器ID
+        in: path
+        name: hid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 接收gitlab的Webhook进行处理
+      tags:
+      - GitWebhook相关
+  /api/v1/git-gitWebhook/project-update-status:
+    patch:
+      description: 更改GitWebhook状态
+      parameters:
+      - description: '格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密'
+        in: header
+        name: CiAuthSign
+        required: true
+        type: string
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 行id
+        in: formData
+        name: id
+        required: true
+        type: integer
+      - description: 状态值
+        in: formData
+        name: status
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 更改GitWebhook状态
+      tags:
+      - GitWebhook相关
   /api/v1/group/apis:
     get:
       description: 由于swagger本身的限制，get请求的切片会报错，并非接口本身问题，请换个方式，如http://127.0.0.1:9081/api/v1/group/apis?ids=3&ids=4
@@ -568,6 +835,7 @@ paths:
         items:
           type: integer
         name: ids
+        required: true
         type: array
       - description: 页码
         in: query
@@ -649,6 +917,7 @@ paths:
         items:
           type: integer
         name: ids
+        required: true
         type: array
       - description: 页码
         in: query
@@ -694,6 +963,7 @@ paths:
         items:
           type: integer
         name: ids
+        required: true
         type: array
       - description: 页码
         in: query
@@ -1572,6 +1842,7 @@ paths:
         type: string
       - in: query
         name: id
+        required: true
         type: integer
       - description: 页码
         in: query
@@ -1685,9 +1956,8 @@ paths:
         required: true
         type: string
       - in: query
-        name: name
-        required: true
-        type: string
+        name: id
+        type: integer
       - description: 页码
         in: query
         name: page
@@ -1696,6 +1966,9 @@ paths:
         in: query
         name: page_size
         type: integer
+      - in: query
+        name: string
+        type: string
       produces:
       - application/json
       responses:

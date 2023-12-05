@@ -122,24 +122,30 @@ func (s *ProjectService) UpdateHostAss(param *api.UpdateProjectAssHostReq) (err 
 }
 
 // 获取项目
-func (s *ProjectService) GetProject(param *api.GetProjectReq) (projectObj any, total int64, err error) {
+func (s *ProjectService) GetProject(param api.SearchIdStringReq) (projectObj any, total int64, err error) {
 	var project []model.Project
 	db := model.DB.Model(&project)
-	searchReq := &api.SearchReq{
-		Condition: db,
-		Table:     &project,
-		PageInfo:  param.PageInfo,
-	}
-	if param.Name != "" {
-		name := "%" + strings.ToUpper(param.Name) + "%"
-		db = model.DB.Where("UPPER(name) LIKE ?", name)
-		searchReq.Condition = db
-		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
-			return nil, 0, err
+	if param.Id != 0 {
+		if err = db.Where("id = ?", param.Id).Find(&project).Error; err != nil {
+			return nil, 0, fmt.Errorf("查询id错误: %v", err)
 		}
 	} else {
-		if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
-			return nil, 0, err
+		searchReq := &api.SearchReq{
+			Condition: db,
+			Table:     &project,
+			PageInfo:  param.PageInfo,
+		}
+		if param.String != "" {
+			name := "%" + strings.ToUpper(param.String) + "%"
+			db = model.DB.Where("UPPER(name) LIKE ?", name)
+			searchReq.Condition = db
+			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+				return nil, 0, err
+			}
+		} else {
+			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+				return nil, 0, err
+			}
 		}
 	}
 	var result *[]api.ProjectRes
