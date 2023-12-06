@@ -34,14 +34,16 @@ func (s *GitWebhookService) HandleGithubWebhook(pid uint, hid uint, c *gin.Conte
 		}
 
 		fmt.Printf("\n github的push处理 \n %s \n %v \n", *res, err)
+		return err
 	case consts.GITHUB_EVENT_PR:
 		var res *gitWebhook.HandleGithubPRJson
 		err = GitWebhook().handleGithubPRReq(data)
 		fmt.Printf("\n github的pull-request处理 \n %s \n %v \n", *res, err)
+		return err
 	default:
 		fmt.Println("处理范围外的请求: " + eventType)
+		return err
 	}
-	return err
 }
 
 func (s *GitWebhookService) writeGithubPushDataToDb(nData *gitWebhook.HandleGithubPushJson, allData []byte, pid uint, hid uint) (uint, error) {

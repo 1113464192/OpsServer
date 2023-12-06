@@ -31,7 +31,7 @@ func (s *GitWebhookService) ExecServerCustomCi(whId uint, sshurl string, name st
 	}
 
 	// 执行CI操作
-	cmd := fmt.Sprintf(`bash %s/%s.sh %d %s %s`, configs.Conf.GitWebhook.GitCiScriptDir, name, whId, sshurl, configs.Conf.GitWebhook.GitCiRepo+"/"+name)
+	cmd := fmt.Sprintf(`bash %s %d %s %s`, configs.Conf.GitWebhook.GitCiScriptDir+"/"+name+".sh", whId, sshurl, configs.Conf.GitWebhook.GitCiRepo+"/"+name)
 
 	var sshClientConfigParam []api.SSHClientConfigReq
 	sshClientConfigParam = append(sshClientConfigParam,
@@ -45,6 +45,9 @@ func (s *GitWebhookService) ExecServerCustomCi(whId uint, sshurl string, name st
 		})
 	var sshResult *[]api.SSHResultRes
 	if sshResult, err = service.SSH().RunSSHCmdAsync(&sshClientConfigParam); err != nil && (*sshResult)[0].Status != 0 {
+		if err = model.DB.Model(&model.GitWebhookRecord{}).Where("id = ?", whId).Updates(model.GitWebhookRecord{ErrResponse: (*sshResult)[0].Response, Status: 5}).Error; err != nil {
+			return fmt.Errorf("写入错误信息到数据库中报错: %v \n ssh错误信息为: %s", err, (*sshResult)[0].Response)
+		}
 		return fmt.Errorf("执行CI脚本报错: %v \n %s", err, (*sshResult)[0].Response)
 	}
 	return err
