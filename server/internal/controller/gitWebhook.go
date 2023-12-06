@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	serviceGitWebhook "fqhWeb/internal/service/gitWebhook"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/api/gitWebhook"
@@ -34,7 +33,6 @@ func HandleGithubWebhook(c *gin.Context) {
 	if hid, err = strconv.ParseUint(hidStr, 10, 0); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 	}
-	fmt.Println("=============", pid, hid, "=================")
 	if err = serviceGitWebhook.GitWebhook().HandleGithubWebhook(uint(pid), uint(hid), c); err != nil {
 		logger.Log().Error("GitWebhook", "GithubWebhookPush", err)
 		c.JSON(500, api.Err("GithubWebhookPushFail", err))

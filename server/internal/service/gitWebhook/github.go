@@ -69,7 +69,6 @@ func (s *GitWebhookService) handleGithubPushReq(data []byte, pid uint, hid uint)
 	if whId, err = s.writeGithubPushDataToDb(res, data, pid, hid); err != nil {
 		return err
 	}
-	//fmt.Println("============", whId, res.Repository.SshUrl, res.Repository.Name, hid, configs.Conf.GitWebhook.GitCiScriptDir, configs.Conf.GitWebhook.GitCiRepo, "============")
 	if err = s.ExecServerCustomCi(whId, res.Repository.SshUrl, res.Repository.Name, hid); err != nil {
 		return err
 	}
