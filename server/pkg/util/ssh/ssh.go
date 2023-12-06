@@ -4,15 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"fqhWeb/configs"
-	"fqhWeb/internal/consts"
 	"fqhWeb/pkg/util"
-	"net"
-	"os"
-	"time"
-
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
+	"net"
+	"os"
+	"time"
 )
 
 func AuthWithPrivateKeyBytes(key []byte, passphrase []byte) (ssh.AuthMethod, error) {
@@ -49,9 +47,14 @@ func AuthWithAgent() (ssh.AuthMethod, error) {
 
 // func SSHNewClient(config *api.SSHClientConfigReq) (client *ssh.Client, err error) {
 func SSHNewClient(hostIp string, username string, sshPort string, password string, priKey []byte, passphrase []byte) (client *ssh.Client, err error) {
+	duration, err := time.ParseDuration(configs.Conf.SshTimeout.SshTimeout)
+	if err != nil {
+		return nil, fmt.Errorf("超时时间获取失败: %v", err)
+	}
+
 	clientConfig := &ssh.ClientConfig{
 		User:            username,
-		Timeout:         consts.SSHTimeout * time.Second,
+		Timeout:         duration,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), // 忽略public key的安全验证
 	}
 

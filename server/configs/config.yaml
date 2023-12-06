@@ -6,6 +6,11 @@ mysql:
 logger:
   level: "Debug"
 
+sshTimeout:
+  # 仅限整数，1h就是1小时，1m就是一分钟等,最大只能是h
+  # 默认1h
+  sshTimeout: 1h
+
 # 允许多少个任务同时执行，设置为0则无并发上限
 concurrency:
   number: 5000
@@ -26,7 +31,7 @@ securityVars:
   # AES的KEY与IV
   aesKey: "0388f9c2cd9e83960fe64589"
   aesIv: "b0bddbefd6ac81ca"
-  # tokentime  1h就是1小时，1m就是一分钟等,最大只能是h
+  # tokentime  仅限整数，1h就是1小时，1m就是一分钟等,最大只能是h
   tokenExpireDuration: "168h"
   # token key
   tokenKey: "52995df076de0cf040055a9e932687209c148e75cc283f5a22c341a84e4e33dc"

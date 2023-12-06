@@ -9,10 +9,9 @@ import (
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/util/ssh"
+	gossh "golang.org/x/crypto/ssh"
 	"os"
 	"sync"
-
-	gossh "golang.org/x/crypto/ssh"
 )
 
 type SSHServer struct {
@@ -79,7 +78,6 @@ func (s *SSHServer) RunSSHCmdAsync(param *[]api.SSHClientConfigReq) (*[]api.SSHR
 		clientMap:      make(map[string]*gossh.Client),
 		clientMapMutex: sync.Mutex{},
 	}
-
 	channel := make(chan *api.SSHResultRes, len(*param))
 	wg := sync.WaitGroup{}
 	var err error
@@ -104,6 +102,15 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHRes
 	defer func() {
 		if r := recover(); r != nil {
 			logger.Log().Error("Groutine", "RunSSHCmd", r)
+			fmt.Println("Groutine", "\n", "RunSSHCmd", "\n", r)
+			result := &api.SSHResultRes{
+				HostIp:   param.HostIp,
+				Status:   9999,
+				Response: fmt.Sprintf("触发了recover(): %v", r),
+			}
+			ch <- result
+			wg.Done()
+			configs.Sem.Release(1)
 		}
 	}()
 	result := &api.SSHResultRes{
@@ -205,6 +212,14 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 		if r := recover(); r != nil {
 			logger.Log().Error("Groutine", "RunSFTPTransfer", r)
 			fmt.Println("Groutine", "\n", "RunSFTPTransfer", "\n", r)
+			result := &api.SSHResultRes{
+				HostIp:   param.HostIp,
+				Status:   9999,
+				Response: fmt.Sprintf("触发了recover(): %v", r),
+			}
+			ch <- result
+			wg.Done()
+			configs.Sem.Release(1)
 		}
 	}()
 	result := &api.SSHResultRes{

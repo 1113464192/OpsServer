@@ -3,6 +3,7 @@ package configs
 type Config struct {
 	Mysql        Mysql        `json:"mysql"`
 	Logger       Logger       `json:"logger"`
+	SshTimeout   SshTimeout   `json:"ssh_timeout"`
 	System       System       `json:"system"`
 	Concurrency  Concurrency  `json:"concurrency"`
 	GitWebhook   GitWebhook   `json:"git_webhook"`
@@ -16,6 +17,10 @@ type Mysql struct {
 
 type Logger struct {
 	Level string
+}
+
+type SshTimeout struct {
+	SshTimeout string
 }
 
 type Concurrency struct {
