@@ -28,17 +28,12 @@ func (s *GitWebhookService) HandleGithubWebhook(pid uint, hid uint, c *gin.Conte
 	eventType := c.GetHeader(consts.GITHUB_EVENT)
 	switch eventType {
 	case consts.GITHUB_EVENT_PUSH:
-		var res *gitWebhook.HandleGithubPushJson
 		if err = GitWebhook().handleGithubPushReq(data, pid, hid); err != nil {
 			return fmt.Errorf("执行webhook处理函数报错: %v", err)
 		}
-
-		fmt.Printf("\n github的push处理 \n %s \n %v \n", *res, err)
 		return err
 	case consts.GITHUB_EVENT_PR:
-		var res *gitWebhook.HandleGithubPRJson
 		err = GitWebhook().handleGithubPRReq(data)
-		fmt.Printf("\n github的pull-request处理 \n %s \n %v \n", *res, err)
 		return err
 	default:
 		fmt.Println("处理范围外的请求: " + eventType)
