@@ -22,7 +22,8 @@ func (s *GitWebhookService) ExecServerCustomCi(whId uint, sshurl string, name st
 	if err = model.DB.First(&opsUser, consts.SSHOpsUserId).Error; err != nil {
 		return fmt.Errorf("获取ops权限用户失败: %v", err)
 	}
-	
+	fmt.Println("============", sshurl, name, hid, configs.Conf.GitWebhook.GitCiScriptDir, configs.Conf.GitWebhook.GitCiRepo, "============")
+
 	// 获取执行主机
 	var host model.Host
 	if err = model.DB.First(&host, hid).Error; err != nil {

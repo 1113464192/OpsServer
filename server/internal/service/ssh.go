@@ -7,6 +7,7 @@ import (
 	"fqhWeb/configs"
 	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
+	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/util/ssh"
 	"os"
 	"sync"
@@ -100,6 +101,11 @@ func (s *SSHServer) RunSSHCmdAsync(param *[]api.SSHClientConfigReq) (*[]api.SSHR
 }
 
 func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
+	defer func() {
+		if r := recover(); r != nil {
+			logger.Log().Error("Groutine", "RunSSHCmd", r)
+		}
+	}()
 	result := &api.SSHResultRes{
 		HostIp: param.HostIp,
 		Status: 0,
@@ -195,6 +201,12 @@ func (s *SSHServer) RunSFTPAsync(param *[]api.SFTPClientConfigReq) (*[]api.SSHRe
 }
 
 func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
+	defer func() {
+		if r := recover(); r != nil {
+			logger.Log().Error("Groutine", "RunSFTPTransfer", r)
+			fmt.Println("Groutine", "\n", "RunSFTPTransfer", "\n", r)
+		}
+	}()
 	result := &api.SSHResultRes{
 		HostIp: param.HostIp,
 		Status: 0,
