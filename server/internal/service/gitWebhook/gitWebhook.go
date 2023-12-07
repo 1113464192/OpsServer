@@ -44,7 +44,9 @@ func (s *GitWebhookService) ExecServerCustomCi(whId uint, sshurl string, name st
 			Cmd:        cmd,
 		})
 	var sshResult *[]api.SSHResultRes
-	if sshResult, err = service.SSH().RunSSHCmdAsync(&sshClientConfigParam); err != nil && (*sshResult)[0].Status != 0 {
+	sshResult, err = service.SSH().RunSSHCmdAsync(&sshClientConfigParam)
+	fmt.Println(*sshResult)
+	if err != nil && (*sshResult)[0].Status != 0 {
 		if err = model.DB.Model(&model.GitWebhookRecord{}).Where("id = ?", whId).Updates(model.GitWebhookRecord{ErrResponse: (*sshResult)[0].Response, Status: 5}).Error; err != nil {
 			return fmt.Errorf("写入错误信息到数据库中报错: %v \n ssh错误信息为: %s", err, (*sshResult)[0].Response)
 		}

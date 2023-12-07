@@ -710,11 +710,6 @@ paths:
         name: CiAuthSign
         required: true
         type: string
-      - description: 格式为：Bearer 用户令牌
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: 行id
         in: formData
         name: id
@@ -1999,7 +1994,8 @@ paths:
         name: Authorization
         required: true
         type: string
-      - in: formData
+      - description: 关联组ID
+        in: formData
         name: group_id
         required: true
         type: integer
@@ -2007,15 +2003,18 @@ paths:
         in: formData
         name: id
         type: integer
-      - in: formData
+      - description: 项目名
+        in: formData
         name: name
         required: true
         type: string
-      - in: formData
+      - description: 状态：1 正常 2 停摆
+        in: formData
         name: status
         required: true
         type: integer
-      - in: formData
+      - description: 负责人用户ID
+        in: formData
         name: user_id
         required: true
         type: integer

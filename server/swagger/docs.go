@@ -790,13 +790,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "格式为：Bearer 用户令牌",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
                         "type": "integer",
                         "description": "行id",
                         "name": "id",
@@ -2677,6 +2670,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "关联组ID",
                         "name": "group_id",
                         "in": "formData",
                         "required": true
@@ -2689,18 +2683,21 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "项目名",
                         "name": "name",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "integer",
+                        "description": "状态：1 正常 2 停摆",
                         "name": "status",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "integer",
+                        "description": "负责人用户ID",
                         "name": "user_id",
                         "in": "formData",
                         "required": true

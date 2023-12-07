@@ -62,8 +62,8 @@ func UserLogout(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
 	parts := strings.SplitN(authHeader, " ", 2)
 	token := parts[1]
-	jwt := &model.JwtBlacklist{Jwt: token}
-	if err := service.Jwt().JwtAddBlacklist(jwt); err != nil {
+	jwt1 := &model.JwtBlacklist{Jwt: token}
+	if err := service.Jwt().JwtAddBlacklist(jwt1); err != nil {
 		logger.Log().Error("User", "用户登出失败，jwt没有拉入黑名单", err)
 		c.JSON(500, api.Err("用户登出失败，jwt没有拉入黑名单", err))
 		return

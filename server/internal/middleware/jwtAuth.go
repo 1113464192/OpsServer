@@ -43,8 +43,14 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		// mc 里面包含对应登录账号，签发人（Issuer） 过期时间（ExpiresAt）
 		if err != nil {
 			//已过期，把token拉到黑名单
-			jwtService.JwtAddBlacklist(&model.JwtBlacklist{Jwt: parts[1]})
-			logger.Log().Error("JWT", "授权已过期", err)
+			err2 := jwtService.JwtAddBlacklist(&model.JwtBlacklist{Jwt: parts[1]})
+			if err2 != nil {
+				logger.Log().Error("JWT", "拉取token到黑名单失败", err2)
+				c.JSON(500, api.Err("拉取token到黑名单失败", err2))
+				c.Abort()
+				return
+			}
+			logger.Log().Info("JWT", "授权已过期", err)
 			c.JSON(403, api.Err("授权已过期", err))
 			c.Abort()
 			return
