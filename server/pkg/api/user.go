@@ -46,3 +46,10 @@ type UserRes struct {
 	Expiration uint64
 	IsAdmin    uint8
 }
+
+// 查询用户操作记录
+type GetRecordListReq struct {
+	Id   uint   `json:"id" form:"id"`                            // 用户ID
+	Date string `json:"string" form:"string" binding:"required"` // 年月，如：2006_01
+	PageInfo
+}

@@ -2,6 +2,8 @@ mysql:
   conf: "root:fqh123456@tcp(192.168.18.65:20001)/fqhWeb?charset=utf8&parseTime=True&loc=Local"
   # 设置Mysql的批处理大小
   createBatchSize: 1000
+  # 表前缀
+  tablePrefix: "fqh_"
 
 logger:
   level: "Debug"

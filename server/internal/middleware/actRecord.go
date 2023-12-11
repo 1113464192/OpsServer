@@ -58,7 +58,10 @@ func UserActionRecord() gin.HandlerFunc {
 			var err error
 			body, err = io.ReadAll(c.Request.Body)
 			if err != nil {
-				logger.Log().Error("UserActionRecord", "记录用户请求body失败", err)
+				logger.Log().Error("UserActionRecord", "记录用户请求body", err)
+				c.JSON(500, api.Err("记录用户请求body失败", err))
+				c.Abort()
+				return
 			} else {
 				c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 			}
@@ -90,8 +93,11 @@ func UserActionRecord() gin.HandlerFunc {
 			// }
 
 			record.Resp = writer.body.String()
-			if err := recordService.RecordCreate(record); err != nil {
+			if err = recordService.RecordCreate(record); err != nil {
 				logger.Log().Error("UserActionRecord", "记录失败", err)
+				c.JSON(500, api.Err("记录失败", err))
+				c.Abort()
+				return
 			}
 			if len(record.Resp) > 1024 {
 				// 截断

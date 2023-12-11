@@ -192,7 +192,7 @@ func (s *GroupService) GetAssUser(param *api.GetPagingMustByIdsReq) (userObj any
 		return &users, total, fmt.Errorf("获取关联的数据失败: %v", err)
 	}
 
-	// 取出所有预加载的表并去重
+	// 取出所有关联的数据并去重
 	var dedupliusers []model.User
 	userMap := make(map[uint]struct{})
 	for _, user := range users {

@@ -428,34 +428,60 @@ func GetSelfAssGroup(c *gin.Context) {
 // @Summary 获取用户操作记录
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetPagingByIdReq true "用户username"
+// @Param data query api.GetRecordListReq true "用户username"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/user/action-log [get]
 func GetRecordList(c *gin.Context) {
-	var param api.GetPagingByIdReq
+	var param api.GetRecordListReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
-	logs, total, err := service.Record().GetRecordList(&param)
+	logs, total, err := service.Record().GetRecordList(param)
 	if err != nil {
-		logger.Log().Error("User", "获取用户操作记录失败", err)
+		logger.Log().Error("User", "获取用户操作记录", err)
 		c.JSON(500, api.Err("获取用户操作记录失败", err))
 		return
-	} else {
-		c.JSON(200, api.PageResult{
-			Meta: api.Meta{
-				Msg: "Success",
-			},
-			Data:     logs,
-			Total:    total,
-			Page:     param.PageInfo.Page,
-			PageSize: param.PageInfo.PageSize,
-		})
 	}
+	c.JSON(200, api.PageResult{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+		Data:     logs,
+		Total:    total,
+		Page:     param.PageInfo.Page,
+		PageSize: param.PageInfo.PageSize,
+	})
+}
+
+// GetRecordLogDate
+// @Tags 用户相关
+// @title 获取用户可查询操作记录的日期
+// @description 查询有多少个月份表可供查询
+// @Summary 获取用户可查询操作记录的日期
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/user/action-log/exist-date [get]
+func GetRecordLogDate(c *gin.Context) {
+	dates, err := service.Record().GetRecordLogDate()
+	if err != nil {
+		logger.Log().Error("User", "获取用户操作记录可用日期", err)
+		c.JSON(500, api.Err("获取用户操作记录可用日期失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+		Data: dates,
+	})
 }
 
 // UpdateKeyFileContext

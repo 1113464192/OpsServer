@@ -46,19 +46,20 @@ func NewRoute() *gin.Engine {
 		// ------------用户相关------------
 		userRoute := v1.Group("user")
 		{
-			userRoute.POST("user", UpdateUser)                 // 新增/修改用户
-			userRoute.GET("users", GetUserList)                // 查询用户切片
-			userRoute.DELETE("users", DeleteUser)              // 删除用户
-			userRoute.PATCH("status", UpdateStatus)            // 修改用户状态
-			userRoute.PATCH("password", UpdatePasswd)          // 修改用户密码
-			userRoute.PATCH("self-password", UpdateSelfPasswd) // 修改自己的密码
-			userRoute.GET("self-user", GetSelfInfo)            // 查询自己的信息
-			userRoute.GET("ass-group", GetAssGroup)            // 根据用户ID查询组
-			userRoute.GET("self-ass-group", GetSelfAssGroup)   // 获取自己关联的组
-			userRoute.PUT("logout", UserLogout)                // 登出
-			userRoute.GET("action-log", GetRecordList)         // 查询用户所有的历史操作
-			userRoute.POST("key-file", UpdateKeyFileContext)   // 添加私钥文件
-			userRoute.POST("key-str", UpdateKeyContext)        // 添加私钥内容(与文件二选一)
+			userRoute.POST("user", UpdateUser)                       // 新增/修改用户
+			userRoute.GET("users", GetUserList)                      // 查询用户切片
+			userRoute.DELETE("users", DeleteUser)                    // 删除用户
+			userRoute.PATCH("status", UpdateStatus)                  // 修改用户状态
+			userRoute.PATCH("password", UpdatePasswd)                // 修改用户密码
+			userRoute.PATCH("self-password", UpdateSelfPasswd)       // 修改自己的密码
+			userRoute.GET("self-user", GetSelfInfo)                  // 查询自己的信息
+			userRoute.GET("ass-group", GetAssGroup)                  // 根据用户ID查询组
+			userRoute.GET("self-ass-group", GetSelfAssGroup)         // 获取自己关联的组
+			userRoute.PUT("logout", UserLogout)                      // 登出
+			userRoute.GET("action-log", GetRecordList)               // 查询用户所有的历史操作
+			userRoute.GET("action-log/exist-date", GetRecordLogDate) // 查询有多少个月份表可供查询
+			userRoute.POST("key-file", UpdateKeyFileContext)         // 添加私钥文件
+			userRoute.POST("key-str", UpdateKeyContext)              // 添加私钥内容(与文件二选一)
 		}
 		// ------------用户组相关--------------
 		groupRoute := v1.Group("group")

@@ -13,6 +13,7 @@ type Config struct {
 type Mysql struct {
 	Conf            string
 	CreateBatchSize int
+	TablePrefix     string
 }
 
 type Logger struct {

@@ -50,7 +50,7 @@ func Database() {
 	}
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix:   "fqh_",
+			TablePrefix:   configs.Conf.Mysql.TablePrefix,
 			SingularTable: true,
 		},
 		Logger:          newLogger,

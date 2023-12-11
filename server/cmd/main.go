@@ -21,7 +21,6 @@ func main() {
 			&model.Menus{},
 			&model.JwtBlacklist{},
 			&model.Api{},
-			&model.ActRecord{},
 			&model.TaskTemplate{},
 			&model.Domain{},
 			&model.Project{},
