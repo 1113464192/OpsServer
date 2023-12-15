@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func (s *OpsService) getInstallServerParam(hostList *[]model.Host, task *model.TaskTemplate, user *model.User, pathCount int, args *map[string][]string) (sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, err error) {
+func (s *OpsService) getInstallServerParam(hostList *[]model.Host, task *model.TaskTemplate, user *model.User, pathCount int, args *map[string][]string) (sshReq *[]api.SSHExecReq, sftpReq *[]api.SFTPExecReq, err error) {
 	// 如果没有端口规则, 那么控制一下hosts数量
 	if len(*hostList) > pathCount {
 		*hostList = (*hostList)[:pathCount]
@@ -23,12 +23,12 @@ func (s *OpsService) getInstallServerParam(hostList *[]model.Host, task *model.T
 	if task.CmdTem == "" || task.ConfigTem == "" {
 		return nil, nil, errors.New("执行命令与配置文件模板都为空")
 	}
-	sshReq = &[]api.SSHClientConfigReq{}
-	sftpReq = &[]api.SFTPClientConfigReq{}
-	var sReq api.SSHClientConfigReq
-	var fReq api.SFTPClientConfigReq
+	sshReq = &[]api.SSHExecReq{}
+	sftpReq = &[]api.SFTPExecReq{}
+	var sReq api.SSHExecReq
+	var fReq api.SFTPExecReq
 	for i := 0; i < len(*hostList); i++ {
-		sReq = api.SSHClientConfigReq{
+		sReq = api.SSHExecReq{
 			HostIp:     (*hostList)[i].Ipv4.String,
 			Username:   (*hostList)[i].User,
 			SSHPort:    (*hostList)[i].Port,
@@ -36,7 +36,7 @@ func (s *OpsService) getInstallServerParam(hostList *[]model.Host, task *model.T
 			Passphrase: user.Passphrase,
 		}
 		*sshReq = append(*sshReq, sReq)
-		fReq = api.SFTPClientConfigReq{
+		fReq = api.SFTPExecReq{
 			HostIp:     (*hostList)[i].Ipv4.String,
 			Username:   (*hostList)[i].User,
 			SSHPort:    (*hostList)[i].Port,
@@ -84,7 +84,7 @@ func (s *OpsService) getInstallServerParam(hostList *[]model.Host, task *model.T
 }
 
 // 装服传参请包含path、serverName、端口规则(key要规则名)
-func (s *OpsService) opsInstallServer(pathCount int, task *model.TaskTemplate, hosts *[]model.Host, user *model.User, args *map[string][]string, sshReq *[]api.SSHClientConfigReq) (*[]api.SSHClientConfigReq, *[]api.SFTPClientConfigReq, error) {
+func (s *OpsService) opsInstallServer(pathCount int, task *model.TaskTemplate, hosts *[]model.Host, user *model.User, args *map[string][]string, sshReq *[]api.SSHExecReq) (*[]api.SSHExecReq, *[]api.SFTPExecReq, error) {
 	var err error
 	if pathCount == 0 {
 		return nil, nil, errors.New("path参数数量为0")
@@ -120,7 +120,7 @@ func (s *OpsService) opsInstallServer(pathCount int, task *model.TaskTemplate, h
 	}
 	(*args)["hostId"] = hostIds
 
-	var sftpReq *[]api.SFTPClientConfigReq
+	var sftpReq *[]api.SFTPExecReq
 	sshReq, sftpReq, err = s.getInstallServerParam(hosts, task, user, pathCount, args)
 	if err != nil {
 		return nil, nil, fmt.Errorf("获取%s参数报错: %v", consts.OperationInstallServerType, err)

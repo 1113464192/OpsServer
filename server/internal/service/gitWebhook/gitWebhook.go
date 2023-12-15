@@ -33,9 +33,9 @@ func (s *GitWebhookService) ExecServerCustomCi(whId uint, sshurl string, name st
 	// 执行CI操作
 	cmd := fmt.Sprintf(`bash %s %d %s %s`, configs.Conf.GitWebhook.GitCiScriptDir+"/"+name+".sh", whId, sshurl, configs.Conf.GitWebhook.GitCiRepo+"/"+name)
 
-	var sshClientConfigParam []api.SSHClientConfigReq
+	var sshClientConfigParam []api.SSHExecReq
 	sshClientConfigParam = append(sshClientConfigParam,
-		api.SSHClientConfigReq{
+		api.SSHExecReq{
 			HostIp:     host.Ipv4.String,
 			Username:   host.User,
 			SSHPort:    host.Port,

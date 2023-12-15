@@ -8,7 +8,7 @@ package ops
 // 	"fqhWeb/pkg/api"
 // )
 
-// func (s *OpsService) getGeneral(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, args *map[string][]string, pathCount int) (sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, err error) {
+// func (s *OpsService) getGeneral(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, args *map[string][]string, pathCount int) (sshReq *[]api.SSHExecReq, sftpReq *[]api.SFTPExecReq, err error) {
 // 	// 如果没有端口规则, 那么控制一下hosts数量
 // 	if len(*hosts) > pathCount {
 // 		*hosts = (*hosts)[:pathCount]

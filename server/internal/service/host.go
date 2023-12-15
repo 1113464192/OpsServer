@@ -209,7 +209,7 @@ func (s *HostService) GetHost(param *api.GetHostReq) (hostInfo any, count int64,
 }
 
 // 获取主机当前状态
-func (s *HostService) GetHostCurrData(param *[]api.SSHClientConfigReq) (*api.HostInfoRes, error) {
+func (s *HostService) GetHostCurrData(param *[]api.SSHExecReq) (*api.HostInfoRes, error) {
 	// systemDiskShell := `df -Th | awk '{if ($NF=="/")print$(NF-2)}' | grep -Eo "[0-9]+"`
 	// dataDiskShell := `df -Th | awk '{if ($NF=="/data")print$(NF-2)}' | grep -Eo "[0-9]+"`
 	// memShell := `free -m | awk '/Mem/{print $NF}'`

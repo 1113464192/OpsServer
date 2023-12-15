@@ -3,11 +3,13 @@ package configs
 type Config struct {
 	Mysql        Mysql        `json:"mysql"`
 	Logger       Logger       `json:"logger"`
-	SshTimeout   SshTimeout   `json:"ssh_timeout"`
+	SshConfig    SshConfig    `json:"ssh_timeout"`
+	Webssh       Webssh       `json:"webssh"`
 	System       System       `json:"system"`
 	Concurrency  Concurrency  `json:"concurrency"`
 	GitWebhook   GitWebhook   `json:"git_webhook"`
 	SecurityVars SecurityVars `json:"security_vars"`
+	ProjectWeb   ProjectWeb   `json:"project_web"`
 }
 
 type Mysql struct {
@@ -20,8 +22,19 @@ type Logger struct {
 	Level string
 }
 
-type SshTimeout struct {
-	SshTimeout string
+type SshConfig struct {
+	SshClientTimeout string
+}
+
+type Webssh struct {
+	ReadBufferSize   int
+	WriteBufferSize  int
+	HandshakeTimeout string
+	SshEcho          uint32
+	SshTtyOpIspeed   uint32
+	SshTtyOpOspeed   uint32
+	ScreenHight      int
+	ScreenWeight     int
 }
 
 type Concurrency struct {
@@ -45,6 +58,10 @@ type SecurityVars struct {
 	TokenExpireDuration string
 	TokenKey            string
 	CiMd5Key            string
+}
+
+type ProjectWeb struct {
+	RootPath string
 }
 
 var Conf = new(Config)

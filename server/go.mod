@@ -10,6 +10,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
+	github.com/gorilla/websocket v1.5.1
 	github.com/pkg/sftp v1.13.1
 	github.com/robfig/cron v1.2.0
 	github.com/spf13/viper v1.16.0

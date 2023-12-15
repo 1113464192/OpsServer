@@ -70,8 +70,8 @@ func (s *OpsService) SubmitTask(param ops.SubmitTaskReq) (result *[]ops.TaskReco
 
 	pathCount := len(args["path"])
 
-	sshReq := &[]api.SSHClientConfigReq{}
-	sftpReq := &[]api.SFTPClientConfigReq{}
+	sshReq := &[]api.SSHExecReq{}
+	sftpReq := &[]api.SFTPExecReq{}
 
 	// 入口
 	var typeParam string
@@ -155,9 +155,9 @@ func (s *OpsService) GetTask(param *api.SearchIdStringReq) (result *[]ops.TaskRe
 }
 
 // 获取执行参数
-func (s *OpsService) GetSSHExecParam(tid uint) (*[]api.SSHClientConfigReq, *[]api.SFTPClientConfigReq, error) {
-	var sshReq []api.SSHClientConfigReq
-	var sftpReq []api.SFTPClientConfigReq
+func (s *OpsService) GetSSHExecParam(tid uint) (*[]api.SSHExecReq, *[]api.SFTPExecReq, error) {
+	var sshReq []api.SSHExecReq
+	var sftpReq []api.SFTPExecReq
 	var err error
 	var task model.TaskRecord
 	if err = model.DB.First(&task, tid).Error; err != nil {
@@ -364,7 +364,7 @@ func (s *OpsService) GetResults(taskInfo any) (*[]ops.TaskRecordRes, error) {
 	var err error
 	if task, ok := taskInfo.(*model.TaskRecord); ok {
 		var res ops.TaskRecordRes
-		sshCmdReq := []api.SSHClientConfigReq{}
+		sshCmdReq := []api.SSHExecReq{}
 		if task.SFTPJson != "" {
 			// 除了CMD全部写入
 			if err = json.Unmarshal([]byte(task.SFTPJson), &res.SSHReqs); err != nil {
@@ -426,7 +426,7 @@ func (s *OpsService) GetResults(taskInfo any) (*[]ops.TaskRecordRes, error) {
 	} else if tasks, ok := taskInfo.(*[]model.TaskRecord); ok {
 		for _, task := range *tasks {
 			var res ops.TaskRecordRes
-			sshCmdReq := []api.SSHClientConfigReq{}
+			sshCmdReq := []api.SSHExecReq{}
 			if task.SFTPJson != "" {
 				// 除了CMD全部写入
 				if err = json.Unmarshal([]byte(task.SFTPJson), &res.SSHReqs); err != nil {

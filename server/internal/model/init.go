@@ -22,7 +22,7 @@ func Database() {
 	var err error
 	if !util.IsDir(util.GetRootPath() + "/logs/mysql/") {
 		if err = os.Mkdir(util.GetRootPath()+"/logs/mysql/", 0777); err != nil {
-			fmt.Printf("启动失败：创建mysql目录失败 %v", err)
+			fmt.Printf("启动失败: 创建mysql目录失败 %v", err)
 			return
 		}
 	}

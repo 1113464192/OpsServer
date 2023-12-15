@@ -8,10 +8,28 @@ mysql:
 logger:
   level: "Debug"
 
-sshTimeout:
+sshConfig:
   # 仅限整数，1h就是1小时，1m就是一分钟等,最大只能是h
-  # 默认1h
-  sshTimeout: 1h
+  # ssh建立Client超时时间，默认1m
+  sshClientTimeout: 1m
+
+
+webssh:
+  # 读写缓存大小
+  readBufferSize: 4096
+  writeBufferSize: 1024
+  # 握手超时时间
+  handshakeTimeout: 1m
+  # 回显是否开启，1为开启，0为关闭
+  # 是否在终端上显示输入。设置为0表示不显示输入，这在输入密码等敏感信息时很有用
+  sshEcho: 1
+  # 设置终端输入输出速度，视带宽而定(单位为byte)
+  sshTtyOpIspeed: 102400
+  sshTtyOpOspeed: 102400
+  # 伪终端屏幕高、宽大小(单位为字符)
+  screenHight: 80
+  screenWeight: 40
+
 
 # 允许多少个任务同时执行，设置为0则无并发上限
 concurrency:
@@ -39,3 +57,7 @@ securityVars:
   tokenKey: "52995df076de0cf040055a9e932687209c148e75cc283f5a22c341a84e4e33dc"
   # Client Ci md5 Key
   ciMd5Key: "5a9042bc95e4d56d940"
+
+# 项目的根目录
+projectWeb: 
+  rootPath: "/data/fqhWeb"

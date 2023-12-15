@@ -8,24 +8,25 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/util/ssh"
-	gossh "golang.org/x/crypto/ssh"
+	utilssh "fqhWeb/pkg/util/ssh"
 	"os"
 	"sync"
+
+	"golang.org/x/crypto/ssh"
 )
 
-type SSHServer struct {
+type SSHService struct {
 }
 
 var (
-	insSSH = &SSHServer{}
+	insSSH = &SSHService{}
 )
 
-func SSH() *SSHServer {
+func SSH() *SSHService {
 	return insSSH
 }
 
-func (s *SSHServer) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, err error) {
+func (s *SSHService) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, err error) {
 	var user model.User
 	var hosts []model.Host
 	if err := model.DB.First(&user, param.UserId).Error; err != nil {
@@ -34,10 +35,10 @@ func (s *SSHServer) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, e
 	if err := model.DB.Find(&hosts, param.HostId).Error; err != nil {
 		return nil, fmt.Errorf("GORM服务器未找到: %v", err)
 	}
-	sshReq := []api.SSHClientConfigReq{}
-	var req api.SSHClientConfigReq
+	sshReq := []api.SSHExecReq{}
+	var req api.SSHExecReq
 	for i := 0; i < len(hosts); i++ {
-		req = api.SSHClientConfigReq{
+		req = api.SSHExecReq{
 			HostIp:     hosts[i].Ipv4.String,
 			Username:   hosts[i].User,
 			SSHPort:    hosts[i].Port,
@@ -65,17 +66,17 @@ func (s *SSHServer) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, e
 }
 
 type clientGroup struct {
-	clientMap      map[string]*gossh.Client
+	clientMap      map[string]*ssh.Client
 	clientMapMutex sync.Mutex
 }
 
-func (s *SSHServer) RunSSHCmdAsync(param *[]api.SSHClientConfigReq) (*[]api.SSHResultRes, error) {
+func (s *SSHService) RunSSHCmdAsync(param *[]api.SSHExecReq) (*[]api.SSHResultRes, error) {
 	if err := s.CheckSSHParam(param); err != nil {
 		return nil, err
 	}
 
 	insClientGroup := clientGroup{
-		clientMap:      make(map[string]*gossh.Client),
+		clientMap:      make(map[string]*ssh.Client),
 		clientMapMutex: sync.Mutex{},
 	}
 	channel := make(chan *api.SSHResultRes, len(*param))
@@ -98,7 +99,7 @@ func (s *SSHServer) RunSSHCmdAsync(param *[]api.SSHClientConfigReq) (*[]api.SSHR
 	return &result, err
 }
 
-func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
+func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
 	defer func() {
 		if r := recover(); r != nil {
 			logger.Log().Error("Groutine", "RunSSHCmd", r)
@@ -118,10 +119,10 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHRes
 		Status: 0,
 	}
 
-	// client, err := ssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
-	client, err := s.getSSHClient(param.HostIp, param, insClientGroup)
+	// client, err := utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
+	client, err := s.getSSHClient(param.HostIp, param.Username, param, insClientGroup)
 	if err != nil {
-		if exitError, ok := err.(*gossh.ExitError); ok {
+		if exitError, ok := err.(*ssh.ExitError); ok {
 			result.Status = exitError.ExitStatus()
 		} else {
 			result.Status = 99999
@@ -133,9 +134,9 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHRes
 		return
 	}
 	defer client.Close()
-	session, err := ssh.SSHNewSession(client)
+	session, err := utilssh.SSHNewSession(client)
 	if err != nil {
-		if exitError, ok := err.(*gossh.ExitError); ok {
+		if exitError, ok := err.(*ssh.ExitError); ok {
 			result.Status = exitError.ExitStatus()
 		} else {
 			result.Status = 99999
@@ -149,7 +150,7 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHRes
 	defer session.Close()
 	output, err := session.CombinedOutput(param.Cmd)
 	if err != nil {
-		if exitError, ok := err.(*gossh.ExitError); ok {
+		if exitError, ok := err.(*ssh.ExitError); ok {
 			result.Status = exitError.ExitStatus()
 		} else {
 			result.Status = 99999
@@ -168,7 +169,7 @@ func (s *SSHServer) RunSSHCmd(param *api.SSHClientConfigReq, ch chan *api.SSHRes
 }
 
 // 检查是否符合执行条件
-func (s *SSHServer) CheckSSHParam(param *[]api.SSHClientConfigReq) error {
+func (s *SSHService) CheckSSHParam(param *[]api.SSHExecReq) error {
 	for _, p := range *param {
 		if p.HostIp == "" || p.Username == "" || p.SSHPort == "" || p.Cmd == "" || p.Key == nil || p.Passphrase == nil {
 			return fmt.Errorf("执行参数中存在空值: \n%v", p)
@@ -177,13 +178,13 @@ func (s *SSHServer) CheckSSHParam(param *[]api.SSHClientConfigReq) error {
 	return nil
 }
 
-func (s *SSHServer) RunSFTPAsync(param *[]api.SFTPClientConfigReq) (*[]api.SSHResultRes, error) {
+func (s *SSHService) RunSFTPAsync(param *[]api.SFTPExecReq) (*[]api.SSHResultRes, error) {
 	if err := s.CheckSFTPParam(param); err != nil {
 		return nil, err
 	}
 
 	insClientGroup := clientGroup{
-		clientMap:      make(map[string]*gossh.Client),
+		clientMap:      make(map[string]*ssh.Client),
 		clientMapMutex: sync.Mutex{},
 	}
 
@@ -207,7 +208,7 @@ func (s *SSHServer) RunSFTPAsync(param *[]api.SFTPClientConfigReq) (*[]api.SSHRe
 	return &result, err
 }
 
-func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
+func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
 	defer func() {
 		if r := recover(); r != nil {
 			logger.Log().Error("Groutine", "RunSFTPTransfer", r)
@@ -227,10 +228,10 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 		Status: 0,
 	}
 
-	// client, err := ssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
-	client, err := s.getSSHClient(param.HostIp, param, insClientGroup)
+	// client, err := utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
+	client, err := s.getSSHClient(param.HostIp, param.Username, param, insClientGroup)
 	if err != nil {
-		if exitError, ok := err.(*gossh.ExitError); ok {
+		if exitError, ok := err.(*ssh.ExitError); ok {
 			result.Status = exitError.ExitStatus()
 		} else {
 			result.Status = 99999
@@ -242,9 +243,9 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 		return
 	}
 	defer client.Close()
-	sftpClient, err := ssh.CreateSFTPClient(client)
+	sftpClient, err := utilssh.CreateSFTPClient(client)
 	if err != nil {
-		if exitError, ok := err.(*gossh.ExitError); ok {
+		if exitError, ok := err.(*ssh.ExitError); ok {
 			result.Status = exitError.ExitStatus()
 		} else {
 			result.Status = 99999
@@ -258,7 +259,7 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 	defer sftpClient.Close()
 	remoteFile, err := sftpClient.OpenFile(param.Path, os.O_WRONLY|os.O_CREATE)
 	if err != nil {
-		if exitError, ok := err.(*gossh.ExitError); ok {
+		if exitError, ok := err.(*ssh.ExitError); ok {
 			result.Status = exitError.ExitStatus()
 		} else {
 			result.Status = 99999
@@ -273,7 +274,7 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 	var bytesWritten int
 	bytesWritten, err = remoteFile.Write([]byte(param.FileContent))
 	if err != nil {
-		if exitError, ok := err.(*gossh.ExitError); ok {
+		if exitError, ok := err.(*ssh.ExitError); ok {
 			result.Status = exitError.ExitStatus()
 		} else {
 			result.Status = 99999
@@ -292,7 +293,7 @@ func (s *SSHServer) RunSFTPTransfer(param *api.SFTPClientConfigReq, ch chan *api
 }
 
 // 检查是否符合执行条件
-func (s *SSHServer) CheckSFTPParam(param *[]api.SFTPClientConfigReq) error {
+func (s *SSHService) CheckSFTPParam(param *[]api.SFTPExecReq) error {
 	for _, p := range *param {
 		if p.HostIp == "" || p.Username == "" || p.SSHPort == "" || p.FileContent == "" || p.Key == nil || p.Passphrase == nil || p.Path == "" {
 			return fmt.Errorf("执行参数中存在空值: \n%v", p)
@@ -301,27 +302,37 @@ func (s *SSHServer) CheckSFTPParam(param *[]api.SFTPClientConfigReq) error {
 	return nil
 }
 
-func (s *SSHServer) getSSHClient(hostIp string, param any, insClientGroup *clientGroup) (client *gossh.Client, err error) {
+func (s *SSHService) getSSHClient(hostIp string, username string, param any, insClientGroup *clientGroup) (client *ssh.Client, err error) {
 	insClientGroup.clientMapMutex.Lock()
 	defer insClientGroup.clientMapMutex.Unlock()
+	// 判断对应hostIp的client是否正常存活
+	if !s.isClientOpen(insClientGroup.clientMap[hostIp+"_"+username]) {
+		delete(insClientGroup.clientMap, hostIp+"_"+username)
+	}
 
 	var ok bool
 	// 检查Map中是否已经存在对应hostIp的client
-	if client, ok = insClientGroup.clientMap[hostIp]; ok {
+	if client, ok = insClientGroup.clientMap[hostIp+"_"+username]; ok {
 		// 如果存在，则直接返回已有的client
 		return client, err
 	}
 
-	if param, ok := param.(*api.SSHClientConfigReq); ok {
-		client, err = ssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
+	if param, ok := param.(*api.SSHExecReq); ok {
+		client, err = utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase, "")
 
 	}
-	if param, ok := param.(*api.SFTPClientConfigReq); ok {
-		client, err = ssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
+	if param, ok := param.(*api.SFTPExecReq); ok {
+		client, err = utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase, "")
 	}
 	if client == nil {
 		return nil, errors.New("未能成功获取到ssh.Client")
 	}
-	insClientGroup.clientMap[hostIp] = client
+	insClientGroup.clientMap[hostIp+"_"+username] = client
 	return client, err
+}
+
+func (s *SSHService) isClientOpen(client *ssh.Client) bool {
+	// 发送一个 "keepalive@openssh.com" 请求，这是一个 OpenSSH 定义的全局请求，用于检查连接是否仍然活动
+	_, _, err := client.Conn.SendRequest("keepalive@openssh.com", true, nil)
+	return err == nil
 }

@@ -1,0 +1,12 @@
+#!/usr/bin/expect
+
+set timeout 10
+set id_key_path $env(id_key_path)
+set id_key_passphrase $env(id_key_passphrase)
+
+spawn ssh-add $id_key_path
+expect "Enter passphrase for $id_key_path: "
+send "$id_key_passphrase\n"
+# 表示脚本在等待"done"这个提示出现。如果你不加这行，那么脚本在发送密码后就立即结束，可能还没等ssh-add处理完密码输入就已经退出了
+expect "done"
+exit 0

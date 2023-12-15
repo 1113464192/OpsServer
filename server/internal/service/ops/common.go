@@ -83,11 +83,11 @@ func (s *OpsService) templateRender(task *model.TaskTemplate, args *map[string][
 }
 
 // 按条件筛选符合条件的服务器
-func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHClientConfigReq, memSize *float32) (err error) {
+func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHExecReq, memSize *float32) (err error) {
 	// 赋值可用IP给ssh命令参数
-	var req api.SSHClientConfigReq
+	var req api.SSHExecReq
 	for i := 0; i < len(*hosts); i++ {
-		req = api.SSHClientConfigReq{
+		req = api.SSHExecReq{
 			HostIp:     (*hosts)[i].Ipv4.String,
 			Username:   (*hosts)[i].User,
 			SSHPort:    (*hosts)[i].Port,
@@ -190,7 +190,7 @@ func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, 
 }
 
 // 按端口规则筛选可用服务器
-func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHClientConfigReq, args *map[string][]string, memSize float32) (hostList *[]model.Host, err error) {
+func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHExecReq, args *map[string][]string, memSize float32) (hostList *[]model.Host, err error) {
 	// 做一个用来计算的host切片，避免影响到host表(防止后面突然有人Save)
 	tmpHosts := make([]model.Host, len(*hosts))
 	copy(tmpHosts, *hosts)
@@ -252,7 +252,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 					echo "success"
 				fi`, int(port))
 				// 兼容多个端口多个命令，这样子就允许单主机多命令
-				req := api.SSHClientConfigReq{
+				req := api.SSHExecReq{
 					HostIp:     host.Ipv4.String,
 					Username:   host.User,
 					SSHPort:    host.Port,
@@ -290,7 +290,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 	return &availHost, err
 }
 
-func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq *[]api.SFTPClientConfigReq, user *model.User, task *model.TaskTemplate, args *map[string][]string, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
+func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHExecReq, sftpReq *[]api.SFTPExecReq, user *model.User, task *model.TaskTemplate, args *map[string][]string, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {
 	// sshReq编码JSON
 	var data []byte
 	if err = util2.CheckIdsExists(model.User{}, auditorIds); err != nil {
@@ -345,7 +345,7 @@ func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHClientConfigReq, sftpReq
 	taskRecord.NonApprover = string(data)
 	// 接入微信小程序之类的请求,向第一个审批用户发送
 	// ......
-	fmt.Println("==========首次写入,接入微信小程序之类的请求,向第一个审批用户发送===========")
+	fmt.Println("微信小程序=====首次写入,向第一个审批用户发送===========")
 	model.DB.Save(&taskRecord)
 
 	// 清空装服的参数，方便后续用户填写装服
