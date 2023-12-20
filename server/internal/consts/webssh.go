@@ -10,4 +10,6 @@ const (
 	PingPeriod                = 1 * time.Minute
 	PongPeriod                = 1 * time.Minute
 	ReadMessageTickerDuration = time.Millisecond * time.Duration(40)
+	SockPath                  = `/tmp/agent.%d`
+	IdKeyPath                 = `/tmp/%d_key`
 )

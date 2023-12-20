@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"fqhWeb/configs"
+	"fqhWeb/internal/consts"
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/globalFunc"
 	"fqhWeb/internal/service/ops"
@@ -81,7 +82,7 @@ func (s *WebSshService) WebSshHandle(c *gin.Context, user *model.User, param api
 	// 将uid_HostIP组成一个字符串赋值给wsRes
 	wsRes = fmt.Sprintf("%d_%s", user.ID, sshParam.HostIp)
 
-	sockPath := fmt.Sprintf("/tmp/agent.%d", user.ID)
+	sockPath := fmt.Sprintf(consts.SockPath, user.ID)
 
 	// 生成ssh agent sock
 	if pid, err = s.generateLocalSSHAgentSocket(sockPath, user.ID, wsRes, sshParam.Key, sshParam.Passphrase); err != nil {
@@ -144,7 +145,7 @@ func (s *WebSshService) generateLocalSSHAgentSocket(sockPath string, uid uint, m
 	)
 
 	// 生成SSH Agent Socket
-	id_key_path := fmt.Sprintf("/tmp/%d_key", uid)
+	id_key_path := fmt.Sprintf(consts.IdKeyPath, uid)
 
 	// 写入私钥到机器中
 	if idKeyFile, err = os.OpenFile(id_key_path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0400); err != nil {
@@ -258,7 +259,9 @@ func (s *WebSshService) removeSSHAgentSocket(pid int, sockPath string) (err erro
 		return fmt.Errorf("关闭ssh_agent进程失败: %v\n很严重的权限问题, 请立即通知相关运维手动删除", err)
 	}
 
-	// 删除socket文件
+	// 删除socket文件，因为我使用的是kill -9删除的进程(确保死亡)，所以这里需要清理socket文件
+	// kill -9 会立即终止进程，进程无法捕获这个信号，也无法忽略它。因此，进程没有机会执行任何清理工作，比如删除 socket 文件
+	// kill -15 可以被进程捕获。进程可以设置一个处理器（handler）来捕获这个信号，并在接收到这个信号时执行清理工作，比如删除 socket 文件
 	if err = os.Remove(sockPath); err != nil {
 		logger.Log().Error("RemoveSSHAgentSocket", "删除ssh_agent_socket文件错误", err)
 		// 接入微信小程序之类的请求, 向运维发送处理ssh_agent.sock文件问题
