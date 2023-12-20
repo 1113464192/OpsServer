@@ -7,6 +7,7 @@ import (
 	"fqhWeb/internal/controller"
 	"fqhWeb/internal/crontab"
 	"fqhWeb/internal/model"
+	"fqhWeb/internal/service/globalFunc"
 	"log"
 )
 
@@ -34,6 +35,7 @@ func main() {
 			return
 		}
 	}
+	globalFunc.DeclareGlobalVar()
 
 	r := controller.NewRoute()
 

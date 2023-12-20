@@ -12,7 +12,7 @@ import (
 func CheckIdExists(table any, id uint) bool {
 	var count int64
 	if err := model.DB.Model(&table).Where("id = ?", id).Count(&count).Error; err != nil {
-		logger.Log().Error("Service", "Mysql查询ID", err)
+		logger.Log().Error("Service", "Mysql查询ID失败", err)
 		return false
 	}
 	if count > 0 {

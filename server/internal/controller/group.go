@@ -29,7 +29,7 @@ func UpdateGroup(c *gin.Context) {
 	}
 	group, err := service.Group().UpdateGroup(&groupReq)
 	if err != nil {
-		logger.Log().Error("Group", "创建/修改组", err)
+		logger.Log().Error("Group", "创建/修改组失败", err)
 		c.JSON(500, api.Err("创建/修改组失败", err))
 		return
 	}
@@ -63,7 +63,7 @@ func UpdateGroupAssUser(c *gin.Context) {
 
 	err := service.Group().UpdateGroupAssUser(&assReq)
 	if err != nil {
-		logger.Log().Error("Group", "更改用户组关联", err)
+		logger.Log().Error("Group", "更改用户组关联失败", err)
 		c.JSON(500, api.Err("更改用户组关联失败", err))
 		return
 	}
@@ -97,7 +97,7 @@ func DeleteUserGroup(c *gin.Context) {
 
 	err := service.Group().DeleteUserGroup(ids.Ids)
 	if err != nil {
-		logger.Log().Error("Group", "删除用户组", err)
+		logger.Log().Error("Group", "删除用户组失败", err)
 		c.JSON(500, api.Err("删除用户组失败", err))
 		return
 	}
@@ -130,7 +130,7 @@ func GetGroup(c *gin.Context) {
 	}
 	group, total, err := service.Group().GetGroupList(&groupReq)
 	if err != nil {
-		logger.Log().Error("Group", "获取用户组用户", err)
+		logger.Log().Error("Group", "获取用户组用户失败", err)
 		c.JSON(500, api.Err("获取用户组用户失败", err))
 		return
 	}
@@ -166,7 +166,7 @@ func GetAssUser(c *gin.Context) {
 	}
 	group, total, err := service.Group().GetAssUser(&groupReq)
 	if err != nil {
-		logger.Log().Error("Group", "获取用户组用户", err)
+		logger.Log().Error("Group", "获取用户组用户失败", err)
 		c.JSON(500, api.Err("获取用户组用户失败", err))
 		return
 	}
@@ -202,7 +202,7 @@ func GetAssProject(c *gin.Context) {
 	}
 	group, total, err := service.Group().GetAssProject(&groupReq)
 	if err != nil {
-		logger.Log().Error("Group", "获取用户组项目", err)
+		logger.Log().Error("Group", "获取用户组项目失败", err)
 		c.JSON(500, api.Err("获取用户组项目失败", err))
 		return
 	}
@@ -238,7 +238,7 @@ func UpdateGroupAssMenus(c *gin.Context) {
 	}
 	data, err := service.Menu().UpdateGroupAssMenus(&assReq)
 	if err != nil {
-		logger.Log().Error("Group", "菜单与用户组关联", err)
+		logger.Log().Error("Group", "菜单与用户组关联失败", err)
 		c.JSON(500, api.Err("菜单与用户组关联失败", err))
 		return
 	}
@@ -271,7 +271,7 @@ func GetGroupAssMenus(c *gin.Context) {
 	}
 	menu, total, err := service.Group().GetGroupAssMenus(&groupReq)
 	if err != nil {
-		logger.Log().Error("Group", "获取用户组菜单", err)
+		logger.Log().Error("Group", "获取用户组菜单失败", err)
 		c.JSON(500, api.Err("获取用户组项目菜单", err))
 		return
 	}
@@ -340,7 +340,7 @@ func UpdateCasbin(c *gin.Context) {
 	}
 	err := service.CasbinServiceApp().UpdateCasbin(param)
 	if err != nil {
-		logger.Log().Error("API", "分配API权限错误", err)
+		logger.Log().Error("API", "分配API权限错误失败", err)
 		c.JSON(500, api.Err("分配API权限错误", nil))
 		return
 	} else {

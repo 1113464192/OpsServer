@@ -1,27 +1,23 @@
-package globalfunc
+package globalFunc
 
 import (
 	"errors"
-	"fqhWeb/configs"
 	"sync"
 )
 
+// webssh
 var (
-	maxWebSSH        = configs.Conf.Webssh.MaxConnNumber
-	counter   uint64 = 0
-	mu        sync.Mutex
+	mu sync.Mutex
 )
 
 func IncreaseWebSSHConn() error {
 	mu.Lock()
 	defer mu.Unlock()
-
-	if counter >= maxWebSSH {
+	if WebSSHcounter >= MaxWebSSH {
 		return errors.New("已达到最大webssh数量")
 	}
 
-	counter++
-	// 创建webssh的代码在这里
+	WebSSHcounter++
 
 	return nil
 }
@@ -30,7 +26,7 @@ func ReduceWebSSHConn() {
 	mu.Lock()
 	defer mu.Unlock()
 
-	if counter > 0 {
-		counter--
+	if WebSSHcounter > 0 {
+		WebSSHcounter--
 	}
 }

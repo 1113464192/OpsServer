@@ -219,7 +219,7 @@ func (s *HostService) GetHostCurrData(param *[]api.SSHExecReq) (*api.HostInfoRes
 	cmdShell := `systemDisk=$(df -Th | awk '{if ($NF=="/")print$(NF-2)}' | grep -Eo "[0-9]+")
 				 dataDisk=$(df -Th | awk '{if ($NF=="/data")print$(NF-2)}' | grep -Eo "[0-9]+")
 				 if [[ -z ${dataDisk} ]];then
-				 	dataDisk=-1
+				 	dataDisk="-1"
 				 fi
 				 mem=$(free -m | awk '/Mem/{print $NF}')
 				 iowait=$(iostat | awk '/avg-cpu:/ {getline; print $(NF-2)}')
@@ -351,48 +351,49 @@ func (s *HostService) GetHostCurrData(param *[]api.SSHExecReq) (*api.HostInfoRes
 func (s *HostService) WritieToDatabase(data *api.HostInfoRes) error {
 	var host model.Host
 	tx := model.DB.Begin()
-	// 如果status非0则全部-1
+	// 如果status非0则全部为--
 	// for _, hostRes := range *data.CurrSystemDisk {
 	for i := 0; i < len(data.CurrSystemDisk); i++ {
 		if (data.CurrSystemDisk)[i].Status != 0 {
 			// 引发写入报错, 从而发送信息给运维处理
-			(data.CurrSystemDisk)[i].Response = ""
+			(data.CurrSystemDisk)[i].Response = "--"
 		}
 		currSystemDisk, err := strconv.ParseFloat((data.CurrSystemDisk)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrDataDisk)[i].Response = ""
+			(data.CurrDataDisk)[i].Response = "--"
 		}
 		currDataDisk, err := strconv.ParseFloat((data.CurrDataDisk)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrMem)[i].Response = ""
+			(data.CurrMem)[i].Response = "--"
 		}
 		currMem, err := strconv.ParseFloat((data.CurrMem)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrIdle)[i].Response = ""
+			(data.CurrIdle)[i].Response = "--"
 		}
 		currIdle, err := strconv.ParseFloat((data.CurrIdle)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrIowait)[i].Response = ""
+			(data.CurrIowait)[i].Response = "--"
 		}
 		currIowait, err := strconv.ParseFloat((data.CurrIowait)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrLoad)[i].Response = ""
+			(data.CurrLoad)[i].Response = "--"
 		}
+
 		currLoad, err := strconv.ParseFloat((data.CurrLoad)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)

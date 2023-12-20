@@ -3418,14 +3418,14 @@ const docTemplate = `{
         },
         "/api/v1/user/action-log/exist-date": {
             "get": {
-                "description": "查询有多少个月份表可供查询",
+                "description": "查询所有用户有多少个月份表可供查询",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "用户相关"
                 ],
-                "summary": "获取用户可查询操作记录的日期",
+                "summary": "获取所有用户可查询操作记录的日期",
                 "parameters": [
                     {
                         "type": "string",
@@ -4189,7 +4189,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "name": "id",
+                        "description": "服务器id",
+                        "name": "hid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "单位为字符",
+                        "name": "hight",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "单位为字符",
+                        "name": "weight",
                         "in": "query",
                         "required": true
                     }

@@ -29,7 +29,7 @@ func UpdateHost(c *gin.Context) {
 	}
 	host, err := service.Host().UpdateHost(&hostReq)
 	if err != nil {
-		logger.Log().Error("Host", "创建/修改服务器", err)
+		logger.Log().Error("Host", "创建/修改服务器失败", err)
 		c.JSON(500, api.Err("创建/修改服务器失败", err))
 		return
 	}
@@ -62,7 +62,7 @@ func GetHostPasswd(c *gin.Context) {
 	}
 	passwd, err := service.Host().GetHostPasswd(param.Id)
 	if err != nil {
-		logger.Log().Error("Host", "获取服务器密码", err)
+		logger.Log().Error("Host", "获取服务器密码失败", err)
 		c.JSON(500, api.Err("获取服务器密码失败", err))
 		return
 	}
@@ -95,7 +95,7 @@ func DeleteHost(c *gin.Context) {
 	}
 	err := service.Host().DeleteHost(hostReq.Ids)
 	if err != nil {
-		logger.Log().Error("Host", "删除服务器", err)
+		logger.Log().Error("Host", "删除服务器失败", err)
 		c.JSON(500, api.Err("删除服务器失败", err))
 		return
 	}
@@ -127,7 +127,7 @@ func GetHost(c *gin.Context) {
 	}
 	host, count, err := service.Host().GetHost(&hostReq)
 	if err != nil {
-		logger.Log().Error("Host", "查询服务器", err)
+		logger.Log().Error("Host", "查询服务器失败", err)
 		c.JSON(500, api.Err("查询服务器失败", err))
 		return
 	}

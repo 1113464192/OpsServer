@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"fqhWeb/configs"
 	"fqhWeb/internal/model"
+	"fqhWeb/internal/service/globalFunc"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
 	utilssh "fqhWeb/pkg/util/ssh"
@@ -44,7 +44,7 @@ func (s *SSHService) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, 
 			SSHPort:    hosts[i].Port,
 			Key:        user.PriKey,
 			Passphrase: user.Passphrase,
-			Cmd:        `ifconfig eth0 | grep inet`,
+			Cmd:        `ls /data`,
 		}
 		sshReq = append(sshReq, req)
 	}
@@ -85,7 +85,7 @@ func (s *SSHService) RunSSHCmdAsync(param *[]api.SSHExecReq) (*[]api.SSHResultRe
 	var result []api.SSHResultRes
 	// data := make(map[string]string)
 	for i := 0; i < len(*param); i++ {
-		if err = configs.Sem.Acquire(context.Background(), 1); err != nil {
+		if err = globalFunc.Sem.Acquire(context.Background(), 1); err != nil {
 			return nil, fmt.Errorf("获取信号失败，错误为: %v", err)
 		}
 		wg.Add(1)
@@ -102,8 +102,8 @@ func (s *SSHService) RunSSHCmdAsync(param *[]api.SSHExecReq) (*[]api.SSHResultRe
 func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
 	defer func() {
 		if r := recover(); r != nil {
-			logger.Log().Error("Groutine", "RunSSHCmd", r)
-			fmt.Println("Groutine", "\n", "RunSSHCmd", "\n", r)
+			logger.Log().Error("Groutine", "RunSSHCmd执行失败", r)
+			fmt.Println("Groutine", "\n", "RunSSHCmd执行失败", "\n", r)
 			result := &api.SSHResultRes{
 				HostIp:   param.HostIp,
 				Status:   9999,
@@ -111,7 +111,7 @@ func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes,
 			}
 			ch <- result
 			wg.Done()
-			configs.Sem.Release(1)
+			globalFunc.Sem.Release(1)
 		}
 	}()
 	result := &api.SSHResultRes{
@@ -129,7 +129,7 @@ func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes,
 		result.Response = fmt.Sprintf("建立/获取SSH客户端错误: %s", err.Error())
 		ch <- result
 		wg.Done()
-		configs.Sem.Release(1)
+		globalFunc.Sem.Release(1)
 		return
 	}
 	defer client.Close()
@@ -143,7 +143,7 @@ func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes,
 		result.Response = fmt.Sprintf("建立SSH会话错误: %s", err.Error())
 		ch <- result
 		wg.Done()
-		configs.Sem.Release(1)
+		globalFunc.Sem.Release(1)
 		return
 	}
 	defer session.Close()
@@ -157,14 +157,14 @@ func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes,
 		result.Response = fmt.Sprintf("Failed to execute command: %s %s", string(output), err.Error())
 		ch <- result
 		wg.Done()
-		configs.Sem.Release(1)
+		globalFunc.Sem.Release(1)
 		return
 	}
 
 	result.Response = string(output)
 	ch <- result
 	wg.Done()
-	configs.Sem.Release(1)
+	globalFunc.Sem.Release(1)
 }
 
 // 检查是否符合执行条件
@@ -193,7 +193,7 @@ func (s *SSHService) RunSFTPAsync(param *[]api.SFTPExecReq) (*[]api.SSHResultRes
 	var result []api.SSHResultRes
 	// data := make(map[string]string)
 	for i := 0; i < len(*param); i++ {
-		if err = configs.Sem.Acquire(context.Background(), 1); err != nil {
+		if err = globalFunc.Sem.Acquire(context.Background(), 1); err != nil {
 			return nil, fmt.Errorf("获取信号失败，错误为: %v", err)
 		}
 		wg.Add(1)
@@ -210,8 +210,8 @@ func (s *SSHService) RunSFTPAsync(param *[]api.SFTPExecReq) (*[]api.SSHResultRes
 func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
 	defer func() {
 		if r := recover(); r != nil {
-			logger.Log().Error("Groutine", "RunSFTPTransfer", r)
-			fmt.Println("Groutine", "\n", "RunSFTPTransfer", "\n", r)
+			logger.Log().Error("Groutine", "RunSFTPTransfer执行失败", r)
+			fmt.Println("Groutine", "\n", "RunSFTPTransfer执行失败", "\n", r)
 			result := &api.SSHResultRes{
 				HostIp:   param.HostIp,
 				Status:   9999,
@@ -219,7 +219,7 @@ func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHRes
 			}
 			ch <- result
 			wg.Done()
-			configs.Sem.Release(1)
+			globalFunc.Sem.Release(1)
 		}
 	}()
 	result := &api.SSHResultRes{
@@ -238,7 +238,7 @@ func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHRes
 		result.Response = fmt.Sprintf("建立/获取SSH客户端错误: %s", err.Error())
 		ch <- result
 		wg.Done()
-		configs.Sem.Release(1)
+		globalFunc.Sem.Release(1)
 		return
 	}
 	defer client.Close()
@@ -252,7 +252,7 @@ func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHRes
 		result.Response = fmt.Sprintf("建立SSH会话错误: %s", err.Error())
 		ch <- result
 		wg.Done()
-		configs.Sem.Release(1)
+		globalFunc.Sem.Release(1)
 		return
 	}
 	defer sftpClient.Close()
@@ -266,7 +266,7 @@ func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHRes
 		result.Response = fmt.Sprintf("开启文件失败: %s ", err.Error())
 		ch <- result
 		wg.Done()
-		configs.Sem.Release(1)
+		globalFunc.Sem.Release(1)
 		return
 	}
 	defer remoteFile.Close()
@@ -281,14 +281,14 @@ func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHRes
 		result.Response = fmt.Sprintf("写入文件内容到文件失败: %s", err.Error())
 		ch <- result
 		wg.Done()
-		configs.Sem.Release(1)
+		globalFunc.Sem.Release(1)
 		return
 	}
 
 	result.Response = fmt.Sprintf("写入文件字节数为: %d", bytesWritten)
 	ch <- result
 	wg.Done()
-	configs.Sem.Release(1)
+	globalFunc.Sem.Release(1)
 }
 
 // 检查是否符合执行条件

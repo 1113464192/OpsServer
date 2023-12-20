@@ -130,6 +130,7 @@ func NewRoute() *gin.Engine {
 		// -----------Webssh相关-------------
 		websshRoute := v1.Group("webssh")
 		{
+
 			websshRoute.GET("webssh-conn", WebsshConn)
 		}
 		// -----------运维操作相关-----------

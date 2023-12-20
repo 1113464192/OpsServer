@@ -205,13 +205,13 @@ func (s *OpsService) ApproveTask(param ops.ApproveTaskReq, uid uint) (res string
 				return "", fmt.Errorf("更改TaskRecord表的NonApprover失败: %v", err)
 			}
 			// 向下一个审批者发送审批信息
-			fmt.Println("==========向下一个审批者发送审批信息===========")
+			fmt.Println("微信小程序==========向下一个审批者发送审批信息===========")
 		} else {
 			if err = model.DB.Model(&task).Where("id = ?", param.Id).Updates(model.TaskRecord{Status: 1, NonApprover: `{"ids":[]}`}).Error; err != nil {
 				return "", fmt.Errorf("更改工单状态为可执行状态失败: %v", err)
 			}
 			// 向操作者发送信息
-			fmt.Println("==========向操作者发送信息===========")
+			fmt.Println("微信小程序==========向操作者发送信息===========")
 		}
 	} else if param.Status == 4 {
 		res = "审批拒绝"

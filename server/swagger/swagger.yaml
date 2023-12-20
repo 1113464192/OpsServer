@@ -2463,7 +2463,7 @@ paths:
       - 用户相关
   /api/v1/user/action-log/exist-date:
     get:
-      description: 查询有多少个月份表可供查询
+      description: 查询所有用户有多少个月份表可供查询
       parameters:
       - description: 格式为：Bearer 用户令牌
         in: header
@@ -2489,7 +2489,7 @@ paths:
           description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
           schema:
             $ref: '#/definitions/api.Response'
-      summary: 获取用户可查询操作记录的日期
+      summary: 获取所有用户可查询操作记录的日期
       tags:
       - 用户相关
   /api/v1/user/ass-group:
@@ -2971,8 +2971,19 @@ paths:
         name: Authorization
         required: true
         type: string
-      - in: query
-        name: id
+      - description: 服务器id
+        in: query
+        name: hid
+        required: true
+        type: integer
+      - description: 单位为字符
+        in: query
+        name: hight
+        required: true
+        type: integer
+      - description: 单位为字符
+        in: query
+        name: weight
         required: true
         type: integer
       produces:

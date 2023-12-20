@@ -3,7 +3,7 @@ package ops
 import (
 	"context"
 	"fmt"
-	"fqhWeb/configs"
+	"fqhWeb/internal/service/globalFunc"
 	"fqhWeb/pkg/api/ops"
 	"fqhWeb/pkg/logger"
 	"os"
@@ -20,7 +20,7 @@ func AsyncRunLocalShell(param *[]ops.RunLocalShellReq) (*[]ops.RunLocalShellRes,
 		err    error
 	)
 	for i := 0; i < len(*param); i++ {
-		if err = configs.Sem.Acquire(context.Background(), 1); err != nil {
+		if err = globalFunc.Sem.Acquire(context.Background(), 1); err != nil {
 			return nil, fmt.Errorf("获取信号失败，错误为: %v", err)
 		}
 		wg.Add(1)
@@ -38,8 +38,8 @@ func AsyncRunLocalShell(param *[]ops.RunLocalShellReq) (*[]ops.RunLocalShellRes,
 func RunLocalShell(param *ops.RunLocalShellReq, ch chan *ops.RunLocalShellRes, wg *sync.WaitGroup) {
 	defer func() {
 		if r := recover(); r != nil {
-			logger.Log().Error("Groutine", "RunLocalShell", r)
-			fmt.Println("Groutine", "\n", "RunLocalShell", "\n", r)
+			logger.Log().Error("Groutine", "RunLocalShell执行失败", r)
+			fmt.Println("Groutine", "\n", "RunLocalShell执行", "\n", r)
 			result := &ops.RunLocalShellRes{
 				Mark:     param.Mark,
 				Status:   9999,
@@ -47,7 +47,7 @@ func RunLocalShell(param *ops.RunLocalShellReq, ch chan *ops.RunLocalShellRes, w
 			}
 			ch <- result
 			wg.Done()
-			configs.Sem.Release(1)
+			globalFunc.Sem.Release(1)
 		}
 	}()
 	result := &ops.RunLocalShellRes{
@@ -61,12 +61,12 @@ func RunLocalShell(param *ops.RunLocalShellReq, ch chan *ops.RunLocalShellRes, w
 		result.Response = fmt.Sprintf("错误返回: %s\n%s", string(output), err.Error())
 		ch <- result
 		wg.Done()
-		configs.Sem.Release(1)
+		globalFunc.Sem.Release(1)
 		return
 	}
 	result.Response = string(output)
 	result.Status = cmd.ProcessState.ExitCode()
 	ch <- result
 	wg.Done()
-	configs.Sem.Release(1)
+	globalFunc.Sem.Release(1)
 }

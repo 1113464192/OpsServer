@@ -29,7 +29,7 @@ func UpdateServerRecord(c *gin.Context) {
 	}
 	data, err := service.Server().UpdateServerRecord(param)
 	if err != nil {
-		logger.Log().Error("Server", "更改单服记录列表", err)
+		logger.Log().Error("Server", "更改单服记录列表失败", err)
 		c.JSON(500, api.Err("更改单服记录列表失败", err))
 		return
 	}
@@ -62,7 +62,7 @@ func GetServerRecord(c *gin.Context) {
 	}
 	data, total, err := service.Server().GetServerRecord(param)
 	if err != nil {
-		logger.Log().Error("Server", "查询单服记录列表", err)
+		logger.Log().Error("Server", "查询单服记录列表失败", err)
 		c.JSON(500, api.Err("查询单服记录列表失败", err))
 		return
 	}
@@ -98,7 +98,7 @@ func DeleteServerRecord(c *gin.Context) {
 	}
 	err := service.Server().DeleteServerRecord(rid.Ids)
 	if err != nil {
-		logger.Log().Error("Server", "删除单服记录", err)
+		logger.Log().Error("Server", "删除单服记录失败", err)
 		c.JSON(500, api.Err("删除单服记录失败", err))
 		return
 	}

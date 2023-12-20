@@ -29,7 +29,7 @@ func UpdateDomain(c *gin.Context) {
 	}
 	domain, err := service.Domain().UpdateDomain(&domainReq)
 	if err != nil {
-		logger.Log().Error("Domain", "新增/修改域名", err)
+		logger.Log().Error("Domain", "新增/修改域名失败", err)
 		c.JSON(500, api.Err("新增/修改域名失败", err))
 		return
 	}
@@ -62,7 +62,7 @@ func UpdateDomainAss(c *gin.Context) {
 	}
 	err := service.Domain().UpdateDomainAss(&domainReq)
 	if err != nil {
-		logger.Log().Error("Domain", "关联服务器", err)
+		logger.Log().Error("Domain", "关联服务器失败", err)
 		c.JSON(500, api.Err("关联服务器失败", err))
 		return
 	}
@@ -94,7 +94,7 @@ func DeleteDomain(c *gin.Context) {
 	}
 	err := service.Domain().DeleteDomain(domainReq.Ids)
 	if err != nil {
-		logger.Log().Error("Domain", "删除域名", err)
+		logger.Log().Error("Domain", "删除域名失败", err)
 		c.JSON(500, api.Err("删除域名失败", err))
 		return
 	}
@@ -126,7 +126,7 @@ func GetDomainAssHost(c *gin.Context) {
 	}
 	domain, total, err := service.Domain().GetDomainAssHost(&domainReq)
 	if err != nil {
-		logger.Log().Error("Domain", "查询域名关联服务器", err)
+		logger.Log().Error("Domain", "查询域名关联服务器失败", err)
 		c.JSON(500, api.Err("查询域名关联服务器失败", err))
 		return
 	}

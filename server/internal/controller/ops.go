@@ -31,7 +31,7 @@ func SubmitTask(c *gin.Context) {
 	}
 	taskRecord, err := ops.Ops().SubmitTask(param)
 	if err != nil {
-		logger.Log().Error("Task", "提交执行工单", err)
+		logger.Log().Error("Task", "提交执行工单失败", err)
 		c.JSON(500, api.Err("提交执行工单失败", err))
 		return
 	}
@@ -64,7 +64,7 @@ func GetTask(c *gin.Context) {
 	}
 	data, total, err := ops.Ops().GetTask(&param)
 	if err != nil {
-		logger.Log().Error("Task", "查看任务工单", err)
+		logger.Log().Error("Task", "查看任务工单失败", err)
 		c.JSON(500, api.Err("查看任务工单失败", err))
 		return
 	}
@@ -100,7 +100,7 @@ func GetSSHExecParam(c *gin.Context) {
 	}
 	sshReq, sftpReq, err := ops.Ops().GetSSHExecParam(param.Id)
 	if err != nil {
-		logger.Log().Error("Task", "获取ssh执行参数", err)
+		logger.Log().Error("Task", "获取ssh执行参数失败", err)
 		c.JSON(500, api.Err("获取Ops任务执行参数失败", err))
 		return
 	}
@@ -143,7 +143,7 @@ func ApproveTask(c *gin.Context) {
 	userId := claims.User.ID
 	res, err := ops.Ops().ApproveTask(param, userId)
 	if err != nil {
-		logger.Log().Error("Task", "提交执行工单", err)
+		logger.Log().Error("Task", "提交执行工单失败", err)
 		c.JSON(500, api.Err("提交执行工单失败", err))
 		return
 	}
@@ -176,7 +176,7 @@ func DeleteTask(c *gin.Context) {
 	}
 	err := ops.Ops().DeleteTask(param.Ids)
 	if err != nil {
-		logger.Log().Error("Task", "删除工单", err)
+		logger.Log().Error("Task", "删除工单失败", err)
 		c.JSON(500, api.Err("删除工单失败", err))
 		return
 	}
@@ -208,7 +208,7 @@ func OpsExecSSHTask(c *gin.Context) {
 	}
 	data, err := ops.Ops().OpsExecSSHTask(param.Id)
 	if err != nil {
-		logger.Log().Error("Task", "执行工单操作", err)
+		logger.Log().Error("Task", "执行工单操作失败", err)
 		c.JSON(500, api.Err("执行工单操作失败", err))
 		return
 	}

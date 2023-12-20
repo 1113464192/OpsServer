@@ -1,6 +1,7 @@
 package webssh
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 
 	"fqhWeb/configs"
 	"fqhWeb/internal/model"
+	"fqhWeb/internal/service/globalFunc"
 	"fqhWeb/internal/service/ops"
 	"fqhWeb/pkg/api"
 	opsApi "fqhWeb/pkg/api/ops"
@@ -38,7 +40,7 @@ func WebSsh() *WebSshService {
 func (s *WebSshService) WebSshHandle(c *gin.Context, user *model.User, param api.WebsshConnReq) (wsRes string, err error) {
 	var (
 		host            model.Host
-		conn            *websocket.Conn
+		wsConn          *websocket.Conn
 		client          *ssh.Client
 		session         *ssh.Session
 		sshConn         *SSHConnect
@@ -58,13 +60,20 @@ func (s *WebSshService) WebSshHandle(c *gin.Context, user *model.User, param api
 		Passphrase: user.Passphrase,
 	}
 
-	if conn, err = s.upgraderWebSocket(c); err != nil {
+	if wsConn, err = s.upgraderWebSocket(c); err != nil {
 		return fmt.Sprintf("用户名: %s, 机器IP: %s", sshParam.Username, sshParam.HostIp), fmt.Errorf("websocket连接失败: %v", err)
 	}
-	defer conn.Close()
+	defer func(wsConn *websocket.Conn) {
+		globalFunc.ReduceWebSSHConn()
+		wsConn.WriteMessage(websocket.CloseMessage, []byte("websocket连接关闭"))
+		wsConn.Close()
+	}(wsConn)
 
 	// Aes解密SSH密钥和passphrase
 	if err = utilssh.DecryptAesSSHKey(&sshParam.Key, &sshParam.Passphrase); err != nil {
+		if e := s.WebSshSendErr(wsConn, "用户私钥解密失败: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
 		return "", fmt.Errorf("用户私钥解密失败: %v", err)
 	}
 
@@ -76,14 +85,18 @@ func (s *WebSshService) WebSshHandle(c *gin.Context, user *model.User, param api
 
 	// 生成ssh agent sock
 	if pid, err = s.generateLocalSSHAgentSocket(sockPath, user.ID, wsRes, sshParam.Key, sshParam.Passphrase); err != nil {
-		s.WebSshSendText(conn, []byte("生成ssh agent socket时发生错误: "+err.Error()))
+		if e := s.WebSshSendErr(wsConn, "生成ssh agent socket时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
 		return wsRes, fmt.Errorf("生成ssh agent socket时发生错误: %v", err)
 	}
 
 	// 生成sshClient
 	var netConn net.Conn
 	if client, netConn, sshAgentPointer, err = utilssh.SSHNewClient(sshParam.HostIp, sshParam.Username, sshParam.SSHPort, sshParam.Password, nil, nil, sockPath); err != nil {
-		s.WebSshSendText(conn, []byte("生成ssh.Client时发生错误: "+err.Error()))
+		if e := s.WebSshSendErr(wsConn, "生成ssh.Client时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
 		return wsRes, fmt.Errorf("生成ssh.Client时发生错误: %v", err)
 	}
 	defer netConn.Close()
@@ -91,29 +104,38 @@ func (s *WebSshService) WebSshHandle(c *gin.Context, user *model.User, param api
 
 	// 生成sshSession
 	if session, err = utilssh.SSHNewSession(client); err != nil {
-		s.WebSshSendText(conn, []byte("生成ssh.Session时发生错误: "+err.Error()))
+		if e := s.WebSshSendErr(wsConn, "生成ssh.Session时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
 		return wsRes, fmt.Errorf("生成ssh.Session时发生错误: %v", err)
 	}
 	defer session.Close()
 
 	// 生成sshConn
 	if sshConn, err = SSHNewConnect(client, session, sshAgentPointer, param.WindowSize); err != nil {
-		s.WebSshSendText(conn, []byte("创建ssh连接时发生错误: "+err.Error()))
+		if e := s.WebSshSendErr(wsConn, "创建ssh连接时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
 		return wsRes, fmt.Errorf("创建ssh连接时发生错误: %v", err)
 	}
 
-	quit := make(chan int)
-	go s.Output(conn, sshConn, quit)
-	go s.Recv(conn, sshConn, quit)
+	quit := make(chan struct{}, 1)
+	go sshConn.WsSend(wsConn, quit)
+	go sshConn.WsRec(wsConn, quit)
+	go sshConn.SessionWait(quit)
 	<-quit
 
 	// 清除用户ssh agent socket与ssh agent process
 	if err = s.removeSSHAgentSocket(pid, sockPath); err != nil {
+		if e := s.WebSshSendErr(wsConn, "清除用户ssh agent socket与ssh agent process时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
 		return wsRes, fmt.Errorf("清除用户ssh agent socket与ssh agent process时发生错误: %v", err)
 	}
 	return wsRes, nil
 }
 
+// 生成SSH代理socket
 func (s *WebSshService) generateLocalSSHAgentSocket(sockPath string, uid uint, mark string, priKey []byte, passphrase []byte) (pid int, err error) {
 	var (
 		idKeyFile       *os.File
@@ -159,6 +181,7 @@ func (s *WebSshService) generateLocalSSHAgentSocket(sockPath string, uid uint, m
 	}
 }
 
+// UpgraderWebsocket
 func (s *WebSshService) upgraderWebSocket(c *gin.Context) (conn *websocket.Conn, err error) {
 	// 获取超时时间
 	var duration time.Duration
@@ -190,13 +213,32 @@ func (s *WebSshService) upgraderWebSocket(c *gin.Context) (conn *websocket.Conn,
 	return conn, nil
 }
 
-func (s *WebSshService) WebSshSendText(conn *websocket.Conn, b []byte) error {
-	if err := conn.WriteMessage(websocket.TextMessage, b); err != nil {
+// 发送信息给websocket
+func (s *WebSshService) WebSshSendText(wsConn *websocket.Conn, b []byte) error {
+	if err := wsConn.WriteMessage(websocket.TextMessage, b); err != nil {
+		return fmt.Errorf("发送信息给websocket报错: %v", err)
+	}
+	return nil
+}
+
+// 接收错误信息返回给前端
+func (s *WebSshService) WebSshSendErr(wsConn *websocket.Conn, msg string) error {
+	// 前端接收到一个json并有wsError这个key的时候，代表这个消息是发送给前端的websocket报错，而不是给用户的
+	errMsg := map[string]string{
+		"wsError": msg,
+	}
+	errMsgBytes, err := json.Marshal(errMsg)
+	if err != nil {
+		return err
+	}
+
+	if err := wsConn.WriteMessage(websocket.TextMessage, errMsgBytes); err != nil {
 		return err
 	}
 	return nil
 }
 
+// 删除ssh代理socket文件与进程
 func (s *WebSshService) removeSSHAgentSocket(pid int, sockPath string) (err error) {
 	// 获取进程
 	var process *os.Process

@@ -29,7 +29,7 @@ func UpdateTemplate(c *gin.Context) {
 	}
 	result, err := service.Template().UpdateTemplate(&taskReq)
 	if err != nil {
-		logger.Log().Error("Task", "创建/修改任务模板", err)
+		logger.Log().Error("Task", "创建/修改任务模板失败", err)
 		c.JSON(500, api.Err("创建/修改任务模板失败", err))
 		return
 	}
@@ -62,7 +62,7 @@ func GetProjectTemplate(c *gin.Context) {
 	}
 	result, total, err := service.Template().GetProjectTemplate(&templateReq)
 	if err != nil {
-		logger.Log().Error("Task", "创建/修改任务模板", err)
+		logger.Log().Error("Task", "创建/修改任务模板失败", err)
 		c.JSON(500, api.Err("创建/修改任务模板失败", err))
 		return
 	}
@@ -98,7 +98,7 @@ func DeleteTemplate(c *gin.Context) {
 	}
 	err := service.Template().DeleteTemplate(taskReq.Ids)
 	if err != nil {
-		logger.Log().Error("Task", "创建/修改任务模板", err)
+		logger.Log().Error("Task", "创建/修改任务模板失败", err)
 		c.JSON(500, api.Err("创建/修改任务模板失败", err))
 		return
 	}
@@ -130,7 +130,7 @@ func UpdateTemplateAssHost(c *gin.Context) {
 	}
 	err := service.Template().UpdateTemplateAssHost(TaskReq)
 	if err != nil {
-		logger.Log().Error("Task", "关联服务器", err)
+		logger.Log().Error("Task", "关联服务器失败", err)
 		c.JSON(500, api.Err("关联服务器失败", err))
 		return
 	}

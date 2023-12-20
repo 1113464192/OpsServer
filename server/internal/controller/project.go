@@ -29,7 +29,7 @@ func UpdateProject(c *gin.Context) {
 	}
 	project, err := service.Project().UpdateProject(&projectReq)
 	if err != nil {
-		logger.Log().Error("Project", "创建/修改项目", err)
+		logger.Log().Error("Project", "创建/修改项目失败", err)
 		c.JSON(500, api.Err("创建/修改项目失败", err))
 		return
 	}
@@ -62,7 +62,7 @@ func DeleteProject(c *gin.Context) {
 	}
 	err := service.Project().DeleteProject(projectReq.Ids)
 	if err != nil {
-		logger.Log().Error("Project", "删除项目", err)
+		logger.Log().Error("Project", "删除项目失败", err)
 		c.JSON(500, api.Err("删除项目失败", err))
 		return
 	}
@@ -94,7 +94,7 @@ func UpdateHostAss(c *gin.Context) {
 	}
 	err := service.Project().UpdateHostAss(&ProjectReq)
 	if err != nil {
-		logger.Log().Error("Project", "关联服务器", err)
+		logger.Log().Error("Project", "关联服务器失败", err)
 		c.JSON(500, api.Err("关联服务器失败", err))
 		return
 	}
@@ -126,7 +126,7 @@ func GetProject(c *gin.Context) {
 	}
 	project, total, err := service.Project().GetProject(projectReq)
 	if err != nil {
-		logger.Log().Error("Project", "获取项目", err)
+		logger.Log().Error("Project", "获取项目失败", err)
 		c.JSON(500, api.Err("获取项目失败", err))
 		return
 	}
@@ -163,7 +163,7 @@ func GetHostAss(c *gin.Context) {
 
 	hostList, total, err := service.Project().GetHostAss(&projectReq)
 	if err != nil {
-		logger.Log().Error("Project", "获取项目拥有机器", err)
+		logger.Log().Error("Project", "获取项目拥有机器失败", err)
 		c.JSON(500, api.Err("获取项目拥有机器失败", err))
 		return
 	}

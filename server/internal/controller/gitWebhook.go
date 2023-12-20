@@ -5,8 +5,9 @@ import (
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/api/gitWebhook"
 	"fqhWeb/pkg/logger"
-	"github.com/gin-gonic/gin"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // HandleGithubWebhook
@@ -34,7 +35,7 @@ func HandleGithubWebhook(c *gin.Context) {
 		c.JSON(500, api.ErrorResponse(err))
 	}
 	if err = serviceGitWebhook.GitWebhook().HandleGithubWebhook(uint(pid), uint(hid), c); err != nil {
-		logger.Log().Error("GitWebhook", "GithubWebhookPush", err)
+		logger.Log().Error("GitWebhook", "GithubWebhookPush失败", err)
 		c.JSON(500, api.Err("GithubWebhookPushFail", err))
 		return
 	}
@@ -70,7 +71,7 @@ func HandleGitlabWebhook(c *gin.Context) {
 		c.JSON(500, api.ErrorResponse(err))
 	}
 	if err = serviceGitWebhook.GitWebhook().HandleGitlabWebhook(uint(pid), uint(hid), c); err != nil {
-		logger.Log().Error("GitWebhook", "GitlabWebhookPush", err)
+		logger.Log().Error("GitWebhook", "GitlabWebhookPush失败", err)
 		c.JSON(500, api.Err("GitlabWebhookPushFail", err))
 		return
 	}
@@ -107,7 +108,7 @@ func UpdateGitWebhookStatus(c *gin.Context) {
 	}
 	err := serviceGitWebhook.GitWebhook().UpdateGitWebhookStatus(param)
 	if err != nil {
-		logger.Log().Error("GitWebhook", "更改状态码", err)
+		logger.Log().Error("GitWebhook", "更改状态码失败", err)
 		c.JSON(500, api.Err("更改状态码失败", err))
 		return
 	}
@@ -139,7 +140,7 @@ func GetGitWebhook(c *gin.Context) {
 	}
 	data, total, err := serviceGitWebhook.GitWebhook().GetGitWebhook(param)
 	if err != nil {
-		logger.Log().Error("GitWebhook", "查询GitWebhook记录", err)
+		logger.Log().Error("GitWebhook", "查询GitWebhook记录失败", err)
 		c.JSON(500, api.Err("查询GitWebhook记录失败", err))
 		return
 	}
@@ -176,7 +177,7 @@ func UpdateGitWebhook(c *gin.Context) {
 	}
 	data, err := serviceGitWebhook.GitWebhook().UpdateGitWebhook(param)
 	if err != nil {
-		logger.Log().Error("GitWebhook", "更改GitWebhook记录", err)
+		logger.Log().Error("GitWebhook", "更改GitWebhook记录失败", err)
 		c.JSON(500, api.Err("更改GitWebhook记录失败", err))
 		return
 	}
@@ -208,7 +209,7 @@ func DeleteGitWebhook(c *gin.Context) {
 		return
 	}
 	if err := serviceGitWebhook.GitWebhook().DeleteGitWebhook(param.Ids); err != nil {
-		logger.Log().Error("GitWebhook", "删除GitWebhook记录", err)
+		logger.Log().Error("GitWebhook", "删除GitWebhook记录失败", err)
 		c.JSON(500, api.Err("删除GitWebhook记录失败", err))
 		return
 	}

@@ -29,7 +29,7 @@ func UpdateMenu(c *gin.Context) {
 	}
 	menu, err := service.Menu().UpdateMenu(&menuReq)
 	if err != nil {
-		logger.Log().Error("Menu", "创建/修改菜单", err)
+		logger.Log().Error("Menu", "创建/修改菜单失败", err)
 		c.JSON(500, api.Err("创建/修改菜单失败", err))
 		return
 	}
@@ -62,7 +62,7 @@ func GetMenuList(c *gin.Context) {
 	}
 	menus, total, err := service.Menu().GetMenuList(param)
 	if err != nil {
-		logger.Log().Error("Menu", "获取菜单信息", err)
+		logger.Log().Error("Menu", "获取菜单信息失败", err)
 		c.JSON(500, api.Err("获取菜单信息失败", err))
 		return
 	}
@@ -98,7 +98,7 @@ func DeleteMenu(c *gin.Context) {
 	}
 	err := service.Menu().DeleteMenu(mid.Ids)
 	if err != nil {
-		logger.Log().Error("Menu", "删除菜单", err)
+		logger.Log().Error("Menu", "删除菜单失败", err)
 		c.JSON(500, api.Err("删除菜单失败", err))
 		return
 	}

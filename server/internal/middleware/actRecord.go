@@ -58,7 +58,7 @@ func UserActionRecord() gin.HandlerFunc {
 			var err error
 			body, err = io.ReadAll(c.Request.Body)
 			if err != nil {
-				logger.Log().Error("UserActionRecord", "记录用户请求body", err)
+				logger.Log().Error("UserActionRecord", "记录用户请求body失败", err)
 				c.JSON(500, api.Err("记录用户请求body失败", err))
 				c.Abort()
 				return

@@ -46,7 +46,7 @@ func Database() {
 	)
 	dsn := configs.Conf.Mysql.Conf
 	if dsn == "" {
-		m_logger.Log().Error("mysql", "")
+		m_logger.Log().Error("Mysql", "dsn配置为空")
 	}
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
@@ -62,12 +62,12 @@ func Database() {
 		},
 	})
 	if err != nil {
-		m_logger.Log().Error("mysql", "service_log", err)
+		m_logger.Log().Error("Mysql", "初始化GORM失败", err)
 		panic(err)
 	}
 	sqlDB, err := db.DB()
 	if err != nil {
-		m_logger.Log().Error("mysql", "service_log", err)
+		m_logger.Log().Error("Mysql", "生成GORM.DB失败", err)
 		panic(err)
 	}
 	// 连接池

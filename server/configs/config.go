@@ -33,7 +33,7 @@ type Webssh struct {
 	SshEcho          uint32
 	SshTtyOpIspeed   uint32
 	SshTtyOpOspeed   uint32
-	MaxConnNumber    uint64
+	MaxConnNumber    uint32
 }
 
 type Concurrency struct {

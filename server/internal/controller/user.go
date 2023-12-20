@@ -29,7 +29,6 @@ func UserLogin(c *gin.Context) {
 	if err := c.ShouldBind(&loginReq); err == nil {
 		u := &model.User{Username: loginReq.Username, Password: loginReq.Password}
 		if userInfo, err := service.User().Login(u); err != nil {
-			logger.Log().Error("User", "账号或密码错误", err)
 			c.JSON(403, api.Err("账号或密码错误", err))
 			return
 		} else {
@@ -98,7 +97,7 @@ func UpdateUser(c *gin.Context) {
 	}
 	user, passwd, err := service.User().UpdateUser(&userReq)
 	if err != nil {
-		logger.Log().Error("User", "添加/修改用户", err)
+		logger.Log().Error("User", "添加/修改用户失败", err)
 		if err.Error() == "用户密码bcrypt加密失败" {
 			c.JSON(500, api.Err("用户密码bcrypt加密失败", nil))
 			return
@@ -144,8 +143,8 @@ func GetUserList(c *gin.Context) {
 
 	user, total, err := service.User().GetUserList(param)
 	if err != nil {
-		logger.Log().Error("User", "获取用户列表", err)
-		c.JSON(500, api.Err("获取失败", err))
+		logger.Log().Error("User", "获取用户列表失败", err)
+		c.JSON(500, api.Err("获取用户列表失败", err))
 		return
 	} else {
 		c.JSON(200, api.PageResult{
@@ -180,8 +179,8 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 	if err := service.User().DeleteUser(param.Ids); err != nil {
-		logger.Log().Error("User", "删除用户", err)
-		c.JSON(500, api.Err("删除失败", err))
+		logger.Log().Error("User", "删除用户失败", err)
+		c.JSON(500, api.Err("删除用户失败", err))
 		return
 	} else {
 		c.JSON(200, api.Response{
@@ -214,13 +213,13 @@ func UpdatePasswd(c *gin.Context) {
 	}
 	passwd.Password, err = util.GenerateFromPassword(passwd.Password)
 	if err != nil {
-		logger.Log().Error("User", "用户密码加密", err)
+		logger.Log().Error("User", "用户密码加密失败", err)
 		c.JSON(500, api.Err("密码加密失败", err))
 		return
 	}
 
 	if err := service.User().UpdatePasswd(&passwd); err != nil {
-		logger.Log().Error("User", "更新密码", err)
+		logger.Log().Error("User", "更新密码失败", err)
 		c.JSON(500, api.Err("更新密码失败", err))
 		return
 	} else {
@@ -265,13 +264,13 @@ func UpdateSelfPasswd(c *gin.Context) {
 
 	passwd.Password, err = util.GenerateFromPassword(passwd.Password)
 	if err != nil {
-		logger.Log().Error("User", "用户密码加密", err)
+		logger.Log().Error("User", "用户密码加密失败", err)
 		c.JSON(500, api.Err("密码加密失败", err))
 		return
 	}
 
 	if err := service.User().UpdatePasswd(&passwd); err != nil {
-		logger.Log().Error("User", "更新密码", err)
+		logger.Log().Error("User", "更新密码失败", err)
 		c.JSON(500, api.Err("更新密码失败", err))
 		return
 	} else {
@@ -303,7 +302,7 @@ func UpdateStatus(c *gin.Context) {
 		return
 	}
 	if err := service.User().UpdateStatus(&param); err != nil {
-		logger.Log().Error("User", "更改用户状态", err)
+		logger.Log().Error("User", "更改用户状态失败", err)
 		c.JSON(500, api.Err("更改用户状态失败", err))
 		return
 	} else {
@@ -338,7 +337,7 @@ func GetSelfInfo(c *gin.Context) {
 	}
 	userInfo, err := service.User().GetSelfInfo(claims.User.ID)
 	if err != nil {
-		logger.Log().Error("User", "获取用户个人信息", err)
+		logger.Log().Error("User", "获取用户个人信息失败", err)
 		c.JSON(500, api.Err("获取用户个人信息失败", err))
 		return
 	} else {
@@ -428,7 +427,7 @@ func GetSelfAssGroup(c *gin.Context) {
 // @Summary 获取用户操作记录
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetRecordListReq true "用户username"
+// @Param data query api.GetRecordListReq true "用户ID"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -442,7 +441,7 @@ func GetRecordList(c *gin.Context) {
 	}
 	logs, total, err := service.Record().GetRecordList(param)
 	if err != nil {
-		logger.Log().Error("User", "获取用户操作记录", err)
+		logger.Log().Error("User", "获取用户操作记录失败", err)
 		c.JSON(500, api.Err("获取用户操作记录失败", err))
 		return
 	}
@@ -459,9 +458,9 @@ func GetRecordList(c *gin.Context) {
 
 // GetRecordLogDate
 // @Tags 用户相关
-// @title 获取用户可查询操作记录的日期
-// @description 查询有多少个月份表可供查询
-// @Summary 获取用户可查询操作记录的日期
+// @title 获取所有用户可查询操作记录的日期
+// @description 查询所有用户有多少个月份表可供查询
+// @Summary 获取所有用户可查询操作记录的日期
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
@@ -472,7 +471,7 @@ func GetRecordList(c *gin.Context) {
 func GetRecordLogDate(c *gin.Context) {
 	dates, err := service.Record().GetRecordLogDate()
 	if err != nil {
-		logger.Log().Error("User", "获取用户操作记录可用日期", err)
+		logger.Log().Error("User", "获取用户操作记录可用日期失败", err)
 		c.JSON(500, api.Err("获取用户操作记录可用日期失败", err))
 		return
 	}
@@ -514,7 +513,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 	}
 	err = service.User().UpdateKeyFileContext(file, passphrase, claims.User.ID)
 	if err != nil {
-		logger.Log().Error("User", "上传文件写入个人密钥失败", err)
+		logger.Log().Error("User", "上传文件写入个人密钥失败失败", err)
 		c.JSON(500, api.Err("上传文件写入个人密钥失败", err))
 		return
 	} else {

@@ -7,10 +7,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"golang.org/x/sync/semaphore"
 )
-
-var Sem *semaphore.Weighted
 
 func Init() {
 	viper.SetConfigFile(util.GetRootPath() + "/configs/config.yaml")
@@ -31,6 +28,5 @@ func Init() {
 			logger.Log().Panic("config", "Conf", "配置文件写入结构体变量失败")
 		}
 	})
-	// 设置总并发数
-	Sem = semaphore.NewWeighted(Conf.Concurrency.Number)
+
 }

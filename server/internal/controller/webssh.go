@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fqhWeb/internal/service/globalFunc"
 	"fqhWeb/internal/service/webssh"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
@@ -23,8 +24,16 @@ import (
 // @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Router /api/v1/webssh/webssh-conn [get]
 func WebsshConn(c *gin.Context) {
-	var param api.WebsshConnReq
-	if err := c.ShouldBind(&param); err != nil {
+	var (
+		param api.WebsshConnReq
+		err   error
+	)
+	if err = globalFunc.IncreaseWebSSHConn(); err != nil {
+		c.JSON(500, api.Err("已达到最大webssh数量", err))
+		return
+	}
+
+	if err = c.ShouldBindQuery(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
 	}
@@ -39,7 +48,7 @@ func WebsshConn(c *gin.Context) {
 
 	wsRes, err := webssh.WebSsh().WebSshHandle(c, &claims.User, param)
 	if err != nil {
-		logger.Log().Error("Webssh", wsRes+"连接Webssh", err)
+		logger.Log().Error("Webssh", wsRes+"连接Webssh失败", err)
 		c.JSON(500, api.Err(wsRes+"连接Webssh失败", err))
 		return
 	}
