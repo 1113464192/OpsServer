@@ -1,14 +1,8 @@
 package api
 
-import (
-	"io"
-
-	"golang.org/x/crypto/ssh"
-)
-
 type TestSSHReq struct {
-	HostId []uint `form:"host_id" json:"host_id"`
-	UserId uint   `form:"user_id" json:"user_id"`
+	HostIds []uint `form:"host_ids" json:"host_ids" binding:"required"`
+	UserId  uint   `form:"user_id" json:"user_id" binding:"required"`
 }
 
 // type RunSSHCmdAsyncReq struct {
@@ -58,11 +52,4 @@ type SSHResultRes struct {
 	HostIp   string
 	Status   int
 	Response string
-}
-
-// Webssh的连接配置
-type SSHConnect struct {
-	Session    *ssh.Session
-	StdinPipe  io.WriteCloser
-	StdoutPipe io.Reader
 }

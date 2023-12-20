@@ -2,6 +2,7 @@ package webssh
 
 import (
 	"fmt"
+	"fqhWeb/internal/consts"
 	"fqhWeb/pkg/api"
 	"time"
 
@@ -15,6 +16,12 @@ func (s *WebSshService) Recv(websshConn *websocket.Conn, sshConn *api.SSHConnect
 		bytes []byte
 		err   error
 	)
+	websshConn.SetReadDeadline(time.Now().Add(consts.PongPeriod))
+	websshConn.SetPongHandler(func(appData string) error {
+		websshConn.SetReadDeadline(time.Now().Add(consts.PongPeriod))
+		return nil
+	})
+
 	for {
 		if _, bytes, err = websshConn.ReadMessage(); err != nil {
 			return
@@ -22,6 +29,8 @@ func (s *WebSshService) Recv(websshConn *websocket.Conn, sshConn *api.SSHConnect
 		if len(bytes) > 0 {
 			if _, e := sshConn.StdinPipe.Write(bytes); e != nil {
 				return
+			} else {
+				fmt.Println("===========Recv==========" + string(bytes))
 			}
 		}
 	}
@@ -34,9 +43,12 @@ func (s *WebSshService) Output(websshConn *websocket.Conn, sshConn *api.SSHConne
 		read int
 		err  error
 	)
+	tickPing := time.NewTicker(consts.PingPeriod)
+	defer tickPing.Stop()
 	tick := time.NewTicker(60 * time.Millisecond)
 	defer tick.Stop()
 Loop:
+	// 无限循环直到退出
 	for {
 		select {
 		case <-tick.C:
@@ -46,6 +58,13 @@ Loop:
 				break Loop
 			}
 			if err = s.WebSshSendText(websshConn, i[:read]); err != nil {
+				fmt.Println(err)
+				break Loop
+			} else {
+				fmt.Println("===========Output==========" + string(i[:read]))
+			}
+		case <-tickPing.C:
+			if err := websshConn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				fmt.Println(err)
 				break Loop
 			}

@@ -35,7 +35,7 @@ type ApproveTaskReq struct {
 
 type RunLocalShellReq struct {
 	CmdStr string   `json:"cmdStr" binding:"required"`
-	Env    []string `json:"env`
+	Env    []string `json:"env"`
 	Mark   string   `json:"mark" binding:"required"`
 }
 

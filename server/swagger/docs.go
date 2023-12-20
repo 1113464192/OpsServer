@@ -4168,6 +4168,59 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/webssh/webssh-conn": {
+            "get": {
+                "description": "连接Webssh,自动获取当前用户，防止冒用其它user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Webssh相关"
+                ],
+                "summary": "连接Webssh",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -4221,8 +4274,12 @@ const docTemplate = `{
         },
         "api.TestSSHReq": {
             "type": "object",
+            "required": [
+                "host_ids",
+                "user_id"
+            ],
             "properties": {
-                "host_id": {
+                "host_ids": {
                     "type": "array",
                     "items": {
                         "type": "integer"

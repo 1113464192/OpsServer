@@ -32,7 +32,7 @@ func (s *SSHService) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, 
 	if err := model.DB.First(&user, param.UserId).Error; err != nil {
 		return nil, fmt.Errorf("GORM用户未找到: %v", err)
 	}
-	if err := model.DB.Find(&hosts, param.HostId).Error; err != nil {
+	if err := model.DB.Find(&hosts, param.HostIds).Error; err != nil {
 		return nil, fmt.Errorf("GORM服务器未找到: %v", err)
 	}
 	sshReq := []api.SSHExecReq{}
@@ -49,15 +49,15 @@ func (s *SSHService) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, 
 		sshReq = append(sshReq, req)
 	}
 
-	//hostInfo, err := Host().GetHostCurrData(&sshReq)
-	//if err != nil {
-	//	logger.Log().Error("Host", "机器数据采集——数据结构有错误", err)
-	//	return nil, fmt.Errorf("机器数据采集——数据结构有错误: %v", err)
-	//}
-	//if err := Host().WritieToDatabase(hostInfo); err != nil {
-	//	logger.Log().Error("Host", "机器数据采集——数据写入数据库失败", err)
-	//	return nil, fmt.Errorf("机器数据采集——数据写入数据库失败: %v", err)
-	//}
+	hostInfo, err := Host().GetHostCurrData(&sshReq)
+	if err != nil {
+		logger.Log().Error("Host", "机器数据采集——数据结构有错误", err)
+		return nil, fmt.Errorf("机器数据采集——数据结构有错误: %v", err)
+	}
+	if err := Host().WritieToDatabase(hostInfo); err != nil {
+		logger.Log().Error("Host", "机器数据采集——数据写入数据库失败", err)
+		return nil, fmt.Errorf("机器数据采集——数据写入数据库失败: %v", err)
+	}
 	result, err = s.RunSSHCmdAsync(&sshReq)
 	if err != nil {
 		return nil, fmt.Errorf("测试执行失败: %v", err)
@@ -118,7 +118,6 @@ func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes,
 		HostIp: param.HostIp,
 		Status: 0,
 	}
-
 	// client, err := utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase)
 	client, err := s.getSSHClient(param.HostIp, param.Username, param, insClientGroup)
 	if err != nil {
@@ -305,12 +304,14 @@ func (s *SSHService) CheckSFTPParam(param *[]api.SFTPExecReq) error {
 func (s *SSHService) getSSHClient(hostIp string, username string, param any, insClientGroup *clientGroup) (client *ssh.Client, err error) {
 	insClientGroup.clientMapMutex.Lock()
 	defer insClientGroup.clientMapMutex.Unlock()
+	var ok bool
 	// 判断对应hostIp的client是否正常存活
-	if !s.isClientOpen(insClientGroup.clientMap[hostIp+"_"+username]) {
-		delete(insClientGroup.clientMap, hostIp+"_"+username)
+	if _, ok = insClientGroup.clientMap[hostIp+"_"+username]; ok {
+		if !s.isClientOpen(insClientGroup.clientMap[hostIp+"_"+username]) {
+			delete(insClientGroup.clientMap, hostIp+"_"+username)
+		}
 	}
 
-	var ok bool
 	// 检查Map中是否已经存在对应hostIp的client
 	if client, ok = insClientGroup.clientMap[hostIp+"_"+username]; ok {
 		// 如果存在，则直接返回已有的client
@@ -318,11 +319,10 @@ func (s *SSHService) getSSHClient(hostIp string, username string, param any, ins
 	}
 
 	if param, ok := param.(*api.SSHExecReq); ok {
-		client, err = utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase, "")
-
+		client, _, _, err = utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase, "")
 	}
 	if param, ok := param.(*api.SFTPExecReq); ok {
-		client, err = utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase, "")
+		client, _, _, err = utilssh.SSHNewClient(param.HostIp, param.Username, param.SSHPort, param.Password, param.Key, param.Passphrase, "")
 	}
 	if client == nil {
 		return nil, errors.New("未能成功获取到ssh.Client")

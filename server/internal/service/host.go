@@ -355,42 +355,43 @@ func (s *HostService) WritieToDatabase(data *api.HostInfoRes) error {
 	// for _, hostRes := range *data.CurrSystemDisk {
 	for i := 0; i < len(data.CurrSystemDisk); i++ {
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrSystemDisk)[i].Response = "-1"
+			// 引发写入报错, 从而发送信息给运维处理
+			(data.CurrSystemDisk)[i].Response = ""
 		}
 		currSystemDisk, err := strconv.ParseFloat((data.CurrSystemDisk)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrDataDisk)[i].Response = "-1"
+			(data.CurrDataDisk)[i].Response = ""
 		}
 		currDataDisk, err := strconv.ParseFloat((data.CurrDataDisk)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrMem)[i].Response = "-1"
+			(data.CurrMem)[i].Response = ""
 		}
 		currMem, err := strconv.ParseFloat((data.CurrMem)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrIdle)[i].Response = "-1"
+			(data.CurrIdle)[i].Response = ""
 		}
 		currIdle, err := strconv.ParseFloat((data.CurrIdle)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrIowait)[i].Response = "-1"
+			(data.CurrIowait)[i].Response = ""
 		}
 		currIowait, err := strconv.ParseFloat((data.CurrIowait)[i].Response, 32)
 		if err != nil {
 			return fmt.Errorf("字符串转换浮点数错误: %v", err)
 		}
 		if (data.CurrSystemDisk)[i].Status != 0 {
-			(data.CurrLoad)[i].Response = "-1"
+			(data.CurrLoad)[i].Response = ""
 		}
 		currLoad, err := strconv.ParseFloat((data.CurrLoad)[i].Response, 32)
 		if err != nil {

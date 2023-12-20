@@ -33,12 +33,15 @@ definitions:
     type: object
   api.TestSSHReq:
     properties:
-      host_id:
+      host_ids:
         items:
           type: integer
         type: array
       user_id:
         type: integer
+    required:
+    - host_ids
+    - user_id
     type: object
   api.UpdateCasbinReq:
     properties:
@@ -2959,4 +2962,39 @@ paths:
       summary: 获取用户列表
       tags:
       - 用户相关
+  /api/v1/webssh/webssh-conn:
+    get:
+      description: 连接Webssh,自动获取当前用户，防止冒用其它user
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 连接Webssh
+      tags:
+      - Webssh相关
 swagger: "2.0"
