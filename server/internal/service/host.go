@@ -177,28 +177,37 @@ func (s *HostService) DeleteHost(ids []uint) (err error) {
 }
 
 // 获取主机
-func (s *HostService) GetHost(param *api.GetHostReq) (hostInfo any, count int64, err error) {
+func (s *HostService) GetHost(param *api.SearchIdStringReq) (hostInfo any, count int64, err error) {
 	var host []model.Host
-	ipstr := "%" + param.Ip + "%"
-	if err := model.DB.Model(&host).Where("UPPER(name) LIKE ?", ipstr).Count(&count).Error; err != nil || count < 1 {
-		return nil, 0, errors.New("记录总数查询失败或不存在该搜索内容")
-	}
 	db := model.DB.Model(&host)
 	searchReq := &api.SearchReq{
 		Condition: db,
 		Table:     &host,
 		PageInfo:  param.PageInfo,
 	}
-	name := "%" + param.Ip + "%"
-	if param.Ip != "" {
-		db = model.DB.Where("name LIKE ?", name)
-		searchReq.Condition = db
-		if count, err = dbOper.DbOper().DbFind(searchReq); err != nil {
-			return nil, 0, err
+	if param.Id != 0 {
+		if err = db.Where("id = ?", param.Id).Count(&count).Error; err != nil {
+			return nil, 0, fmt.Errorf("查询id总数错误: %v", err)
+		}
+		if err = db.Where("id = ?", param.Id).Find(&host).Error; err != nil {
+			return nil, 0, fmt.Errorf("查询id错误: %v", err)
 		}
 	} else {
-		if count, err = dbOper.DbOper().DbFind(searchReq); err != nil {
-			return nil, 0, err
+		if param.String != "" {
+			ip := "%" + param.String + "%"
+			db = model.DB.Model(&host).Where("ipv4 LIKE ?", ip)
+			searchReq.Condition = db
+			if count, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+				db = model.DB.Model(&host).Where("ipv6 LIKE ?", ip)
+				searchReq.Condition = db
+				if count, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+					return nil, 0, fmt.Errorf("记录查询失败或不存在该搜索内容: %v", err)
+				}
+			}
+		} else {
+			if count, err = dbOper.DbOper().DbFind(searchReq); err != nil {
+				return nil, 0, err
+			}
 		}
 	}
 	var result *[]api.HostRes

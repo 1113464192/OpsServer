@@ -6,10 +6,12 @@ import "time"
 const (
 	WebsshLinuxTerminal = "linux"
 	// 终端窗口
-	WebsshXTerminal           = "xterm"
-	PingPeriod                = 1 * time.Minute
-	PongPeriod                = 1 * time.Minute
-	ReadMessageTickerDuration = time.Millisecond * time.Duration(40)
-	SockPath                  = `/tmp/agent.%d`
-	IdKeyPath                 = `/tmp/%d_key`
+	WebsshXTerminal                 = "xterm"
+	WebsshPingPeriod                = 20 * time.Second
+	WebsshPongWait                  = WebsshPingPeriod * 2
+	WebsshWriteWait                 = 10 * time.Second
+	WebsshReadMessageTickerDuration = time.Millisecond * time.Duration(40)
+	WebsshSockPath                  = `/tmp/agent.%d`
+	WebsshIdKeyPath                 = `/tmp/%d_key`
+	WebsshMaxRecordLength           = 2048
 )

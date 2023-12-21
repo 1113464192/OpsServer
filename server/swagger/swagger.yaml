@@ -16,15 +16,6 @@ definitions:
         description: Status int64  `json:"status"`
         type: string
     type: object
-  api.PageInfo:
-    properties:
-      page:
-        description: 页码
-        type: integer
-      page_size:
-        description: 每页大小
-        type: integer
-    type: object
   api.Response:
     properties:
       data: {}
@@ -1201,9 +1192,19 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 查询IP则输入IP，v4或v6都可以
+      - in: query
+        name: id
+        type: integer
+      - description: 页码
         in: query
-        name: ip
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: string
         type: string
       produces:
       - application/json
@@ -2962,6 +2963,37 @@ paths:
       summary: 获取用户列表
       tags:
       - 用户相关
+  /api/v1/webssh/exist-date:
+    get:
+      description: 查询所有用户有多少个月份表可供查询
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取所有用户可查询操作记录的日期
+      tags:
+      - Webssh相关
   /api/v1/webssh/webssh-conn:
     get:
       description: 连接Webssh,自动获取当前用户，防止冒用其它user
@@ -3006,6 +3038,54 @@ paths:
           schema:
             $ref: '#/definitions/api.Response'
       summary: 连接Webssh
+      tags:
+      - Webssh相关
+  /api/v1/webssh/webssh-record:
+    get:
+      description: 获取用户操作
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 用户ID
+        in: query
+        name: id
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: page_size
+        type: integer
+      - description: 年月，如：2006_01
+        in: query
+        name: string
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 查询某月Webssh记录
       tags:
       - Webssh相关
 swagger: "2.0"

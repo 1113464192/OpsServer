@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"fqhWeb/configs"
 	"fqhWeb/internal/consts"
+	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
 	"io"
+	"net"
 	"sync"
 
 	"golang.org/x/crypto/ssh"
@@ -18,10 +20,13 @@ import (
 type SSHConnect struct {
 	Session       *ssh.Session
 	Client        *ssh.Client
-	Once          sync.Once
-	Logger        *logger.Logger
+	NetConn       net.Conn
 	CombineOutput *WebsshBufferWriter
 	StdinPipe     io.WriteCloser
+	Once          sync.Once
+	Logger        *logger.Logger
+	User          *model.User
+	Host          *model.Host
 }
 
 type WebsshBufferWriter struct {
@@ -29,7 +34,7 @@ type WebsshBufferWriter struct {
 	Mu     sync.Mutex
 }
 
-func SSHNewConnect(client *ssh.Client, session *ssh.Session, sshAgentPointer *agent.ExtendedAgent, windowSize api.WindowSize) (conn *SSHConnect, err error) {
+func SSHNewConnect(client *ssh.Client, session *ssh.Session, sshAgentPointer *agent.ExtendedAgent, netConn net.Conn, windowSize api.WindowSize, user *model.User, host *model.Host) (conn *SSHConnect, err error) {
 	if err = agent.ForwardToAgent(client, *sshAgentPointer); err != nil {
 		return nil, fmt.Errorf("启动agent.ForwardToAgent失败: %v", err)
 	}
@@ -53,7 +58,7 @@ func SSHNewConnect(client *ssh.Client, session *ssh.Session, sshAgentPointer *ag
 	}
 	// 伪终端屏幕高、宽大小(单位为字符)
 	// 基本的操作是所有终端类型都支持的。不同的终端类型可能会支持不同的特性，比如颜色、鼠标事件、窗口大小改变事件等。然而，许多基本的终端操作，比如输入和输出文本，是所有终端类型都支持的。
-	if err := session.RequestPty(consts.WebsshLinuxTerminal, windowSize.Hight, windowSize.Weight, modes); err != nil {
+	if err := session.RequestPty(consts.WebsshXTerminal, windowSize.Hight, windowSize.Weight, modes); err != nil {
 		return nil, fmt.Errorf("生成Session.RequestPty失败: %v", err)
 	}
 
@@ -69,10 +74,13 @@ func SSHNewConnect(client *ssh.Client, session *ssh.Session, sshAgentPointer *ag
 	return &SSHConnect{
 		Session:       session,
 		Client:        client,
-		Once:          sync.Once{},
-		Logger:        logger.Log(),
+		NetConn:       netConn,
 		CombineOutput: comboWriter,
 		StdinPipe:     stdinPipe,
+		Once:          sync.Once{},
+		Logger:        logger.Log(),
+		User:          user,
+		Host:          host,
 	}, err
 }
 

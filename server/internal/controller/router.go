@@ -125,13 +125,14 @@ func NewRoute() *gin.Engine {
 		// -----------SSH操作相关-----------
 		sshRoute := v1.Group("ssh")
 		{
-			sshRoute.POST("test-ssh", TestSSH)
+			sshRoute.POST("test-ssh", TestSSH) // 测试ssh
 		}
 		// -----------Webssh相关-------------
 		websshRoute := v1.Group("webssh")
 		{
-
-			websshRoute.GET("webssh-conn", WebsshConn)
+			websshRoute.GET("webssh-conn", WebsshConn)                   // 连接webssh
+			websshRoute.GET("webssh-exist-date", GetWebsshRecordLogDate) // 查询存在的日期
+			websshRoute.GET("webssh-record", GetWebsshRecord)            // 查询Webssh操作记录
 		}
 		// -----------运维操作相关-----------
 		opsRoute := v1.Group("ops")

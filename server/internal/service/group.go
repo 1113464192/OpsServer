@@ -150,7 +150,7 @@ func (s *GroupService) GetGroupList(param *api.SearchIdStringReq) (groupObj any,
 	} else {
 		if param.String != "" {
 			name := "%" + strings.ToUpper(param.String) + "%"
-			db = model.DB.Where("UPPER(name) LIKE ?", name)
+			db = model.DB.Model(&group).Where("UPPER(name) LIKE ?", name)
 			searchReq.Condition = db
 			if total, err = dbOper.DbOper().DbFind(searchReq); err != nil {
 				return nil, 0, err

@@ -53,3 +53,71 @@ func WebsshConn(c *gin.Context) {
 		return
 	}
 }
+
+// GetWebsshRecord
+// @Tags Webssh相关
+// @title 查询某月Webssh记录
+// @description 获取用户操作
+// @Summary 查询某月Webssh记录
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data query api.GetWebsshRecordReq true "用户ID与日期，如：2006_01"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/webssh/webssh-record [get]
+func GetWebsshRecord(c *gin.Context) {
+	var (
+		param api.GetWebsshRecordReq
+		err   error
+	)
+
+	if err = c.ShouldBind(&param); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+
+	logs, total, err := webssh.WebSsh().GetWebsshRecord(param)
+	if err != nil {
+		logger.Log().Error("Webssh", "获取用户操作记录失败", err)
+		c.JSON(500, api.Err("获取用户操作记录失败", err))
+		return
+	}
+	c.JSON(200, api.PageResult{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+		Data:     logs,
+		Total:    total,
+		Page:     param.PageInfo.Page,
+		PageSize: param.PageInfo.PageSize,
+	})
+}
+
+// GetWebsshRecordLogDate
+// @Tags Webssh相关
+// @title 获取所有用户可查询操作记录的日期
+// @description 查询所有用户有多少个月份表可供查询
+// @Summary 获取所有用户可查询操作记录的日期
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/webssh/exist-date [get]
+func GetWebsshRecordLogDate(c *gin.Context) {
+	dates, err := webssh.WebSsh().GetRecordLogDate()
+	if err != nil {
+		logger.Log().Error("Webssh", "获取用户操作记录可用日期失败", err)
+		c.JSON(500, api.Err("获取用户操作记录可用日期失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+		Data: dates,
+	})
+}

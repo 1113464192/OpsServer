@@ -40,13 +40,11 @@ func WebSsh() *WebSshService {
 
 func (s *WebSshService) WebSshHandle(c *gin.Context, user *model.User, param api.WebsshConnReq) (wsRes string, err error) {
 	var (
-		host            model.Host
-		wsConn          *websocket.Conn
-		client          *ssh.Client
-		session         *ssh.Session
-		sshConn         *SSHConnect
-		sshAgentPointer *agent.ExtendedAgent
-		pid             int
+		host     model.Host
+		wsConn   *websocket.Conn
+		sshConn  *SSHConnect
+		sockPath string
+		pid      int
 	)
 
 	if err = model.DB.First(&host, param.Hid).Error; err != nil {
@@ -70,55 +68,13 @@ func (s *WebSshService) WebSshHandle(c *gin.Context, user *model.User, param api
 		wsConn.Close()
 	}(wsConn)
 
-	// Aes解密SSH密钥和passphrase
-	if err = utilssh.DecryptAesSSHKey(&sshParam.Key, &sshParam.Passphrase); err != nil {
-		if e := s.WebSshSendErr(wsConn, "用户私钥解密失败: "+err.Error()); e != nil {
-			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
-		}
-		return "", fmt.Errorf("用户私钥解密失败: %v", err)
+	if sshConn, pid, sockPath, err = s.getSSHAuthWithAgentConn(sshParam, wsConn, user, &host, param.WindowSize); err != nil {
+		return fmt.Sprintf("用户名: %s, 机器IP: %s", sshParam.Username, sshParam.HostIp), err
 	}
-
-	// Create ssh client
-	// 将uid_HostIP组成一个字符串赋值给wsRes
-	wsRes = fmt.Sprintf("%d_%s", user.ID, sshParam.HostIp)
-
-	sockPath := fmt.Sprintf(consts.SockPath, user.ID)
-
-	// 生成ssh agent sock
-	if pid, err = s.generateLocalSSHAgentSocket(sockPath, user.ID, wsRes, sshParam.Key, sshParam.Passphrase); err != nil {
-		if e := s.WebSshSendErr(wsConn, "生成ssh agent socket时发生错误: "+err.Error()); e != nil {
-			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
-		}
-		return wsRes, fmt.Errorf("生成ssh agent socket时发生错误: %v", err)
-	}
-
-	// 生成sshClient
-	var netConn net.Conn
-	if client, netConn, sshAgentPointer, err = utilssh.SSHNewClient(sshParam.HostIp, sshParam.Username, sshParam.SSHPort, sshParam.Password, nil, nil, sockPath); err != nil {
-		if e := s.WebSshSendErr(wsConn, "生成ssh.Client时发生错误: "+err.Error()); e != nil {
-			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
-		}
-		return wsRes, fmt.Errorf("生成ssh.Client时发生错误: %v", err)
-	}
-	defer netConn.Close()
-	defer client.Close()
-
-	// 生成sshSession
-	if session, err = utilssh.SSHNewSession(client); err != nil {
-		if e := s.WebSshSendErr(wsConn, "生成ssh.Session时发生错误: "+err.Error()); e != nil {
-			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
-		}
-		return wsRes, fmt.Errorf("生成ssh.Session时发生错误: %v", err)
-	}
-	defer session.Close()
-
-	// 生成sshConn
-	if sshConn, err = SSHNewConnect(client, session, sshAgentPointer, param.WindowSize); err != nil {
-		if e := s.WebSshSendErr(wsConn, "创建ssh连接时发生错误: "+err.Error()); e != nil {
-			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
-		}
-		return wsRes, fmt.Errorf("创建ssh连接时发生错误: %v", err)
-	}
+	// 在外层关闭SSH，内层关闭恐导致提前关闭ssh连接
+	defer sshConn.NetConn.Close()
+	defer sshConn.Client.Close()
+	defer sshConn.Session.Close()
 
 	quit := make(chan struct{}, 1)
 	go sshConn.WsSend(wsConn, quit)
@@ -145,7 +101,7 @@ func (s *WebSshService) generateLocalSSHAgentSocket(sockPath string, uid uint, m
 	)
 
 	// 生成SSH Agent Socket
-	id_key_path := fmt.Sprintf(consts.IdKeyPath, uid)
+	id_key_path := fmt.Sprintf(consts.WebsshIdKeyPath, uid)
 
 	// 写入私钥到机器中
 	if idKeyFile, err = os.OpenFile(id_key_path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0400); err != nil {
@@ -212,6 +168,62 @@ func (s *WebSshService) upgraderWebSocket(c *gin.Context) (conn *websocket.Conn,
 		return nil, fmt.Errorf("websocket连接失败: %v", err)
 	}
 	return conn, nil
+}
+
+func (s *WebSshService) getSSHAuthWithAgentConn(sshParam *api.SSHExecReq, wsConn *websocket.Conn, user *model.User, host *model.Host, windowSize api.WindowSize) (sshConn *SSHConnect, pid int, sockPath string, err error) {
+	var (
+		client          *ssh.Client
+		session         *ssh.Session
+		sshAgentPointer *agent.ExtendedAgent
+		wsRes           string
+	)
+	// Aes解密SSH密钥和passphrase
+	if err = utilssh.DecryptAesSSHKey(&sshParam.Key, &sshParam.Passphrase); err != nil {
+		if e := s.WebSshSendErr(wsConn, "用户私钥解密失败: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
+		return nil, pid, sockPath, fmt.Errorf("用户私钥解密失败: %v", err)
+	}
+
+	// Create ssh client
+	// 将uid_HostIP组成一个字符串赋值给wsRes
+	wsRes = fmt.Sprintf("%d_%s", user.ID, sshParam.HostIp)
+
+	sockPath = fmt.Sprintf(consts.WebsshSockPath, user.ID)
+
+	// 生成ssh agent sock
+	if pid, err = s.generateLocalSSHAgentSocket(sockPath, user.ID, wsRes, sshParam.Key, sshParam.Passphrase); err != nil {
+		if e := s.WebSshSendErr(wsConn, "生成ssh agent socket时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
+		return nil, pid, sockPath, fmt.Errorf("生成ssh agent socket时发生错误: %v", err)
+	}
+
+	// 生成sshClient
+	var netConn net.Conn
+	if client, netConn, sshAgentPointer, err = utilssh.SSHNewClient(sshParam.HostIp, sshParam.Username, sshParam.SSHPort, sshParam.Password, nil, nil, sockPath); err != nil {
+		if e := s.WebSshSendErr(wsConn, "生成ssh.Client时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
+		return nil, pid, sockPath, fmt.Errorf("生成ssh.Client时发生错误: %v", err)
+	}
+
+	// 生成sshSession
+	if session, err = utilssh.SSHNewSession(client); err != nil {
+		if e := s.WebSshSendErr(wsConn, "生成ssh.Session时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
+		return nil, pid, sockPath, fmt.Errorf("生成ssh.Session时发生错误: %v", err)
+	}
+
+	// 生成sshConn
+	if sshConn, err = SSHNewConnect(client, session, sshAgentPointer, netConn, windowSize, user, host); err != nil {
+		if e := s.WebSshSendErr(wsConn, "创建ssh连接时发生错误: "+err.Error()); e != nil {
+			logger.Log().Error("Webssh", "发送错误信息至websocket失败", err)
+		}
+		return nil, pid, sockPath, fmt.Errorf("创建ssh连接时发生错误: %v", err)
+	}
+	return sshConn, pid, sockPath, nil
 }
 
 // 发送信息给websocket

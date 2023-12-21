@@ -1,8 +1,10 @@
 package webssh
 
 import (
+	"bytes"
 	"encoding/json"
 	"fqhWeb/internal/consts"
+	"fqhWeb/internal/model"
 	"fqhWeb/pkg/api"
 	"time"
 
@@ -29,8 +31,10 @@ func (s *SSHConnect) wsQuit(ch chan struct{}) {
 // 向websocket发送服务器返回的信息
 func (s *SSHConnect) WsSend(wsConn *websocket.Conn, quitCh chan struct{}) {
 	defer s.wsQuit(quitCh)
+	pingTick := time.NewTicker(consts.WebsshPingPeriod)
+	defer pingTick.Stop()
 
-	tick := time.NewTicker(consts.ReadMessageTickerDuration)
+	tick := time.NewTicker(consts.WebsshReadMessageTickerDuration)
 	defer tick.Stop()
 	for {
 		select {
@@ -43,6 +47,16 @@ func (s *SSHConnect) WsSend(wsConn *websocket.Conn, quitCh chan struct{}) {
 				s.Logger.Error("Webssh", "发送服务器返回信息到websocket失败", err)
 				return
 			}
+			// 发送ping至websocket
+		case <-pingTick.C:
+			if err := wsConn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+				if e := WebSsh().WebSshSendErr(wsConn, "发送Ping至websocket失败: "+err.Error()); e != nil {
+					s.Logger.Error("Webssh", "发送错误信息至websocket失败", err)
+				}
+				s.Logger.Error("Webssh", "发送Ping至websocket失败", err)
+				return
+			}
+
 		case <-quitCh:
 			return
 		}
@@ -52,6 +66,14 @@ func (s *SSHConnect) WsSend(wsConn *websocket.Conn, quitCh chan struct{}) {
 func (s *SSHConnect) WsRec(wsConn *websocket.Conn, quitCh chan struct{}) {
 	//tells other go routine quit
 	defer s.wsQuit(quitCh)
+	// 处理pong消息
+	wsConn.SetReadDeadline(time.Now().Add(consts.WebsshPongWait))
+	wsConn.SetPongHandler(func(appData string) error {
+		// 重置读取存活时间
+		wsConn.SetReadDeadline(time.Now().Add(consts.WebsshPongWait))
+		return nil
+	})
+
 	for {
 		select {
 		case <-quitCh:
@@ -71,23 +93,50 @@ func (s *SSHConnect) WsRec(wsConn *websocket.Conn, quitCh chan struct{}) {
 			if len(wsData) > 0 {
 				// resize 或者 粘贴
 				resize := api.WindowSize{}
-				err := json.Unmarshal(wsData, &resize)
+				err = json.Unmarshal(wsData, &resize)
 				if err != nil {
 					goto SEND
 				}
 				if resize.Hight > 0 && resize.Weight > 0 {
-					if err := s.Session.WindowChange(resize.Hight, resize.Weight); err != nil {
+					if err = s.Session.WindowChange(resize.Hight, resize.Weight); err != nil {
+						if e := WebSsh().WebSshSendErr(wsConn, "变更WindowSize失败: "+err.Error()); e != nil {
+							s.Logger.Error("Webssh", "发送错误信息至websocket失败", err)
+						}
 						s.Logger.Error("Webssh", "变更WindowSize失败", err)
+						break
 					}
 				} else {
 					goto SEND
 				}
 				break
 			}
+			// 服务器的返回发送给websocket
 		SEND:
-			decodeBytes := wsData
-			if _, err := s.StdinPipe.Write(decodeBytes); err != nil {
+			if _, err = s.StdinPipe.Write(wsData); err != nil {
+				if e := WebSsh().WebSshSendErr(wsConn, "发送服务器信息到前端失败: "+err.Error()); e != nil {
+					s.Logger.Error("Webssh", "发送错误信息至websocket失败", err)
+				}
 				s.Logger.Error("Webssh", "发送服务器信息到前端失败", err)
+				break
+			}
+			// 入库
+			decodeBytes := bytes.TrimSpace(wsData)
+			if len(decodeBytes) > consts.WebsshMaxRecordLength {
+				decodeBytes = decodeBytes[:consts.WebsshMaxRecordLength]
+			}
+			websshRecord := &model.WebsshRecord{
+				UserId: s.User.ID,
+				HostId: s.Host.ID,
+				Ipv4:   s.Host.Ipv4,
+				Ipv6:   s.Host.Ipv6,
+				Actlog: decodeBytes,
+			}
+			if err = WebSsh().RecordCreate(websshRecord); err != nil {
+				if e := WebSsh().WebSshSendErr(wsConn, "用户操作记录入库失败: "+err.Error()); e != nil {
+					s.Logger.Error("Webssh", "发送错误信息至websocket失败", err)
+				}
+				s.Logger.Error("Webssh", "用户操作记录入库失败", err)
+				return
 			}
 		}
 	}
