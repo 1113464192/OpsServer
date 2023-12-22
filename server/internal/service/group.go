@@ -9,6 +9,7 @@ import (
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/util2"
+	"strconv"
 	"strings"
 )
 
@@ -21,6 +22,47 @@ var (
 
 func Group() *GroupService {
 	return insGroup
+}
+
+func (s *GroupService) permissionInheritance(parentId uint, group *model.UserGroup) (err error) {
+	// 顶层组无权限继承
+	if parentId == 0 {
+		return nil
+	}
+	var parentGroup model.UserGroup
+	if err = model.DB.First(&parentGroup, parentId).Error; err != nil {
+		return fmt.Errorf("查询用户组报错: %v", err)
+	}
+	// 继承工作室菜单
+	var parentMenus []model.Menus
+	if err = model.DB.Model(&parentGroup).Association("Menus").Find(&parentMenus); err != nil {
+		return fmt.Errorf("查询工作室菜单报错: %v", err)
+	}
+	if err = model.DB.Model(&group).Association("Menus").Replace(&parentMenus); err != nil {
+		return fmt.Errorf("继承工作室菜单报错: %v", err)
+	}
+
+	// 继承工作室API
+	var anySlice []any
+	var parentApiIds []uint
+	if anySlice, err = CasbinServiceApp().GetPolicyPathByGroupIds([]uint{parentId}); err != nil {
+		return fmt.Errorf("获取工作室的APIIDs失败: %v", err)
+	}
+	for _, anyUint := range anySlice {
+		parentApiId, ok := anyUint.(uint)
+		if !ok {
+			return fmt.Errorf("转换工作室的APIIDs失败: %v", err)
+		}
+		parentApiIds = append(parentApiIds, parentApiId)
+	}
+	updateCasbinReq := api.UpdateCasbinReq{
+		GroupId: strconv.Itoa(int(group.ID)),
+		Ids:     parentApiIds,
+	}
+	if err = CasbinServiceApp().UpdateCasbin(updateCasbinReq); err != nil {
+		return fmt.Errorf("继承工作室API报错: %v", err)
+	}
+	return err
 }
 
 // 修改或新增用户组
@@ -44,6 +86,7 @@ func (s *GroupService) UpdateGroup(param *api.UpdateGroupReq) (groupInfo any, er
 
 		group.Name = param.Name
 		group.ParentId = param.ParentId
+
 		// 有标识则写入，没有默认为Null
 		if param.Mark != "" {
 			group.Mark = sql.NullString{String: param.Mark, Valid: true}
@@ -68,7 +111,10 @@ func (s *GroupService) UpdateGroup(param *api.UpdateGroupReq) (groupInfo any, er
 		}
 		if err = model.DB.Create(&group).Error; err != nil {
 			logger.Log().Error("Group", "创建用户组失败", err)
-			return group, errors.New("创建用户组失败")
+			return group, fmt.Errorf("创建用户组失败: %v", err)
+		}
+		if err = s.permissionInheritance(uint(group.ParentId), &group); err != nil {
+			return group, fmt.Errorf("创建组成功，但是继承工作室权限失败: %v", err)
 		}
 		var result *[]api.GroupRes
 		if result, err = s.GetResults(&group); err != nil {
@@ -115,6 +161,19 @@ func (s *GroupService) DeleteUserGroup(ids []uint) (err error) {
 	if err = tx.Find(&group, ids).Error; err != nil {
 		return errors.New("查询用户组信息失败")
 	}
+	// 如果删除工作室则判断是否存在未删除的项目组
+	var count int64
+	for _, g := range group {
+		if g.ParentId == 0 {
+			if err = tx.Model(&model.UserGroup{}).Where("parent_id = ?", g.ID).Count(&count).Error; err != nil || count > 0 {
+				tx.Rollback()
+				if err != nil {
+					return fmt.Errorf("查询用户组下是否有子组失败: %v", err)
+				}
+				return fmt.Errorf("%d 用户组下有子组存在", g.ID)
+			}
+		}
+	}
 	if err = tx.Model(&group).Association("Users").Clear(); err != nil {
 		tx.Rollback()
 		return errors.New("清除表信息 用户组与用户关联 失败")
@@ -123,7 +182,7 @@ func (s *GroupService) DeleteUserGroup(ids []uint) (err error) {
 		tx.Rollback()
 		return errors.New("清除表信息 用户组与菜单关联 失败")
 	}
-	if err = tx.Where("id IN (?)", ids).Delete(&model.User{}).Error; err != nil {
+	if err = tx.Where("id IN (?)", ids).Delete(&model.UserGroup{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除用户失败")
 	}

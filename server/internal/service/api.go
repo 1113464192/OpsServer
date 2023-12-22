@@ -48,15 +48,15 @@ func (s *ApiService) UpdateApi(param *api.UpdateApiReq) (apiInter model.Api, err
 		if err = model.DB.Where("id = ?", param.ID).Find(&apiRes).Error; err != nil {
 			return apiInter, err
 		}
-		err = CasbinServiceApp().UpdateCasbinApi(apiRes.Path, param.Path, apiRes.Method, param.Method)
-		if err == nil {
-			apiRes.Path = param.Path
-			apiRes.Description = param.Description
-			apiRes.ApiGroup = param.ApiGroup
-			apiRes.Method = param.Method
-			if err = model.DB.Save(&apiRes).Error; err != nil {
-				return apiInter, err
-			}
+		if err = CasbinServiceApp().UpdateCasbinApi(apiRes.Path, param.Path, apiRes.Method, param.Method); err != nil {
+			return apiInter, err
+		}
+		apiRes.Path = param.Path
+		apiRes.Description = param.Description
+		apiRes.ApiGroup = param.ApiGroup
+		apiRes.Method = param.Method
+		if err = model.DB.Save(&apiRes).Error; err != nil {
+			return apiInter, err
 		}
 	} else {
 		// 新增
