@@ -300,32 +300,30 @@ func ConvertToJsonPair(param []string) (res string, err error) {
 
 // uint切片中删除元素
 func DeleteUintSlice(s []uint, elem uint) []uint {
-	j := 0
+	result := make([]uint, 0)
 	for _, v := range s {
 		if v != elem {
-			s[j] = v
-			j++
+			result = append(result, v)
 		}
 	}
-	// 如果直接使用 return s，那么返回的切片 s 将包含原始切片中的所有元素，包括指定元素和非指定元素。这是因为切片是引用类型，返回的切片与传入的切片共享相同的底层数组。在这种情况下，虽然在循环中将指定元素跳过并将非指定元素移动到切片的前面，但没有对底层数组进行修改。因此，返回的切片 s 仍然包含了原始切片中的所有元素。
-	return s[:j]
+	return result
 }
 
 // 切片中删除元素
-func DeleteAnySlice(s any, elem any) (any, error) {
+func DeleteAnySlice(s interface{}, elem interface{}) (interface{}, error) {
 	sliceValue := reflect.ValueOf(s)
 	if sliceValue.Kind() != reflect.Slice {
 		return s, errors.New("传入的首位参数, 类型不是slice")
 	}
-	j := 0
+
+	result := reflect.MakeSlice(sliceValue.Type(), 0, sliceValue.Len())
 	for i := 0; i < sliceValue.Len(); i++ {
-		v := sliceValue.Index(i).Interface()
-		if v != elem {
-			sliceValue.Index(j).Set(sliceValue.Index(i))
-			j++
+		v := sliceValue.Index(i)
+		if v.Interface() != elem {
+			result = reflect.Append(result, v)
 		}
 	}
-	return sliceValue.Slice(0, j).Interface(), nil
+	return result.Interface(), nil
 }
 
 // uint切片取交集
