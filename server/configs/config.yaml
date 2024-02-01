@@ -1,9 +1,9 @@
 mysql:
-  conf: "root:fqh123456@tcp(192.168.18.65:20001)/fqhWeb?charset=utf8&parseTime=True&loc=Local"
+  conf: "root:fqh123456@tcp(106.52.66.254:20001)/ops?charset=utf8&parseTime=True&loc=Local"
   # 设置Mysql的批处理大小
   createBatchSize: 1000
   # 表前缀
-  tablePrefix: "fqh_"
+  tablePrefix: "ops_"
 
 logger:
   level: "Debug"
@@ -59,7 +59,7 @@ securityVars:
 
 # 项目的根目录
 projectWeb: 
-  rootPath: "/data/fqhWeb"
+  rootPath: "/data/ops"
 
 # 腾讯云AKSK
 cloudSecretKey:
