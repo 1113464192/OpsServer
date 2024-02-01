@@ -279,6 +279,7 @@ func ConvertToJson(param []string) (res string, err error) {
 }
 
 // 传x=y切片
+// 返回如：{"a":["1","3"],"b":["2"]}
 func ConvertToJsonPair(param []string) (res string, err error) {
 	data := make(map[string][]string)
 	for _, param := range param {
@@ -387,6 +388,24 @@ func UintSliceDifference(slice1, slice2 []uint) []uint {
 	sort.Slice(difference, func(i, j int) bool {
 		return difference[i] < difference[j]
 	})
+
+	return difference
+}
+
+// string切片取差集
+func StringSliceDifference(slice1, slice2 []string) []string {
+	set := make(map[string]bool)
+	var difference []string
+
+	for _, str := range slice2 {
+		set[str] = true
+	}
+
+	for _, str := range slice1 {
+		if !set[str] {
+			difference = append(difference, str)
+		}
+	}
 
 	return difference
 }

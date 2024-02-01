@@ -75,12 +75,17 @@ func (s *CasbinService) GetPolicyPathByGroupIds(groupIds []uint) (res []any, err
 		}
 	}
 
-	// 去重
-	uniquePaths := util.StringSliceRemoveDuplicat(pathList)
-
+	// 多工作室则去重
 	var apiList []model.Api
-	if err := model.DB.Where("path IN (?)", uniquePaths).Find(&apiList).Error; err != nil {
-		return nil, err
+	if len(groupIds) > 1 {
+		uniquePaths := util.StringSliceRemoveDuplicat(pathList)
+		if err := model.DB.Where("path IN (?)", uniquePaths).Find(&apiList).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		if err := model.DB.Where("path IN (?)", pathList).Find(&apiList).Error; err != nil {
+			return nil, err
+		}
 	}
 
 	for _, v := range apiList {

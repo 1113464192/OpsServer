@@ -6,6 +6,7 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
+	"fqhWeb/pkg/cloudScript"
 	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/util2"
 	"strings"
@@ -39,6 +40,16 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		if err := model.DB.Where("id = ?", param.ID).First(&project).Error; err != nil {
 			return project, errors.New("项目数据库查询失败")
 		}
+		// 更改云平台项目属性
+		if project.Name != param.Name || project.Status != param.Status {
+			cloudPid, err := cloudScript.GetCloudProjectId(project.Cloud, project.Name)
+			if err != nil {
+				return nil, err
+			}
+			if err = cloudScript.UpdateCloudProjectEntry(project.Cloud, cloudPid, param.Name, int64(param.Status)); err != nil {
+				return nil, err
+			}
+		}
 
 		project.Name = param.Name
 		project.Status = param.Status
@@ -55,10 +66,17 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 	} else {
 		project = model.Project{
 			Name:    param.Name,
+			Cloud:   param.Cloud,
 			Status:  param.Status,
 			UserId:  param.UserId,
 			GroupId: param.GroupId,
 		}
+
+		// 创建云平台项目
+		if err = cloudScript.CreateCloudProjectEntry(param.Cloud, param.Name); err != nil {
+			return nil, err
+		}
+
 		if err = model.DB.Create(&project).Error; err != nil {
 			logger.Log().Error("project", "创建项目失败", err)
 			return project, errors.New("创建项目失败")
@@ -76,12 +94,12 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 	if err = util2.CheckIdsExists(model.Project{}, ids); err != nil {
 		return err
 	}
-	var project []model.Project
+	var projects []model.Project
 	tx := model.DB.Begin()
-	if err = tx.Find(&project, ids).Error; err != nil {
+	if err = tx.Find(&projects, ids).Error; err != nil {
 		return errors.New("查询项目信息失败")
 	}
-	if err = tx.Model(&project).Association("Hosts").Clear(); err != nil {
+	if err = tx.Model(&projects).Association("Hosts").Clear(); err != nil {
 		tx.Rollback()
 		return errors.New("清除表信息 项目与服务器关联 失败")
 	}
@@ -90,6 +108,18 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 		return errors.New("删除项目失败")
 	}
 	tx.Commit()
+
+	// 删除云平台项目
+	for _, project := range projects {
+		cloudPid, err := cloudScript.GetCloudProjectId(project.Cloud, project.Name)
+		if err != nil {
+			return err
+		}
+		if err = cloudScript.UpdateCloudProjectEntry(project.Cloud, cloudPid, project.Name, 2); err != nil {
+			return err
+		}
+	}
+
 	return err
 }
 
@@ -198,6 +228,7 @@ func (s *ProjectService) GetResults(projectInfo any) (*[]api.ProjectRes, error) 
 			res = api.ProjectRes{
 				ID:      project.ID,
 				Name:    project.Name,
+				Cloud:   project.Cloud,
 				Status:  project.Status,
 				UserId:  project.UserId,
 				GroupId: project.GroupId,
@@ -210,6 +241,7 @@ func (s *ProjectService) GetResults(projectInfo any) (*[]api.ProjectRes, error) 
 		res = api.ProjectRes{
 			ID:      project.ID,
 			Name:    project.Name,
+			Cloud:   project.Cloud,
 			Status:  project.Status,
 			UserId:  project.UserId,
 			GroupId: project.GroupId,

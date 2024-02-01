@@ -16,6 +16,7 @@ func main() {
 	model.Database()
 	crontab.Cron()
 	if configs.Conf.System.Mode != "product" {
+		// 数据库这块更推荐业务层实现关联，而不使用主外键，这里为了开发速度使用了主外键
 		err := model.DB.AutoMigrate(
 			&model.User{},
 			&model.UserGroup{},

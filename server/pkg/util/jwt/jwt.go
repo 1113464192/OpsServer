@@ -42,7 +42,7 @@ func GenToken(user model.User) (string, error) {
 // ParseToken 解析JWT
 func ParseToken(tokenString string) (*CustomClaims, error) {
 	// 解析token
-	// 如果是自定义Claim结构体则需要使用 ParseWithClaims 方法
+	// 如果是自定义Claim结构体则需要使用 ParseWithClaims 方法，接受三个参数：要解析的JWT字符串、一个空的CustomClaims实例（用于存储解析后的payload）、一个函数（用于返回签名密钥）。
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (i any, err error) {
 		// 直接使用标准的Claim则可以直接使用Parse方法
 		return CustomSecret, nil

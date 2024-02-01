@@ -12,6 +12,8 @@ import (
 )
 
 func flushCombOutput(w *WebsshBufferWriter, wsConn *websocket.Conn) error {
+	w.Mu.Lock()
+	defer w.Mu.Unlock()
 	if w.Buffer.Len() != 0 {
 		err := wsConn.WriteMessage(websocket.BinaryMessage, w.Buffer.Bytes())
 		if err != nil {

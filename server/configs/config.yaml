@@ -60,3 +60,16 @@ securityVars:
 # 项目的根目录
 projectWeb: 
   rootPath: "/data/fqhWeb"
+
+# 腾讯云AKSK
+cloudSecretKey:
+  tencentCloud:
+    ak: testak
+    sk: testsk
+  aliyunCloud:
+    ak: testak
+    sk: testsk
+  volcengineCloud:
+    ak: testak
+    sk: testsk
+  

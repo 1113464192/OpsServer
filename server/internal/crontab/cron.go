@@ -8,6 +8,7 @@ func Cron() {
 	c := cron.New()
 	c.AddFunc("0 0 5 * * *", CronMysqlLogRename)
 	c.AddFunc("0 */30 * * * *", CronWrittenHostInfo)
-	c.AddFunc("0 * * * * *", CronCheckIdKey)
+	c.AddFunc("0 * * * * *", CronExistCheckIdKey)
+	c.AddFunc("0 0 5 * * *", CronCheckCloudProject)
 	c.Start()
 }

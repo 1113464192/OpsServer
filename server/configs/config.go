@@ -1,15 +1,16 @@
 package configs
 
 type Config struct {
-	Mysql        Mysql        `json:"mysql"`
-	Logger       Logger       `json:"logger"`
-	SshConfig    SshConfig    `json:"ssh_timeout"`
-	Webssh       Webssh       `json:"webssh"`
-	System       System       `json:"system"`
-	Concurrency  Concurrency  `json:"concurrency"`
-	GitWebhook   GitWebhook   `json:"git_webhook"`
-	SecurityVars SecurityVars `json:"security_vars"`
-	ProjectWeb   ProjectWeb   `json:"project_web"`
+	Mysql          Mysql          `json:"mysql"`
+	Logger         Logger         `json:"logger"`
+	SshConfig      SshConfig      `json:"ssh_timeout"`
+	Webssh         Webssh         `json:"webssh"`
+	System         System         `json:"system"`
+	Concurrency    Concurrency    `json:"concurrency"`
+	GitWebhook     GitWebhook     `json:"git_webhook"`
+	SecurityVars   SecurityVars   `json:"security_vars"`
+	ProjectWeb     ProjectWeb     `json:"project_web"`
+	CloudSecretKey CloudSecretKey `json:"cloud_secret_key"`
 }
 
 type Mysql struct {
@@ -61,6 +62,21 @@ type SecurityVars struct {
 
 type ProjectWeb struct {
 	RootPath string
+}
+
+type CloudSecretKey struct {
+	TencentCloud struct {
+		Ak string
+		Sk string
+	} `json:"tencent_cloud"`
+	AliyunCloud struct {
+		Ak string
+		Sk string
+	} `json:"aliyun_cloud"`
+	VolcengineCloud struct {
+		Ak string
+		Sk string
+	} `json:"volcengine_cloud"`
 }
 
 var Conf = new(Config)
