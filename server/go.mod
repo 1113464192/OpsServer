@@ -17,7 +17,8 @@ require (
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.2
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.854
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.856
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.856
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tag v1.0.854
 	golang.org/x/crypto v0.14.0
 	golang.org/x/sync v0.4.0

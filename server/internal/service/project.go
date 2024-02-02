@@ -46,7 +46,7 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 			if err != nil {
 				return nil, err
 			}
-			if err = cloudScript.UpdateCloudProjectEntry(project.Cloud, cloudPid, param.Name, int64(param.Status)); err != nil {
+			if err = cloudScript.UpdateCloudProject(project.Cloud, cloudPid, param.Name, int64(param.Status)); err != nil {
 				return nil, err
 			}
 		}
@@ -73,7 +73,7 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		}
 
 		// 创建云平台项目
-		if err = cloudScript.CreateCloudProjectEntry(param.Cloud, param.Name); err != nil {
+		if err = cloudScript.CreateCloudProject(param.Cloud, param.Name); err != nil {
 			return nil, err
 		}
 
@@ -115,7 +115,7 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 		if err != nil {
 			return err
 		}
-		if err = cloudScript.UpdateCloudProjectEntry(project.Cloud, cloudPid, project.Name, 2); err != nil {
+		if err = cloudScript.UpdateCloudProject(project.Cloud, cloudPid, project.Name, 2); err != nil {
 			return err
 		}
 	}

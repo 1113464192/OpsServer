@@ -9,7 +9,7 @@ type Host struct {
 	User           string         `gorm:"type: varchar(20)"`
 	Password       []byte         `gorm:"type: blob;comment: 服务器密码加密后的字符串，一般机器都会禁止密码登录"`
 	Port           string         `gorm:"type: varchar(10);comment: SSH端口"`
-	Zone           string         `gorm:"type: varchar(100);comment: 服务器所在地区"`
+	Zone           string         `gorm:"type: varchar(100);comment: 服务器所在地区,用英文小写，如guangzhou、seoul"`
 	ZoneTime       uint8          `gorm:"comment: 时区"`
 	BillingType    uint8          `gorm:"comment: 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加"`
 	Cost           float32        `gorm:"comment: 下次续费金额, 人民币为单位"`
