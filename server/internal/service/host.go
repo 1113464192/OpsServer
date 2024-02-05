@@ -55,7 +55,7 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		host.Port = param.Port
 		host.Zone = param.Zone
 		host.ZoneTime = param.ZoneTime
-		host.BillingType = param.BillingType
+		//	host.BillingType = param.BillingType
 		host.Cost = param.Cost
 		host.Cloud = param.Cloud
 		host.System = param.System
@@ -88,23 +88,23 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 			return nil, fmt.Errorf("主机密码加密失败: %v", err)
 		}
 		host = &model.Host{
-			Ipv4:        sql.NullString{String: param.Ipv4, Valid: true},
-			User:        param.User,
-			Password:    aesPassword,
-			Port:        param.Port,
-			Zone:        param.Zone,
-			ZoneTime:    param.ZoneTime,
-			BillingType: param.BillingType,
-			Cost:        param.Cost,
-			Cloud:       param.Cloud,
-			System:      param.System,
-			Type:        param.Type,
-			Cores:       param.Cores,
-			SystemDisk:  param.SystemDisk,
-			DataDisk:    param.DataDisk,
-			Iops:        param.Iops,
-			Mbps:        param.Mbps,
-			Mem:         uint64(param.Mem) * 1024,
+			Ipv4:     sql.NullString{String: param.Ipv4, Valid: true},
+			User:     param.User,
+			Password: aesPassword,
+			Port:     param.Port,
+			Zone:     param.Zone,
+			ZoneTime: param.ZoneTime,
+			//		BillingType: param.BillingType,
+			Cost:       param.Cost,
+			Cloud:      param.Cloud,
+			System:     param.System,
+			Type:       param.Type,
+			Cores:      param.Cores,
+			SystemDisk: param.SystemDisk,
+			DataDisk:   param.DataDisk,
+			Iops:       param.Iops,
+			Mbps:       param.Mbps,
+			Mem:        uint64(param.Mem) * 1024,
 			// CurrDisk:    param.CurrDisk,
 			// CurrMem:     param.CurrMem,
 			// CurrIowait:  param.CurrIowait,
@@ -424,13 +424,13 @@ func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 	if hosts, ok := hostInfo.(*[]model.Host); ok {
 		for _, host := range *hosts {
 			res = api.HostRes{
-				ID:             host.ID,
-				Ipv4:           host.Ipv4.String,
-				Ipv6:           host.Ipv6.String,
-				Port:           host.Port,
-				Zone:           host.Zone,
-				ZoneTime:       host.ZoneTime,
-				BillingType:    host.BillingType,
+				ID:       host.ID,
+				Ipv4:     host.Ipv4.String,
+				Ipv6:     host.Ipv6.String,
+				Port:     host.Port,
+				Zone:     host.Zone,
+				ZoneTime: host.ZoneTime,
+				//				BillingType:    host.BillingType,
 				Cost:           host.Cost,
 				Cloud:          host.Cloud,
 				System:         host.System,
@@ -454,13 +454,13 @@ func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 	}
 	if host, ok := hostInfo.(*model.Host); ok {
 		res = api.HostRes{
-			ID:             host.ID,
-			Ipv4:           host.Ipv4.String,
-			Ipv6:           host.Ipv6.String,
-			Port:           host.Port,
-			Zone:           host.Zone,
-			ZoneTime:       host.ZoneTime,
-			BillingType:    host.BillingType,
+			ID:       host.ID,
+			Ipv4:     host.Ipv4.String,
+			Ipv6:     host.Ipv6.String,
+			Port:     host.Port,
+			Zone:     host.Zone,
+			ZoneTime: host.ZoneTime,
+			//			BillingType:    host.BillingType,
 			Cost:           host.Cost,
 			Cloud:          host.Cloud,
 			System:         host.System,

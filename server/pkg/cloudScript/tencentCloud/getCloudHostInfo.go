@@ -9,90 +9,88 @@ import (
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 )
 
-type CloudHostResponse struct {
-	InstanceSet []struct {
-		RenewFlag            string `json:"RenewFlag"`
-		Uuid                 string `json:"Uuid"`
-		InstanceState        string `json:"InstanceState"`
-		LatestOperationState string `json:"LatestOperationState"`
-		LoginSettings        struct {
-			Password       string   `json:"Password"`
-			KeepImageLogin string   `json:"KeepImageLogin"`
-			KeyIds         []string `json:"KeyIds"`
-		} `json:"LoginSettings"`
-		IPv6Addresses          []string `json:"IPv6Addresses"`
-		DedicatedClusterId     string   `json:"DedicatedClusterId"`
-		RestrictState          string   `json:"RestrictState"`
-		ExpiredTime            string   `json:"ExpiredTime"`
-		DisasterRecoverGroupId string   `json:"DisasterRecoverGroupId"`
-		Memory                 int      `json:"Memory"`
-		CreatedTime            string   `json:"CreatedTime"`
-		CPU                    int      `json:"CPU"`
-		RdmaIpAddresses        []string `json:"RdmaIpAddresses"`
-		CamRoleName            string   `json:"CamRoleName"`
-		PublicIpAddresses      []string `json:"PublicIpAddresses"`
-		Tags                   []struct {
-			Value string `json:"Value"`
-			Key   string `json:"Key"`
-		} `json:"Tags"`
-		InstanceId         string `json:"InstanceId"`
-		ImageId            string `json:"ImageId"`
-		StopChargingMode   string `json:"StopChargingMode"`
-		InstanceChargeType string `json:"InstanceChargeType"`
-		InstanceType       string `json:"InstanceType"`
-		SystemDisk         struct {
-			DiskSize int    `json:"DiskSize"`
-			CdcId    string `json:"CdcId"`
-			DiskId   string `json:"DiskId"`
-			DiskType string `json:"DiskType"`
-		} `json:"SystemDisk"`
-		Placement struct {
-			HostId    string   `json:"HostId"`
-			ProjectId int      `json:"ProjectId"`
-			HostIds   []string `json:"HostIds"`
-			Zone      string   `json:"Zone"`
-		} `json:"Placement"`
-		PrivateIpAddresses []string `json:"PrivateIpAddresses"`
-		OsName             string   `json:"OsName"`
-		SecurityGroupIds   []string `json:"SecurityGroupIds"`
-		InstanceName       string   `json:"InstanceName"`
-		DataDisks          []struct {
-			DeleteWithInstance    bool        `json:"DeleteWithInstance"`
-			Encrypt               bool        `json:"Encrypt"`
-			CdcId                 string      `json:"CdcId"`
-			DiskType              string      `json:"DiskType"`
-			ThroughputPerformance int         `json:"ThroughputPerformance"`
-			KmsKeyId              interface{} `json:"KmsKeyId"`
-			DiskSize              int         `json:"DiskSize"`
-			SnapshotId            interface{} `json:"SnapshotId"`
-			DiskId                string      `json:"DiskId"`
-		} `json:"DataDisks"`
-		IsolatedSource      string `json:"IsolatedSource"`
-		VirtualPrivateCloud struct {
-			SubnetId           string   `json:"SubnetId"`
-			AsVpcGateway       bool     `json:"AsVpcGateway"`
-			Ipv6AddressCount   int      `json:"Ipv6AddressCount"`
-			VpcId              string   `json:"VpcId"`
+type HostResponse struct {
+	CloudHostResponse struct {
+		InstanceSet []struct {
+			RenewFlag            string `json:"RenewFlag"`
+			Uuid                 string `json:"Uuid"`
+			InstanceState        string `json:"InstanceState"`
+			LatestOperationState string `json:"LatestOperationState"`
+			LoginSettings        struct {
+				Password       string   `json:"Password"`
+				KeepImageLogin string   `json:"KeepImageLogin"`
+				KeyIds         []string `json:"KeyIds"`
+			} `json:"LoginSettings"`
+			IPv6Addresses          []string `json:"IPv6Addresses"`
+			DedicatedClusterId     string   `json:"DedicatedClusterId"`
+			RestrictState          string   `json:"RestrictState"`
+			ExpiredTime            string   `json:"ExpiredTime"`
+			DisasterRecoverGroupId string   `json:"DisasterRecoverGroupId"`
+			Memory                 int      `json:"Memory"`
+			CreatedTime            string   `json:"CreatedTime"`
+			CPU                    int      `json:"CPU"`
+			RdmaIpAddresses        []string `json:"RdmaIpAddresses"`
+			CamRoleName            string   `json:"CamRoleName"`
+			PublicIpAddresses      []string `json:"PublicIpAddresses"`
+			Tags                   []struct {
+				Value string `json:"Value"`
+				Key   string `json:"Key"`
+			} `json:"Tags"`
+			InstanceId         string `json:"InstanceId"`
+			ImageId            string `json:"ImageId"`
+			StopChargingMode   string `json:"StopChargingMode"`
+			InstanceChargeType string `json:"InstanceChargeType"`
+			InstanceType       string `json:"InstanceType"`
+			SystemDisk         struct {
+				DiskSize int    `json:"DiskSize"`
+				CdcId    string `json:"CdcId"`
+				DiskId   string `json:"DiskId"`
+				DiskType string `json:"DiskType"`
+			} `json:"SystemDisk"`
+			Placement struct {
+				HostId    string   `json:"HostId"`
+				ProjectId int      `json:"ProjectId"`
+				HostIds   []string `json:"HostIds"`
+				Zone      string   `json:"Zone"`
+			} `json:"Placement"`
 			PrivateIpAddresses []string `json:"PrivateIpAddresses"`
-		} `json:"VirtualPrivateCloud"`
-		LatestOperationRequestId string `json:"LatestOperationRequestId"`
-		InternetAccessible       struct {
-			PublicIpAssigned        bool   `json:"PublicIpAssigned"`
-			InternetChargeType      string `json:"InternetChargeType"`
-			InternetMaxBandwidthOut int    `json:"InternetMaxBandwidthOut"`
-		} `json:"InternetAccessible"`
-		HpcClusterId    string `json:"HpcClusterId"`
-		LatestOperation string `json:"LatestOperation"`
-	} `json:"InstanceSet"`
-	TotalCount int    `json:"TotalCount"`
-	RequestId  string `json:"RequestId"`
+			OsName             string   `json:"OsName"`
+			SecurityGroupIds   []string `json:"SecurityGroupIds"`
+			InstanceName       string   `json:"InstanceName"`
+			DataDisks          []struct {
+				DeleteWithInstance    bool        `json:"DeleteWithInstance"`
+				Encrypt               bool        `json:"Encrypt"`
+				CdcId                 string      `json:"CdcId"`
+				DiskType              string      `json:"DiskType"`
+				ThroughputPerformance int         `json:"ThroughputPerformance"`
+				KmsKeyId              interface{} `json:"KmsKeyId"`
+				DiskSize              int         `json:"DiskSize"`
+				SnapshotId            interface{} `json:"SnapshotId"`
+				DiskId                string      `json:"DiskId"`
+			} `json:"DataDisks"`
+			IsolatedSource      string `json:"IsolatedSource"`
+			VirtualPrivateCloud struct {
+				SubnetId           string   `json:"SubnetId"`
+				AsVpcGateway       bool     `json:"AsVpcGateway"`
+				Ipv6AddressCount   int      `json:"Ipv6AddressCount"`
+				VpcId              string   `json:"VpcId"`
+				PrivateIpAddresses []string `json:"PrivateIpAddresses"`
+			} `json:"VirtualPrivateCloud"`
+			LatestOperationRequestId string `json:"LatestOperationRequestId"`
+			InternetAccessible       struct {
+				PublicIpAssigned        bool   `json:"PublicIpAssigned"`
+				InternetChargeType      string `json:"InternetChargeType"`
+				InternetMaxBandwidthOut int    `json:"InternetMaxBandwidthOut"`
+			} `json:"InternetAccessible"`
+			HpcClusterId    string `json:"HpcClusterId"`
+			LatestOperation string `json:"LatestOperation"`
+		} `json:"InstanceSet"`
+		TotalCount int    `json:"TotalCount"`
+		RequestId  string `json:"RequestId"`
+	} `json:"Response"`
 }
 
-type Response struct {
-	CloudHostResponse CloudHostResponse `json:"Response"`
-}
-
-func (s *TencentCloudService) GetCloudHostInfo(region string, publicIpv4 string, publicIpv6 string, offset int64, limit int64) (*CloudHostResponse, error) {
+func (s *TencentCloudService) GetCloudHostInfo(region string, publicIpv4 string, publicIpv6 string, offset int64, limit int64) (*HostResponse, error) {
 	// 实例化一个认证对象，入参需要传入腾讯云账户 SecretId 和 SecretKey，此处还需注意密钥对的保密
 	// 代码泄露可能会导致 SecretId 和 SecretKey 泄露，并威胁账号下所有资源的安全性。以下代码示例仅供参考，建议采用更安全的方式来使用密钥，请参见：https://cloud.tencent.com/document/product/1278/85305
 	// 密钥可前往官网控制台 https://console.cloud.tencent.com/cam/capi 进行获取
@@ -146,10 +144,10 @@ func (s *TencentCloudService) GetCloudHostInfo(region string, publicIpv4 string,
 	if err != nil {
 		return nil, fmt.Errorf("获取返回结果失败：%v", err)
 	}
-	var res Response
+	var res HostResponse
 	// 输出json格式的字符串回包
 	if err = json.Unmarshal([]byte(response.ToJsonString()), &res); err != nil {
 		return nil, fmt.Errorf("解析json失败：%v", err)
 	}
-	return &res.CloudHostResponse, err
+	return &res, err
 }

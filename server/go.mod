@@ -20,6 +20,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.856
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.856
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tag v1.0.854
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.856
 	golang.org/x/crypto v0.14.0
 	golang.org/x/sync v0.4.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1

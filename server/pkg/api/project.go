@@ -2,7 +2,7 @@ package api
 
 type UpdateProjectReq struct {
 	ID      uint   `form:"id" json:"id"`                                // 修改才需要传，没有传算新增
-	Name    string `form:"name" json:"name" binding:"required"`         // 项目名
+	Name    string `form:"name" json:"name" binding:"required"`         // 项目名, 不允许修改
 	Cloud   string `form:"cloud" json:"cloud" binding:"required"`       // 云平台所属，用中文
 	Status  uint   `form:"status" json:"status" binding:"required"`     // 状态：1 正常 2 停摆
 	UserId  uint   `form:"user_id" json:"user_id" binding:"required"`   // 负责人用户ID

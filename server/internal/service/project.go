@@ -40,8 +40,11 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		if err := model.DB.Where("id = ?", param.ID).First(&project).Error; err != nil {
 			return project, errors.New("项目数据库查询失败")
 		}
+		if project.Name != param.Name {
+			return nil, errors.New("项目名不允许修改,因为牵扯服务太多容易出问题(如必要请通知运维逐个服务添加递归修改)，建议删除重建新项目")
+		}
 		// 更改云平台项目属性
-		if project.Name != param.Name || project.Status != param.Status {
+		if project.Status != param.Status {
 			cloudPid, err := cloudScript.GetCloudProjectId(project.Cloud, project.Name)
 			if err != nil {
 				return nil, err

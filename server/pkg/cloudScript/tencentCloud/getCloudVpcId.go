@@ -3,23 +3,21 @@ package tencentCloud
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
+	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
-func (s *TencentCloudService) GetAvailCloudZoneId(region string) ([]string, error) {
+func (s *TencentCloudService) GetCloudVpcId(region string, vpcName string) (string, error) {
 	type Response struct {
-		ZoneResponse struct {
-			TotalCount int `json:"TotalCount"`
-			ZoneSet    []struct {
-				Zone      string `json:"Zone"`
-				ZoneName  string `json:"ZoneName"`
-				ZoneId    string `json:"ZoneId"`
-				ZoneState string `json:"ZoneState"`
-			} `json:"ZoneSet"`
-			RequestId string `json:"RequestId"`
+		VpcResponse struct {
+			RequestId  string `json:"RequestId"`
+			TotalCount int    `json:"TotalCount"`
+			VpcSet     []struct {
+				VpcId string `json:"VpcId"`
+			} `json:"VpcSet"`
 		} `json:"Response"`
 	}
 	// 实例化一个认证对象，入参需要传入腾讯云账户 SecretId 和 SecretKey，此处还需注意密钥对的保密
@@ -32,32 +30,34 @@ func (s *TencentCloudService) GetAvailCloudZoneId(region string) ([]string, erro
 	completeRegion := RegionPrefix + region
 	// 实例化一个client选项，可选的，没有特殊需求可以跳过
 	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint = "cvm.tencentcloudapi.com"
+	cpf.HttpProfile.Endpoint = "vpc.tencentcloudapi.com"
 	// 实例化要请求产品的client对象,clientProfile是可选的
-	client, _ := cvm.NewClient(credential, completeRegion, cpf)
+	client, _ := vpc.NewClient(credential, completeRegion, cpf)
 
 	// 实例化一个请求对象,每个接口都会对应一个request对象
-	request := cvm.NewDescribeZonesRequest()
+	request := vpc.NewDescribeVpcsRequest()
 
-	// 返回的resp是一个DescribeZonesResponse的实例，与请求对象对应
-	response, err := client.DescribeZones(request)
+	request.Filters = []*vpc.Filter{
+		&vpc.Filter{
+			Name:   common.StringPtr("vpc-name"),
+			Values: common.StringPtrs([]string{vpcName}),
+		},
+	}
+	request.Offset = common.StringPtr("0")
+	request.Limit = common.StringPtr("1")
+
+	// 返回的resp是一个DescribeVpcsResponse的实例，与请求对象对应
+	response, err := client.DescribeVpcs(request)
 	if _, ok := err.(*errors.TencentCloudSDKError); ok {
-		return nil, fmt.Errorf("an API error has returned: %v", err)
+		return "", fmt.Errorf("an API error has returned: %v", err)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("返回实例报错: %v", err)
+		return "", err
 	}
 	var res Response
 	err = json.Unmarshal([]byte(response.ToJsonString()), &res)
 	if err != nil {
-		return nil, fmt.Errorf("json解析失败: %v", err)
+		return "", fmt.Errorf("json.Unmarshal error: %v", err)
 	}
-	var availableZones []string
-	for _, zone := range res.ZoneResponse.ZoneSet {
-		if zone.ZoneState == "AVAILABLE" {
-			availableZones = append(availableZones, zone.ZoneId)
-		}
-	}
-
-	return availableZones, err
+	return res.VpcResponse.VpcSet[0].VpcId, err
 }
