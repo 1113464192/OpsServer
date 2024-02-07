@@ -13,7 +13,7 @@ func (s *TencentCloudService) GetCloudProjectId(projectName string) (uint64, err
 	type tencentResponse struct {
 		Total    int `json:"Total"`
 		Projects []struct {
-			ProjectID   int    `json:"projectId"`
+			ProjectID   uint64 `json:"projectId"`
 			ProjectName string `json:"projectName"`
 		} `json:"Projects"`
 		RequestID string `json:"RequestId"`
@@ -59,5 +59,5 @@ func (s *TencentCloudService) GetCloudProjectId(projectName string) (uint64, err
 	if res.Response.Total == 0 {
 		return 0, fmt.Errorf("没有在云的可用项目中找到项目组")
 	}
-	return uint64(res.Response.Projects[0].ProjectID), nil
+	return res.Response.Projects[0].ProjectID, nil
 }

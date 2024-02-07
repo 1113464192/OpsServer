@@ -80,7 +80,7 @@ func (s *ApiService) UpdateApi(param *api.UpdateApiReq) (apiInter model.Api, err
 
 // DeleteApi
 // @description:  删除API
-// @param: ids []uint
+// @param ids []uint
 // @return:  err error
 func (s *ApiService) DeleteApi(ids []uint) (err error) {
 	err = model.DB.Where("id IN (?)", ids).Delete(&model.Api{}).Error

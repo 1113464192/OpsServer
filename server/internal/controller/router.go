@@ -91,6 +91,24 @@ func NewRoute() *gin.Engine {
 			projectRoute.PUT("ass-host", UpdateHostAss)   // 项目关联服务器
 			projectRoute.DELETE("project", DeleteProject) // 删除项目
 		}
+		// --------------云相关---------------
+		cloudRoute := v1.Group("cloud")
+		{
+			cloudRoute.POST("vpc", CreateCloudVpc)                               // 创建项目的VPC
+			cloudRoute.POST("vpc-subnet", CreateCloudVpcSubnet)                  // 创建项目VPC的subnet
+			cloudRoute.POST("security-group", CreateCloudSecurityGroup)          // 创建项目的安全组
+			cloudRoute.GET("host-in-subnet-sum", GetCloudHostInVpcSubnetSum)     // 项目机器沾指定subnet的总数
+			cloudRoute.PUT("instance-config", UpdateCloudInstanceConfig)         // 创建/更新云项目的实例配置
+			cloudRoute.GET("instance-config", GetCloudInstanceConfig)            // 获取云项目的实例配置
+			cloudRoute.GET("vpc-id", GetCloudVpcId)                              // 根据VPCname获取VPC-ID
+			cloudRoute.GET("vpc-subnet-id", GetCloudVpcSubnetId)                 // 根据subnetName和VPCID获取subnet-id
+			cloudRoute.GET("security-group-id", GetCloudSecurityGroupId)         // 根据安全组Name获取安全组ID
+			cloudRoute.GET("project-id", GetCloudProjectId)                      // 根据项目名获取云项目的ID(非数据库项目ID)
+			cloudRoute.GET("GetCloudInstanceTypeList", GetCloudInstanceTypeList) // 获取对应的云实例类型列表
+			cloudRoute.POST("create-instance", CreateCloudInstance)              // 创建云主机
+			cloudRoute.POST("return-instance", ReturnCloudInstance)              // 退还云主机
+		}
+
 		// --------------Git-Webhook相关---------------------
 		{
 			gitWebhookRouter.PUT("git-webhook", UpdateGitWebhook)    // 修改git-webhook记录的数据

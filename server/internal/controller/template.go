@@ -155,11 +155,11 @@ func UpdateTemplateAssHost(c *gin.Context) {
 // @Router /api/v1/template/condition-set [get]
 func GetConditionSet(c *gin.Context) {
 	m := map[uint]string{
-		1: "data_disk",
-		2: "mem",
-		3: "iowait",
-		4: "idle",
-		5: "load",
+		1: "data_disk	单位G",
+		2: "mem		单位G",
+		3: "iowait	单位%",
+		4: "idle	单位%",
+		5: "load	单位%",
 	}
 	c.JSON(200, api.Response{
 		Data: m,

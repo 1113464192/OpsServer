@@ -17,12 +17,12 @@ func (s *TencentCloudService) CreateCloudSecurityGroup(region string, projectId 
 		s.ak,
 		s.sk,
 	)
-	completeRegion := RegionPrefix + region
+	//completeRegion := RegionPrefix + region
 	// 实例化一个client选项，可选的，没有特殊需求可以跳过
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "vpc.tencentcloudapi.com"
 	// 实例化要请求产品的client对象,clientProfile是可选的
-	client, _ := vpc.NewClient(credential, completeRegion, cpf)
+	client, _ := vpc.NewClient(credential, region, cpf)
 
 	// 实例化一个请求对象,每个接口都会对应一个request对象
 	request := vpc.NewCreateSecurityGroupRequest()

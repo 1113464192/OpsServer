@@ -6,7 +6,6 @@ import (
 	"fqhWeb/internal/model"
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
-	"fqhWeb/pkg/cloudScript"
 	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/util2"
 	"strings"
@@ -29,7 +28,7 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 	var count int64
 	// 判断项目名是否已被使用
 	if model.DB.Model(&project).Where("name = ? AND id != ?", param.Name, param.ID).Count(&count); count > 0 {
-		return project, errors.New("项目名已被使用")
+		return &project, errors.New("项目名已被使用")
 	}
 	// ID查询
 	if param.ID != 0 {
@@ -38,18 +37,18 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		}
 
 		if err := model.DB.Where("id = ?", param.ID).First(&project).Error; err != nil {
-			return project, errors.New("项目数据库查询失败")
+			return &project, errors.New("项目数据库查询失败")
 		}
 		if project.Name != param.Name {
-			return nil, errors.New("项目名不允许修改,因为牵扯服务太多容易出问题(如必要请通知运维逐个服务添加递归修改)，建议删除重建新项目")
+			return nil, errors.New("项目名不允许修改,建议删除重建新项目。 （因为牵扯服务太多容易出问题,如必要请通知运维逐个服务添加递归修改)")
 		}
 		// 更改云平台项目属性
 		if project.Status != param.Status {
-			cloudPid, err := cloudScript.GetCloudProjectId(project.Cloud, project.Name)
+			cloudPid, err := Cloud().GetCloudProjectId(project.Cloud, project.Name)
 			if err != nil {
 				return nil, err
 			}
-			if err = cloudScript.UpdateCloudProject(project.Cloud, cloudPid, param.Name, int64(param.Status)); err != nil {
+			if err = Cloud().UpdateCloudProject(project.Cloud, cloudPid, param.Name, int64(param.Status)); err != nil {
 				return nil, err
 			}
 		}
@@ -76,7 +75,7 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		}
 
 		// 创建云平台项目
-		if err = cloudScript.CreateCloudProject(param.Cloud, param.Name); err != nil {
+		if err = Cloud().CreateCloudProject(param.Cloud, param.Name); err != nil {
 			return nil, err
 		}
 
@@ -114,11 +113,11 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 
 	// 删除云平台项目
 	for _, project := range projects {
-		cloudPid, err := cloudScript.GetCloudProjectId(project.Cloud, project.Name)
+		cloudPid, err := Cloud().GetCloudProjectId(project.Cloud, project.Name)
 		if err != nil {
 			return err
 		}
-		if err = cloudScript.UpdateCloudProject(project.Cloud, cloudPid, project.Name, 2); err != nil {
+		if err = Cloud().UpdateCloudProject(project.Cloud, cloudPid, project.Name, 2); err != nil {
 			return err
 		}
 	}
