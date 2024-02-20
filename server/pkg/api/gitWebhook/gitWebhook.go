@@ -4,7 +4,7 @@ import "time"
 
 type UpdateGitWebhookStatusReq struct {
 	Id     uint  `json:"id" form:"id" binding:"required"`         // 行id
-	Status uint8 `json:"status" form:"status" binding:"required"` // 状态值
+	Status uint8 `json:"status" form:"status" binding:"required"` // 状态(0: 待审核 1: 待执行 2: 执行成功 3: 执行失败 4: 审核中 5: 已驳回)
 }
 
 type UpdateGitWebhookReq struct {

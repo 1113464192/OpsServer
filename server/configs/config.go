@@ -57,7 +57,7 @@ type SecurityVars struct {
 	AesIv               string
 	TokenExpireDuration string
 	TokenKey            string
-	CiMd5Key            string
+	ClientReqMd5Key     string
 }
 
 type ProjectWeb struct {

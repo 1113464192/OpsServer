@@ -5,6 +5,7 @@ import (
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/api/gitWebhook"
 	"fqhWeb/pkg/logger"
+	"fqhWeb/pkg/util"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -88,7 +89,7 @@ func HandleGitlabWebhook(c *gin.Context) {
 // @description 更改GitWebhook状态
 // @Summary 更改GitWebhook状态
 // @Produce  application/json
-// @Param CiAuthSign header string true "格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密"
+// @Param ClientAuthSign header string true "格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密"
 // @Param data formData gitWebhook.UpdateGitWebhookStatusReq true "填入行ID和状态码"
 // @Success 200 {object} api.Response "{"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -97,7 +98,7 @@ func HandleGitlabWebhook(c *gin.Context) {
 // @Router /api/v1/git-gitWebhook/project-update-status [patch]
 func UpdateGitWebhookStatus(c *gin.Context) {
 	// 判断是否运维给的签名
-	if err := serviceGitWebhook.GitWebhook().UpdateStatusAuth(c.Request.Header.Get("CiAuthSign"), c.ClientIP()); err != nil {
+	if err := util.CheckClientReqAuth(c.Request.Header.Get("ClientAuthSign"), c.ClientIP()); err != nil {
 		c.JSON(403, api.ErrorResponse(err))
 		return
 	}

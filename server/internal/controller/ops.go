@@ -5,6 +5,7 @@ import (
 	"fqhWeb/pkg/api"
 	apiOps "fqhWeb/pkg/api/ops"
 	"fqhWeb/pkg/logger"
+	"fqhWeb/pkg/util"
 	"fqhWeb/pkg/util/jwt"
 
 	"github.com/gin-gonic/gin"
@@ -122,7 +123,7 @@ func GetSSHExecParam(c *gin.Context) {
 // @Summary 用户审批工单
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData apiOps.ApproveTaskReq true "传入工单的ID和是否成功"
+// @Param data formData apiOps.UpdateTaskStatusReq true "传入工单的ID和是否成功"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -135,7 +136,7 @@ func ApproveTask(c *gin.Context) {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
 	}
-	var param apiOps.ApproveTaskReq
+	var param apiOps.UpdateTaskStatusReq
 	if err := c.ShouldBind(&param); err != nil {
 		c.JSON(500, api.ErrorResponse(err))
 		return
@@ -149,6 +150,45 @@ func ApproveTask(c *gin.Context) {
 	}
 	c.JSON(200, api.Response{
 		Data: res,
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
+// UpdateTaskStatus
+// @Tags Ops相关
+// @title 客户机更改工单状态
+// @description 传入工单的ID与status码
+// @Summary 客户机更改工单状态
+// @Produce  application/json
+// @Param ClientAuthSign header string true "格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密"
+// @Param data formData apiOps.UpdateTaskStatusReq true "传入工单的ID和status码"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/ops/status [put]
+func UpdateTaskStatus(c *gin.Context) {
+	// 判断是否运维给的签名
+	if err := util.CheckClientReqAuth(c.Request.Header.Get("ClientAuthSign"), c.ClientIP()); err != nil {
+		c.JSON(403, api.ErrorResponse(err))
+		return
+	}
+
+	var param apiOps.UpdateTaskStatusReq
+	if err := c.ShouldBind(&param); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+
+	err := ops.Ops().UpdateTaskStatus(param)
+	if err != nil {
+		logger.Log().Error("Task", "更改工单记录状态失败", err)
+		c.JSON(500, api.Err("更改工单记录状态失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
 		Meta: api.Meta{
 			Msg: "Success",
 		},

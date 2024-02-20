@@ -785,7 +785,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密",
-                        "name": "CiAuthSign",
+                        "name": "ClientAuthSign",
                         "in": "header",
                         "required": true
                     },

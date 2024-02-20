@@ -1,8 +1,6 @@
 package gitWebhook
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"fqhWeb/configs"
@@ -31,7 +29,6 @@ func (s *GitWebhookService) ExecServerCustomCi(whId uint, sshurl string, name st
 
 	// 执行CI操作
 	cmd := fmt.Sprintf(`bash %s %d %s %s`, configs.Conf.GitWebhook.GitCiScriptDir+"/"+name+".sh", whId, sshurl, configs.Conf.GitWebhook.GitCiRepo+"/"+name)
-
 	var sshClientConfigParam []api.SSHExecReq
 	sshClientConfigParam = append(sshClientConfigParam,
 		api.SSHExecReq{
@@ -52,31 +49,6 @@ func (s *GitWebhookService) ExecServerCustomCi(whId uint, sshurl string, name st
 		return fmt.Errorf("执行CI脚本报错: %v \n %s", err, (*sshResult)[0].Response)
 	}
 	return err
-}
-
-func (s *GitWebhookService) UpdateStatusAuth(clientSign string, clientIp string) (err error) {
-	if clientSign == "" {
-		return errors.New("未从header获取签名到CiAuthSign的值")
-	} else if clientIp == "" {
-		return errors.New("未从header获取签名到clientIp的值")
-	}
-	sign, err := s.md5EncryptSign(clientIp, configs.Conf.SecurityVars.CiMd5Key)
-	if err != nil {
-		return fmt.Errorf("sign生成报错: %v", err)
-	}
-	if sign != clientSign {
-		return errors.New(`认证码错误，请确认认证码生成方式`)
-	}
-	return err
-}
-
-func (s *GitWebhookService) md5EncryptSign(clientIp string, md5Key string) (sign string, err error) {
-	builder := strings.Builder{}
-	builder.WriteString(clientIp)
-	builder.WriteString(md5Key)
-	md5Hash := md5.Sum([]byte(builder.String()))
-	sign = hex.EncodeToString(md5Hash[:])
-	return sign, err
 }
 
 func (s *GitWebhookService) UpdateGitWebhookStatus(param gitWebhook.UpdateGitWebhookStatusReq) (err error) {

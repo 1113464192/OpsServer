@@ -54,8 +54,8 @@ securityVars:
   tokenExpireDuration: "168h"
   # token key
   tokenKey: "52995df076de0cf040055a9e932687209c148e75cc283f5a22c341a84e4e33dc"
-  # Client Ci md5 Key
-  ciMd5Key: "5a9042bc95e4d56d940"
+  # Client Req md5 Key
+  clientReqMd5Key: "5a9042bc95e4d56d940"
 
 # 项目的根目录
 projectWeb: 

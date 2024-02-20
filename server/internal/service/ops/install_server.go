@@ -45,6 +45,8 @@ func (s *OpsService) getInstallServerParam(hostList *[]model.Host, task *model.T
 		}
 		*sftpReq = append(*sftpReq, fReq)
 	}
+	// 加入tid到cmd的渲染中，方便后续client更改task状态
+	(*args)["tid"] = []string{strconv.Itoa(int(task.ID))}
 
 	// 对模板进行渲染
 	cmd, config, err := s.templateRender(task, args, pathCount)

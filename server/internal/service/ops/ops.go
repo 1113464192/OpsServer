@@ -85,6 +85,7 @@ func (s *OpsService) SubmitTask(param ops.SubmitTaskReq) (result *[]ops.TaskReco
 	switch typeParam {
 	// 单服装服操作
 	// 此处用ssh模式举例
+	// 如果加入繁琐操作的服务，建议结合OpsClient进行http交互，做C/S模式，因为ssh模式进行长时间的操作不稳定
 	case consts.OperationInstallServerType:
 		if sshReq, sftpReq, err = s.opsInstallServer(pathCount, &task, &hosts, &user, &args, sshReq); err != nil {
 			return nil, fmt.Errorf("提交%s工单失败: %v", consts.OperationInstallServerType, err)
@@ -178,8 +179,18 @@ func (s *OpsService) GetSSHExecParam(tid uint) (*[]api.SSHExecReq, *[]api.SFTPEx
 	return &sshReq, &sftpReq, err
 }
 
+// 更改task的staus
+func (s *OpsService) UpdateTaskStatus(param ops.UpdateTaskStatusReq) (err error) {
+	var task model.TaskRecord
+	if err = model.DB.Model(&task).Where("id = ?", param.Id).Update("status", param.Status).Error; err != nil {
+		return fmt.Errorf("更改工单状态失败: %v", err)
+	}
+	return err
+
+}
+
 // 对应用户审核工单
-func (s *OpsService) ApproveTask(param ops.ApproveTaskReq, uid uint) (res string, err error) {
+func (s *OpsService) ApproveTask(param ops.UpdateTaskStatusReq, uid uint) (res string, err error) {
 	var task model.TaskRecord
 	var nonApproverSlice []uint
 	if nonApproverSlice, err = s.getNonApprover(param.Id); err != nil {
@@ -201,9 +212,16 @@ func (s *OpsService) ApproveTask(param ops.ApproveTaskReq, uid uint) (res string
 			if err != nil {
 				return "", fmt.Errorf("map转换json失败: %v", err)
 			}
-			if err = model.DB.Model(&task).Where("id = ?", param.Id).Update("non_approver", string(data)).Error; err != nil {
+			tx := model.DB.Begin()
+			if err = tx.Model(&task).Where("id = ?", param.Id).Update("non_approver", string(data)).Error; err != nil {
+				tx.Rollback()
 				return "", fmt.Errorf("更改TaskRecord表的NonApprover失败: %v", err)
 			}
+			if err = tx.Model(&task).Where("id = ?", param.Id).Update("status", 4).Error; err != nil {
+				tx.Rollback()
+				return "", fmt.Errorf("更改TaskRecord表的NonApprover失败: %v", err)
+			}
+			tx.Commit()
 			// 向下一个审批者发送审批信息
 			fmt.Println("微信小程序==========向下一个审批者发送审批信息===========")
 		} else {
@@ -213,9 +231,9 @@ func (s *OpsService) ApproveTask(param ops.ApproveTaskReq, uid uint) (res string
 			// 向操作者发送信息
 			fmt.Println("微信小程序==========向操作者发送信息===========")
 		}
-	} else if param.Status == 4 {
+	} else if param.Status == 5 {
 		res = "审批拒绝"
-		if err = model.DB.Model(&task).Where("id = ?", param.Id).Update("status", 4).Error; err != nil {
+		if err = model.DB.Model(&task).Where("id = ?", param.Id).Update("status", 5).Error; err != nil {
 			return "", fmt.Errorf("更改工单状态为可执行状态失败: %v", err)
 		}
 	} else {

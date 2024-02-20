@@ -28,9 +28,9 @@ type TaskRecordSSHRes struct {
 	FileContent string `json:"file_content"`
 }
 
-type ApproveTaskReq struct {
+type UpdateTaskStatusReq struct {
 	Id     uint  `json:"id" form:"id" binding:"required"`
-	Status uint8 `json:"status" form:"status" binding:"required"` // 1:通过 4:驳回
+	Status uint8 `json:"status" form:"status" binding:"required"` // 1:通过 5:驳回
 }
 
 type RunLocalShellReq struct {
