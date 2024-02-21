@@ -47,6 +47,7 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		if param.Ipv6 != "" {
 			host.Ipv6 = sql.NullString{String: param.Ipv6, Valid: true}
 		}
+		host.Name = param.Name
 		host.User = param.User
 		host.Password, err = util.EncryptAESCBC(param.Password, []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
 		if err != nil {
@@ -89,6 +90,7 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		}
 		host = &model.Host{
 			Ipv4:     sql.NullString{String: param.Ipv4, Valid: true},
+			Name:     param.Name,
 			User:     param.User,
 			Password: aesPassword,
 			Port:     param.Port,
@@ -427,6 +429,7 @@ func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 				ID:       host.ID,
 				Ipv4:     host.Ipv4.String,
 				Ipv6:     host.Ipv6.String,
+				Name:     host.Name,
 				Port:     host.Port,
 				Zone:     host.Zone,
 				ZoneTime: host.ZoneTime,
@@ -457,6 +460,7 @@ func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 			ID:       host.ID,
 			Ipv4:     host.Ipv4.String,
 			Ipv6:     host.Ipv6.String,
+			Name:     host.Name,
 			Port:     host.Port,
 			Zone:     host.Zone,
 			ZoneTime: host.ZoneTime,

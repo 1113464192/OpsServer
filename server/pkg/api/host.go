@@ -4,10 +4,11 @@ type UpdateHostReq struct {
 	ID       uint   `form:"id" json:"id"`
 	Ipv4     string `form:"ipv4" json:"ipv4" binding:"required"`
 	Ipv6     string `form:"ipv6" json:"ipv6"`
+	Name     string `form:"name" json:"name" binding:"required"`
 	User     string `form:"user" json:"user" binding:"required"`
 	Password []byte `form:"password" json:"password"`
 	Port     string `form:"port" json:"port" binding:"required"`
-	Zone     string `form:"zone" json:"zone" binding:"required"`           // 所在地，用英文小写，如guangzhou、seoul
+	Zone     string `form:"zone" json:"zone" binding:"required"`           // 所在地，用英文小写，如guangzhou
 	ZoneTime uint8  `form:"zone_time" json:"zone_time" binding:"required"` // 时区，如东八区填8
 	//BillingType uint8   `form:"billing" json:"billing" binding:"required"`     // 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加
 	Cost       float32 `form:"cost" json:"cost"` // 下次续费金额, 人民币为单位
@@ -45,6 +46,7 @@ type HostRes struct {
 	ID       uint
 	Ipv4     string
 	Ipv6     string
+	Name     string
 	Port     string
 	Zone     string
 	ZoneTime uint8

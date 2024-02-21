@@ -31,7 +31,7 @@ func (s *OpsService) SubmitTask(param ops.SubmitTaskReq) (result *[]ops.TaskReco
 	var taskRecord *model.TaskRecord
 	var task model.TaskTemplate
 	var user model.User
-	if err = model.DB.First(&task, param.Tid).Error; err != nil {
+	if err = model.DB.Preload("Project").First(&task, param.Tid).Error; err != nil {
 		return nil, errors.New("根据id查询任务失败")
 	}
 	if err = model.DB.First(&user, param.Uid).Error; err != nil {

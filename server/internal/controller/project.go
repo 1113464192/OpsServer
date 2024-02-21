@@ -41,6 +41,30 @@ func UpdateProject(c *gin.Context) {
 	})
 }
 
+// GetCloudTypeSet
+// @Tags 项目相关
+// @title 获取可填写的云商
+// @description 返回云商map
+// @Summary 获取可填写的云商
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/project/cloud-type-set [get]
+func GetCloudTypeSet(c *gin.Context) {
+	m := map[uint]string{
+		1: "腾讯云",
+	}
+	c.JSON(200, api.Response{
+		Data: m,
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
 // DeleteProject
 // @Tags 项目相关
 // @title 删除项目

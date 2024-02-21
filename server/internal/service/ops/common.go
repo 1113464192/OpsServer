@@ -141,7 +141,7 @@ func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, 
 			fields = append(fields, "curr_load < ?")
 			values = append(values, value[0])
 		default:
-			return fmt.Errorf("%s 不属于ConditionSet中的任何一个", key)
+			return fmt.Errorf("%s 不属于ConditionSet接口返回中的任何一个", key)
 		}
 	}
 
@@ -150,6 +150,8 @@ func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, 
 	for _, sshReq := range *sshReq {
 		hostsIp = append(hostsIp, sshReq.HostIp)
 	}
+	// 清空sshReq
+	*sshReq = []api.SSHExecReq{}
 	if len(fields) > 0 {
 		conditions := strings.Join(fields, " AND ")
 		// 从关联的主机中获取符合条件的单服
@@ -190,7 +192,11 @@ func (s *OpsService) filterConditionHost(hosts *[]model.Host, user *model.User, 
 }
 
 // 按端口规则筛选可用服务器
-func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHExecReq, args *map[string][]string, memSize float32) (hostList *[]model.Host, err error) {
+func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, task *model.TaskTemplate, sshReq *[]api.SSHExecReq, args *map[string][]string, memSize float32) (hostList *[]model.Host, flagTotal int, flagAssHostSum int, err error) {
+	defer func() {
+		// 清空sshReq
+		*sshReq = []api.SSHExecReq{}
+	}()
 	// 做一个用来计算的host切片，避免影响到host表(防止后面突然有人Save)
 	tmpHosts := make([]model.Host, len(*hosts))
 	copy(tmpHosts, *hosts)
@@ -198,20 +204,20 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 	// 解析出每个端口规则
 	var portRule map[string]string
 	if err = json.Unmarshal([]byte(task.PortRule), &portRule); err != nil {
-		return nil, errors.New("端口规则进行json解析失败")
+		return nil, flagTotal, flagAssHostSum, errors.New("端口规则进行json解析失败")
 	}
 	// 获取每个服的字符串标识
 	flags, err := s.getFlag(task.Args, args)
 	if err != nil {
-		return nil, err
+		return nil, flagTotal, flagAssHostSum, err
 	}
 	// 判断当前项目下是否有重复Flag
 	var count int64
 	if err = model.DB.Model(&model.ServerRecord{}).Where("project_id = ? AND flag IN (?)", task.Pid, flags).Count(&count).Error; err != nil {
-		return nil, fmt.Errorf("查询单服flag信息失败: %v", err)
+		return nil, flagTotal, flagAssHostSum, fmt.Errorf("查询单服flag信息失败: %v", err)
 	}
 	if count != 0 {
-		return nil, errors.New("与现有单服的flag有冲突")
+		return nil, flagTotal, flagAssHostSum, errors.New("与现有单服的flag有冲突")
 	}
 	// 添加到后续的模板变量映射
 	flagsString := util.IntSliceToStringSlice(flags)
@@ -219,7 +225,9 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 
 	// 接收可用host切片
 	var availHost []model.Host
-	// 遍历每个服
+	// flags总数
+	flagTotal = len(flags)
+	// 遍历每个服务器
 	for _, flag := range flags {
 		// 遍历前面进行条件筛选和内存排序的机器
 		for i := range tmpHosts {
@@ -231,7 +239,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 			var portList []float64
 			portList, err = util.GenerateExprResult(portRule, flag)
 			if len(portList) != len(portRule) {
-				return nil, errors.New("取出端口数量不等于端口规则数量")
+				return nil, flagTotal, flagAssHostSum, errors.New("取出端口数量不等于端口规则数量")
 			}
 			// 添加到后续的模板变量映射
 			var p int
@@ -242,7 +250,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 				p += 1
 			}
 			if err != nil {
-				return nil, fmt.Errorf("端口规则\n%v\n基于flag %d 生成端口失败: %v", portRule, flag, err)
+				return nil, flagTotal, flagAssHostSum, fmt.Errorf("端口规则\n%v\n基于flag %d 生成端口失败: %v", portRule, flag, err)
 			}
 			// 统计需检查端口的总数
 			var c int
@@ -269,7 +277,7 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 			var successNum int
 			sshResult, err = service.SSH().RunSSHCmdAsync(sshReq)
 			if err != nil {
-				return nil, fmt.Errorf("端口检测命令执行失败: %v", err)
+				return nil, flagTotal, flagAssHostSum, fmt.Errorf("端口检测命令执行失败: %v", err)
 			}
 			// 判断每个端口占用
 			for _, res := range *sshResult {
@@ -281,13 +289,18 @@ func (s *OpsService) filterPortRuleHost(hosts *[]model.Host, user *model.User, t
 			if successNum == c {
 				availHost = append(availHost, *host)
 				host.CurrMem = host.CurrMem - memSize
+				flagAssHostSum += 1
 				// 开始循环下一个预备单服
 				break
 			}
 			continue
 		}
 	}
-	return &availHost, err
+	if flagAssHostSum != flagTotal {
+		// 返回机器不足的信息
+		return nil, flagTotal, flagAssHostSum, errors.New("服务器资源不足")
+	}
+	return &availHost, flagTotal, flagAssHostSum, err
 }
 
 func (s *OpsService) writingTaskRecord(sshReq *[]api.SSHExecReq, sftpReq *[]api.SFTPExecReq, user *model.User, task *model.TaskTemplate, args *map[string][]string, auditorIds []uint) (taskRecord *model.TaskRecord, err error) {

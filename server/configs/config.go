@@ -1,16 +1,16 @@
 package configs
 
 type Config struct {
-	Mysql          Mysql          `json:"mysql"`
-	Logger         Logger         `json:"logger"`
-	SshConfig      SshConfig      `json:"ssh_timeout"`
-	Webssh         Webssh         `json:"webssh"`
-	System         System         `json:"system"`
-	Concurrency    Concurrency    `json:"concurrency"`
-	GitWebhook     GitWebhook     `json:"git_webhook"`
-	SecurityVars   SecurityVars   `json:"security_vars"`
-	ProjectWeb     ProjectWeb     `json:"project_web"`
-	CloudSecretKey CloudSecretKey `json:"cloud_secret_key"`
+	Mysql        Mysql        `json:"mysql"`
+	Logger       Logger       `json:"logger"`
+	SshConfig    SshConfig    `json:"ssh_timeout"`
+	Webssh       Webssh       `json:"webssh"`
+	System       System       `json:"system"`
+	Concurrency  Concurrency  `json:"concurrency"`
+	GitWebhook   GitWebhook   `json:"git_webhook"`
+	SecurityVars SecurityVars `json:"security_vars"`
+	ProjectWeb   ProjectWeb   `json:"project_web"`
+	Cloud        Cloud        `json:"cloud"`
 }
 
 type Mysql struct {
@@ -64,8 +64,9 @@ type ProjectWeb struct {
 	RootPath string
 }
 
-type CloudSecretKey struct {
-	TencentCloud struct {
+type Cloud struct {
+	AllowConsecutiveCreateTimes int
+	TencentCloud                struct {
 		Ak string
 		Sk string
 	} `json:"tencent_cloud"`

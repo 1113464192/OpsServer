@@ -30,6 +30,12 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 	if model.DB.Model(&project).Where("name = ? AND id != ?", param.Name, param.ID).Count(&count); count > 0 {
 		return &project, errors.New("项目名已被使用")
 	}
+	// 判断是否为支持的云商
+	switch param.Cloud {
+	case "腾讯云":
+	default:
+		return nil, errors.New("云平台不支持")
+	}
 	// ID查询
 	if param.ID != 0 {
 		if !util2.CheckIdExists(&project, param.ID) {
@@ -41,6 +47,9 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		}
 		if project.Name != param.Name {
 			return nil, errors.New("项目名不允许修改,建议删除重建新项目。 （因为牵扯服务太多容易出问题,如必要请通知运维逐个服务添加递归修改)")
+		}
+		if project.Cloud != param.Cloud {
+			return nil, errors.New("项目云平台不允许修改")
 		}
 		// 更改云平台项目属性
 		if project.Status != param.Status {

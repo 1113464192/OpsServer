@@ -154,10 +154,10 @@ func (s *CloudService) GetCloudProjectId(cloudType string, projectName string) (
 	}
 }
 
-func (s *CloudService) GetCloudInsInfo(cloudType string, region string, publicIpv4 string, publicIpv6 string, offset int64, limit int64) (any, error) {
+func (s *CloudService) GetCloudInsInfo(cloudType string, region string, publicIpv4 string, publicIpv6 string, insName string, cloudPid string, offset int64, limit int64) (any, error) {
 	switch cloudType {
 	case "腾讯云":
-		return tencentCloud.TencentCloud().GetCloudInsInfo(region, publicIpv4, publicIpv6, offset, limit)
+		return tencentCloud.TencentCloud().GetCloudInsInfo(region, publicIpv4, publicIpv6, insName, cloudPid, offset, limit)
 	case "火山云":
 		return nil, fmt.Errorf("%s 云商暂未加入平台，请通知运维加入", cloudType)
 	default:

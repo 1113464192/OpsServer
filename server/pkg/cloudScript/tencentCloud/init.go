@@ -13,8 +13,8 @@ var (
 
 func TencentCloud() *TencentCloudService {
 	insTencentCloud = &TencentCloudService{
-		ak: configs.Conf.CloudSecretKey.TencentCloud.Ak,
-		sk: configs.Conf.CloudSecretKey.TencentCloud.Sk,
+		ak: configs.Conf.Cloud.TencentCloud.Ak,
+		sk: configs.Conf.Cloud.TencentCloud.Sk,
 	}
 	return insTencentCloud
 }

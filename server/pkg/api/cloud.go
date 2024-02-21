@@ -116,3 +116,14 @@ type ReturnCloudInstanceReq struct {
 	Region     string `json:"region" form:"region"  binding:"required"`
 	InstanceId string `json:"instance_id" form:"instance_id"  binding:"required"`
 }
+
+type GetCloudInsInfoReq struct {
+	CloudType  string `json:"cloud_type" form:"cloud_type"  binding:"required"` // 如: 腾讯云、阿里云
+	Region     string `json:"region" form:"region"  binding:"required"`
+	PublicIpv4 string `json:"public_ipv4" form:"public_ipv4"`
+	PublicIpv6 string `json:"public_ipv6" form:"public_ipv6"`
+	InsName    string `json:"ins_name" form:"ins_name"`
+	CloudPid   string `json:"cloud_pid" form:"cloud_pid"`
+	Offset     int64  `json:"offset" form:"offset"`
+	Limit      int64  `json:"limit" form:"limit"`
+}

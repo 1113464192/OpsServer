@@ -85,11 +85,12 @@ func NewRoute() *gin.Engine {
 		// -----------项目相关-------------
 		projectRoute := v1.Group("project")
 		{
-			projectRoute.POST("project", UpdateProject)   // 新增/修改项目
-			projectRoute.GET("project", GetProject)       // 查询项目
-			projectRoute.GET("ass-host", GetHostAss)      // 查询项目关联的服务器
-			projectRoute.PUT("ass-host", UpdateHostAss)   // 项目关联服务器
-			projectRoute.DELETE("project", DeleteProject) // 删除项目
+			projectRoute.POST("project", UpdateProject)         // 新增/修改项目
+			projectRoute.GET("project", GetProject)             // 查询项目
+			projectRoute.GET("ass-host", GetHostAss)            // 查询项目关联的服务器
+			projectRoute.PUT("ass-host", UpdateHostAss)         // 项目关联服务器
+			projectRoute.DELETE("project", DeleteProject)       // 删除项目
+			projectRoute.GET("cloud-type-set", GetCloudTypeSet) // 获取可填写的云商
 		}
 		// --------------云相关---------------
 		cloudRoute := v1.Group("cloud")
@@ -100,6 +101,7 @@ func NewRoute() *gin.Engine {
 			cloudRoute.GET("host-in-subnet-sum", GetCloudHostInVpcSubnetSum)     // 项目机器沾指定subnet的总数
 			cloudRoute.PUT("instance-config", UpdateCloudInstanceConfig)         // 创建/更新云项目的实例配置
 			cloudRoute.GET("instance-config", GetCloudInstanceConfig)            // 获取云项目的实例配置
+			cloudRoute.GET("instance", GetCloudInsInfo)                          // 获取云实例的详细信息
 			cloudRoute.GET("vpc-id", GetCloudVpcId)                              // 根据VPCname获取VPC-ID
 			cloudRoute.GET("vpc-subnet-id", GetCloudVpcSubnetId)                 // 根据subnetName和VPCID获取subnet-id
 			cloudRoute.GET("security-group-id", GetCloudSecurityGroupId)         // 根据安全组Name获取安全组ID
@@ -160,6 +162,7 @@ func NewRoute() *gin.Engine {
 			opsRoute.GET("task", GetTask)                   // 查看任务工单
 			opsRoute.GET("ssh-exec-param", GetSSHExecParam) // 提取SSH执行参数
 			opsRoute.PUT("approve-task", ApproveTask)       // 用户审批工单
+			opsRoute.PUT("status", UpdateTaskStatus)        // 更改工单状态
 			opsRoute.DELETE("task", DeleteTask)             // 删除任务工单
 			opsRoute.POST("exec-ssh-task", OpsExecSSHTask)  // 执行人执行工单操作
 		}

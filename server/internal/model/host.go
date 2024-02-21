@@ -6,10 +6,11 @@ type Host struct {
 	Global   `gorm:"embedded"`
 	Ipv4     sql.NullString `gorm:"type: varchar(30);index;comment: 如: 11.129.212.42"`
 	Ipv6     sql.NullString `gorm:"type: varchar(100);comment: 如: 241d:c000:2022:601c:0:91aa:274c:e7ac/64"`
+	Name     string         `gorm:"type: varchar(30);comment: 服务器名"`
 	User     string         `gorm:"type: varchar(20)"`
 	Password []byte         `gorm:"type: blob;comment: 服务器密码加密后的字符串，一般机器都会禁止密码登录"`
 	Port     string         `gorm:"type: varchar(10);comment: SSH端口"`
-	Zone     string         `gorm:"type: varchar(100);comment: 服务器所在地区,用英文小写，如guangzhou、seoul"`
+	Zone     string         `gorm:"type: varchar(100);comment: 服务器所在地区,用英文小写，如guangzhou"`
 	ZoneTime uint8          `gorm:"comment: 时区"`
 	//BillingType    uint8          `gorm:"comment: 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加"`
 	Cost           float32 `gorm:"comment: 下次续费金额, 人民币为单位"`

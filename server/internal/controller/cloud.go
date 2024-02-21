@@ -223,6 +223,39 @@ func GetCloudInstanceConfig(c *gin.Context) {
 	})
 }
 
+// GetCloudInsInfo
+// @Tags 云平台相关
+// @title 获取云实例的详细信息
+// @description 返回云实例的详细信息，P.S: 可选输入云项目ID(不是项目ID)
+// @Summary 获取云实例的详细信息
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data query api.GetCloudInsInfoReq true ""
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/cloud/instance [get]
+func GetCloudInsInfo(c *gin.Context) {
+	var param api.GetCloudInsInfoReq
+	if err := c.ShouldBind(&param); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	res, err := service.Cloud().GetCloudInsInfo(param.CloudType, param.Region, param.PublicIpv4, param.PublicIpv6, param.InsName, param.CloudPid, param.Offset, param.Limit)
+	if err != nil {
+		logger.Log().Error("Cloud", "获取云实例信息失败", err)
+		c.JSON(500, api.Err("获取云实例信息失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Data: res,
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
 // GetCloudVpcId
 // @Tags 云平台相关
 // @title 获取VpcId
