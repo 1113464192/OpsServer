@@ -201,33 +201,15 @@ func (s *OpsService) autoCreateInstance(task *model.TaskTemplate) (err error) {
 	default:
 		return fmt.Errorf("不支持的云服务器类型: %v", task.Project.Cloud)
 	}
+	if err = s.writeHostTable(instanceName, &task.Project, insConfig); err != nil {
+		return fmt.Errorf("写入host表失败: %v", err)
+
+	}
 	return err
 }
 
 // 写入host表
-func (s *OpsService) writeHostTable(insTypeInterface any, insName string, project *model.Project, insConfig *model.CloudInstanceConfig) (err error) {
-	// 写入host表
-	//ID       uint   `form:"id" json:"id"`
-	//Ipv4     string `form:"ipv4" json:"ipv4" binding:"required"`
-	//Ipv6     string `form:"ipv6" json:"ipv6"`
-	//Name     string `form:"name" json:"name" binding:"required"`
-	//User     string `form:"user" json:"user" binding:"required"`
-	//Password []byte `form:"password" json:"password"`
-	//Port     string `form:"port" json:"port" binding:"required"`
-	//Zone     string `form:"zone" json:"zone" binding:"required"`           // 所在地，用英文小写，如guangzhou、seoul
-	//ZoneTime uint8  `form:"zone_time" json:"zone_time" binding:"required"` // 时区，如东八区填8
-	////BillingType uint8   `form:"billing" json:"billing" binding:"required"`     // 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加
-	//Cost       float32 `form:"cost" json:"cost"` // 下次续费金额, 人民币为单位
-	//Cloud      string  `form:"cloud" json:"cloud" binding:"required"`
-	//System     string  `form:"system" json:"system" binding:"required"`
-	//Iops       uint32  `form:"iops" json:"iops" binding:"required"`
-	//Mbps       uint32  `form:"mbps" json:"mbps" binding:"required"`
-	//Type       uint8   `form:"type" json:"type" binding:"required"`               // 1 单服机器, 2 中央服机器, 3 CDN机器, 4 业务服机器  ...后续有需要再加
-	//Cores      uint16  `form:"cores" json:"cores" binding:"required"`             // 四核输入4
-	//SystemDisk uint32  `form:"system_disk" json:"system_disk" binding:"required"` // 磁盘单位为G
-	//DataDisk   uint32  `form:"data_disk" json:"data_disk" binding:"required"`     // 磁盘单位为G
-	//Mem        uint32  `form:"mem" json:"mem" binding:"required"`                 // 内存单位为G
-
+func (s *OpsService) writeHostTable(insName string, project *model.Project, insConfig *model.CloudInstanceConfig) (err error) {
 	insInfoInterface, err := service.Cloud().GetCloudInsInfo(project.Cloud, insConfig.Region, "", "", insName, "", 1, 1)
 	if err != nil {
 		return fmt.Errorf("获取云实例信息失败: %v", err)
@@ -235,26 +217,52 @@ func (s *OpsService) writeHostTable(insTypeInterface any, insName string, projec
 	}
 	switch project.Cloud {
 	case "腾讯云":
-		insType, ok := insTypeInterface.(tencentCloud.InstanceConfigRes)
-		if !ok {
-			return fmt.Errorf("获取云服务器类型失败: %v", err)
-		}
 		insInfo, ok := insInfoInterface.(tencentCloud.HostResponse)
 		if !ok {
 			return fmt.Errorf("断言云服务器信息失败: %v", err)
 		}
 		// 默认root用户并不提供密码
+		hostZone := insInfo.CloudHostResponse.InstanceSet[0].Placement.Zone
+		zone := strings.Split(hostZone, "-")[1]
+		// 获取时区
+		var zoneTime int8
+		switch zone {
+		case "guangzhou", "shanghai", "beijing", "hongkong", "taipei":
+			zoneTime = consts.Guangzhou
+		case "newyork":
+			zoneTime = consts.NewYork
+		case "london":
+			zoneTime = consts.London
+		case "seoul":
+			zoneTime = consts.Seoul
+		case "tokyo":
+			zoneTime = consts.Tokyo
+		default:
+			return errors.New("未知的时区,请联系运维添加")
+		}
 		hostReq := api.UpdateHostReq{
-			Ipv4:     insInfo.CloudHostResponse.InstanceSet[0].PrivateIpAddresses[0],
-			Ipv6:     insInfo.CloudHostResponse.InstanceSet[0].IPv6Addresses[0],
-			Name:     insName,
-			User:     consts.DefaultHostUsername,
-			Password: []byte(consts.DefaultHostPassword),
-			Port:     consts.DefaultHostPort,
-			Zone:     insInfo.CloudHostResponse.InstanceSet[0].Placement.Zone,
+			Ipv4:       insInfo.CloudHostResponse.InstanceSet[0].PrivateIpAddresses[0],
+			Ipv6:       insInfo.CloudHostResponse.InstanceSet[0].IPv6Addresses[0],
+			Name:       insName,
+			User:       consts.DefaultHostUsername,
+			Password:   []byte(consts.DefaultHostPassword),
+			Port:       consts.DefaultHostPort,
+			Zone:       zone,
+			ZoneTime:   zoneTime,
+			Cloud:      project.Cloud,
+			System:     insInfo.CloudHostResponse.InstanceSet[0].OsName,
+			Mbps:       uint32(insConfig.InternetMaxBandwidthOut),
+			Type:       1,
+			Cores:      uint16(insInfo.CloudHostResponse.InstanceSet[0].CPU),
+			SystemDisk: uint32(insInfo.CloudHostResponse.InstanceSet[0].SystemDisk.DiskSize),
+			DataDisk:   uint32(insInfo.CloudHostResponse.InstanceSet[0].DataDisks[0].DiskSize),
+			Mem:        uint32(insInfo.CloudHostResponse.InstanceSet[0].Memory),
+		}
+		if _, err = service.Host().UpdateHost(&hostReq); err != nil {
+			return fmt.Errorf("创建host表数据失败: %v", err)
 		}
 	default:
-		return fmt.Errorf("不支持的云服务器类型: %v", task.Project.Cloud)
+		return fmt.Errorf("不支持的云服务器类型: %v", project.Cloud)
 	}
 	return err
 }

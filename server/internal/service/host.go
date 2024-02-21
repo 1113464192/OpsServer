@@ -64,7 +64,6 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		host.Cores = param.Cores
 		host.SystemDisk = param.SystemDisk
 		host.DataDisk = param.DataDisk
-		host.Iops = param.Iops
 		host.Mbps = param.Mbps
 		host.Mem = uint64(param.Mem) * uint64(1024)
 		// 当前数据则只支持从代码中获取
@@ -104,7 +103,6 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 			Cores:      param.Cores,
 			SystemDisk: param.SystemDisk,
 			DataDisk:   param.DataDisk,
-			Iops:       param.Iops,
 			Mbps:       param.Mbps,
 			Mem:        uint64(param.Mem) * 1024,
 			// CurrDisk:    param.CurrDisk,
@@ -441,7 +439,6 @@ func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 				Cores:          host.Cores,
 				SystemDisk:     host.SystemDisk,
 				DataDisk:       host.DataDisk,
-				Iops:           host.Iops,
 				Mbps:           host.Mbps,
 				Mem:            uint32(host.Mem) / uint32(1024),
 				CurrSystemDisk: host.CurrSystemDisk,
@@ -472,7 +469,6 @@ func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 			Cores:          host.Cores,
 			SystemDisk:     host.SystemDisk,
 			DataDisk:       host.DataDisk,
-			Iops:           host.Iops,
 			Mbps:           host.Mbps,
 			Mem:            uint32(host.Mem) / uint32(1024),
 			CurrSystemDisk: host.CurrSystemDisk,
