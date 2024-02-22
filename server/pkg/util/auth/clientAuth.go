@@ -27,8 +27,8 @@ func CheckClientReqAuth(clientSign string, clientIp string) (err error) {
 
 func Md5EncryptSign(clientIp string, md5Key string) (sign string, err error) {
 	builder := strings.Builder{}
-	builder.WriteString(clientIp)
 	builder.WriteString(md5Key)
+	builder.WriteString(clientIp)
 	md5Hash := md5.Sum([]byte(builder.String()))
 	sign = hex.EncodeToString(md5Hash[:])
 	return sign, err

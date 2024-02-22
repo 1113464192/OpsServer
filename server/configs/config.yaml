@@ -55,7 +55,7 @@ securityVars:
   # token key
   tokenKey: "52995df076de0cf040055a9e932687209c148e75cc283f5a22c341a84e4e33dc"
   # Client Req md5 Key
-  clientReqMd5Key: "5a9042bc95e4d56d940"
+  clientReqMd5Key: "bb53faabdfc3e2e8f9fba3e2d3"
 
 # 腾讯云AKSK
 cloud:

@@ -89,8 +89,8 @@ func HandleGitlabWebhook(c *gin.Context) {
 // @description 更改GitWebhook状态
 // @Summary 更改GitWebhook状态
 // @Produce  application/json
-// @Param ClientAuthSign header string true "格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密"
-// @Param data formData gitWebhook.UpdateGitWebhookStatusReq true "填入行ID和状态码"
+// @Param ClientAuthSign header string true "格式为: 运维密钥.发送机的IP(.不作加密, 两个字符串相连) 再由md5加密"
+// @Param data body gitWebhook.UpdateGitWebhookStatusReq true "填入行ID和状态码"
 // @Success 200 {object} api.Response "{"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"

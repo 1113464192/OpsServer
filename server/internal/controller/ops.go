@@ -160,8 +160,8 @@ func ApproveTask(c *gin.Context) {
 // @description 传入工单的ID与status码
 // @Summary 客户机更改工单状态
 // @Produce  application/json
-// @Param ClientAuthSign header string true "格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密"
-// @Param data formData apiOps.UpdateTaskStatusReq true "传入工单的ID和status码"
+// @Param ClientAuthSign header string true "格式为: 运维密钥.发送机的IP(.不作加密, 两个字符串相连) 再由md5加密"
+// @Param data body apiOps.UpdateTaskStatusReq true "传入工单的ID和status码"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"

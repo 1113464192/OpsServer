@@ -179,6 +179,18 @@ definitions:
     required:
     - id
     type: object
+  gitWebhook.UpdateGitWebhookStatusReq:
+    properties:
+      id:
+        description: 行id
+        type: integer
+      status:
+        description: '状态(0: 待审核 1: 待执行 2: 执行成功 3: 执行失败 4: 审核中 5: 已驳回)'
+        type: integer
+    required:
+    - id
+    - status
+    type: object
   ops.SubmitTaskReq:
     properties:
       auditorId:
@@ -189,6 +201,17 @@ definitions:
         type: integer
       uid:
         type: integer
+    type: object
+  ops.UpdateTaskStatusReq:
+    properties:
+      id:
+        type: integer
+      status:
+        description: 1:通过 5:驳回
+        type: integer
+    required:
+    - id
+    - status
     type: object
 info:
   contact: {}
@@ -1420,21 +1443,17 @@ paths:
     patch:
       description: 更改GitWebhook状态
       parameters:
-      - description: '格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密'
+      - description: '格式为: 运维密钥.发送机的IP(.不作加密, 两个字符串相连) 再由md5加密'
         in: header
         name: ClientAuthSign
         required: true
         type: string
-      - description: 行id
-        in: formData
-        name: id
+      - description: 填入行ID和状态码
+        in: body
+        name: data
         required: true
-        type: integer
-      - description: '状态(0: 待审核 1: 待执行 2: 执行成功 3: 执行失败 4: 审核中 5: 已驳回)'
-        in: formData
-        name: status
-        required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/gitWebhook.UpdateGitWebhookStatusReq'
       produces:
       - application/json
       responses:
@@ -2401,20 +2420,17 @@ paths:
     put:
       description: 传入工单的ID与status码
       parameters:
-      - description: '格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密'
+      - description: '格式为: 运维密钥.发送机的IP(.不作加密, 两个字符串相连) 再由md5加密'
         in: header
         name: ClientAuthSign
         required: true
         type: string
-      - in: formData
-        name: id
+      - description: 传入工单的ID和status码
+        in: body
+        name: data
         required: true
-        type: integer
-      - description: 1:通过 5:驳回
-        in: formData
-        name: status
-        required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/ops.UpdateTaskStatusReq'
       produces:
       - application/json
       responses:
