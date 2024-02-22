@@ -29,10 +29,10 @@ func (s *JwtService) JwtAddBlacklist(jwtList *model.JwtBlacklist) (err error) {
 
 // @function: IsBlacklist
 // @description: 判断JWT是否在黑名单内部
-// @param: jwt string
+// @param: auth string
 // @return: bool
 func (s *JwtService) IsBlacklist(jwt string) bool {
-	err := model.DB.Where("jwt = ?", jwt).First(&model.JwtBlacklist{}).Error
+	err := model.DB.Where("auth = ?", jwt).First(&model.JwtBlacklist{}).Error
 	isNotFound := errors.Is(err, gorm.ErrRecordNotFound)
 	return !isNotFound
 }

@@ -6,7 +6,7 @@ import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/util/jwt"
+	"fqhWeb/pkg/util/auth"
 	"io"
 	"sync"
 	"time"
@@ -49,7 +49,7 @@ func UserActionRecord() gin.HandlerFunc {
 		if c.Request.Method != "GET" {
 			var body []byte
 			cClaims, _ := c.Get("claims")
-			claims, ok := cClaims.(*jwt.CustomClaims)
+			claims, ok := cClaims.(*auth.CustomClaims)
 			if !ok {
 				c.JSON(401, api.Err("token携带的claims不合法", nil))
 				c.Abort()

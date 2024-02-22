@@ -9,7 +9,6 @@ type Config struct {
 	Concurrency  Concurrency  `json:"concurrency"`
 	GitWebhook   GitWebhook   `json:"git_webhook"`
 	SecurityVars SecurityVars `json:"security_vars"`
-	ProjectWeb   ProjectWeb   `json:"project_web"`
 	Cloud        Cloud        `json:"cloud"`
 }
 
@@ -58,10 +57,6 @@ type SecurityVars struct {
 	TokenExpireDuration string
 	TokenKey            string
 	ClientReqMd5Key     string
-}
-
-type ProjectWeb struct {
-	RootPath string
 }
 
 type Cloud struct {

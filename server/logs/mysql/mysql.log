@@ -41269,3 +41269,231 @@
   ],
   "user_id": 1
 }',1,'fanqihang',200,196651600,'{"data":[{"HostIp":"192.168.18.65","Status":0,"Response":"        inet 192.168.18.65  netmask 255.255.254.0  broadcast 192.168.19.255\n"}],"meta":{"msg":"Success"}}')
+
+2024/02/22 14:11:25 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.784ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:25 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[64.259ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.464ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_user' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[104.515ms] [34;1m[rows:0][0m CREATE TABLE `ops_user` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`username` varchar(30) UNIQUE,`password` varchar(60),`name` varchar(10),`status` tinyint unsigned DEFAULT 1 COMMENT ' 1是正常，2是禁用',`email` varchar(255) UNIQUE,`mobile` varchar(15) UNIQUE,`login_time` bigint,`expiration` bigint unsigned,`is_admin` tinyint unsigned DEFAULT 0,`pri_key` blob UNIQUE COMMENT ' 用户私钥，不传为NULL',`passphrase` blob COMMENT ' 用户私钥通行密码，不传为NULL',PRIMARY KEY (`id`),INDEX `idx_ops_user_username` (`username`),INDEX `idx_ops_user_deleted_at` (`deleted_at`))
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.733ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[65.784ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.498ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_user_group' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[70.710ms] [34;1m[rows:0][0m CREATE TABLE `ops_user_group` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`name` varchar(10) UNIQUE,`parent_id` smallint unsigned COMMENT '工作室下分项目组',`mark` varchar(50) COMMENT '标识',PRIMARY KEY (`id`),INDEX `idx_ops_user_group_name` (`name`),INDEX `idx_ops_user_group_deleted_at` (`deleted_at`))
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[32.228ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[64.196ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[67.499ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_permit_users' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[43.507ms] [34;1m[rows:0][0m CREATE TABLE `ops_permit_users` (`user_group_id` bigint unsigned,`user_id` bigint unsigned,PRIMARY KEY (`user_group_id`,`user_id`),CONSTRAINT `fk_ops_permit_users_user_group` FOREIGN KEY (`user_group_id`) REFERENCES `ops_user_group`(`id`),CONSTRAINT `fk_ops_permit_users_user` FOREIGN KEY (`user_id`) REFERENCES `ops_user`(`id`))
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[32.072ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[65.136ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.382ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_menus' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[46.730ms] [34;1m[rows:0][0m CREATE TABLE `ops_menus` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`name` varchar(30) UNIQUE,`parent_id` bigint unsigned COMMENT '子菜单',`mark` varchar(60) COMMENT '简称',`type` varchar(30) DEFAULT 'center',`title` varchar(30) COMMENT '菜单名',`url` varchar(255) COMMENT '路由',`sort` bigint COMMENT '排序标记',`icon` varchar(255) COMMENT '菜单图标',`author` varchar(30) COMMENT '创建人',`component` varchar(30) COMMENT '组件',PRIMARY KEY (`id`),INDEX `idx_ops_menus_deleted_at` (`deleted_at`),INDEX `idx_ops_menus_title` (`title`))
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.816ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.967ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:26 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.957ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_permit_menus' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[43.510ms] [34;1m[rows:0][0m CREATE TABLE `ops_permit_menus` (`menus_id` bigint unsigned,`user_group_id` bigint unsigned,PRIMARY KEY (`menus_id`,`user_group_id`),CONSTRAINT `fk_ops_permit_menus_menus` FOREIGN KEY (`menus_id`) REFERENCES `ops_menus`(`id`),CONSTRAINT `fk_ops_permit_menus_user_group` FOREIGN KEY (`user_group_id`) REFERENCES `ops_user_group`(`id`))
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.848ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[64.410ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[64.297ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_jwt_blacklist' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[43.725ms] [34;1m[rows:0][0m CREATE TABLE `ops_jwt_blacklist` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`jwt` text COMMENT 'auth',PRIMARY KEY (`id`),INDEX `idx_ops_jwt_blacklist_deleted_at` (`deleted_at`))
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[32.722ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.738ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.651ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_api' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[44.513ms] [34;1m[rows:0][0m CREATE TABLE `ops_api` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`path` varchar(100) COMMENT 'api路径',`method` varchar(10) COMMENT '方法',`api_group` varchar(10) COMMENT 'api组',`description` varchar(255) COMMENT 'api中文描述',PRIMARY KEY (`id`),INDEX `idx_ops_api_deleted_at` (`deleted_at`))
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.633ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.964ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.851ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_cloud_instance_config' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[48.508ms] [34;1m[rows:0][0m CREATE TABLE `ops_cloud_instance_config` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`region`  varchar(50),`instance_charge_type`  varchar(50),`period`  smallint,`renew_flag`  varchar(50),`project_id`  bigint,`instance_family`  varchar(50),`cpu_cores`  smallint,`memory_size`  smallint COMMENT '单位GB',`fpga`  smallint,`gpu_cores`  smallint,`image_id`  varchar(50),`system_disk_type`  varchar(50),`system_disk_size`  smallint,`data_disk_type`  varchar(50),`data_disk_size`  smallint,`vpc_id`  varchar(50),`subnet_id`  varchar(50),`internet_charge_type`  varchar(50),`internet_max_bandwidth_out`  smallint,`instance_name_prefix`  varchar(50),`security_group_id`  varchar(50),`host_name_prefix`  varchar(50),PRIMARY KEY (`id`),INDEX `idx_ops_cloud_instance_config_deleted_at` (`deleted_at`))
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[30.526ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.142ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.110ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_project' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[50.512ms] [34;1m[rows:0][0m CREATE TABLE `ops_project` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`name` varchar(30) UNIQUE COMMENT '项目名',`cloud` longtext COMMENT ' 云平台所属，用中文',`status` bigint unsigned COMMENT '状态 1 正常 2 停摆',`user_id` bigint unsigned COMMENT '负责人用户ID',`group_id` bigint unsigned COMMENT '关联组ID',`cloud_instance_config_id` bigint unsigned COMMENT '云平台默认配置ID',PRIMARY KEY (`id`),INDEX `idx_ops_project_deleted_at` (`deleted_at`),INDEX `idx_ops_project_name` (`name`),INDEX `idx_ops_project_user_id` (`user_id`),INDEX `idx_ops_project_group_id` (`group_id`),INDEX `idx_ops_project_cloud_instance_config_id` (`cloud_instance_config_id`),CONSTRAINT `fk_ops_project_user` FOREIGN KEY (`user_id`) REFERENCES `ops_user`(`id`),CONSTRAINT `fk_ops_project_user_group` FOREIGN KEY (`group_id`) REFERENCES `ops_user_group`(`id`),CONSTRAINT `fk_ops_project_cloud_instance_config` FOREIGN KEY (`cloud_instance_config_id`) REFERENCES `ops_cloud_instance_config`(`id`))
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.659ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:27 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[64.149ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.881ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_task_template' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[45.528ms] [34;1m[rows:0][0m CREATE TABLE `ops_task_template` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`type_name` varchar(10) COMMENT ' 类型名称, 最长10字符',`task_name` varchar(30) COMMENT ' 用户执行任务名',`cmd_tem` longtext COMMENT ' 用户执行任务内容,限Shell语言, 变量参数格式:双大括号间隔空格包含.var',`config_tem` longtext COMMENT ' 配置文件模板, 变量参数格式:双大括号间隔空格包含0.var',`comment` varchar(50) COMMENT ' 任务备注, 限长50',`pid` bigint unsigned COMMENT ' 项目ID',`condition` text COMMENT '如: mem=5 代表1个服最少占用5G',`port_rule` text COMMENT ' 端口规则,如: serverPort=10000 + flag % 1000 用模板变量名',`args`  text COMMENT ' 任意变量, 如: path=/data/a_b_c,sftpPath=/data/a_b_c/server/config',PRIMARY KEY (`id`),INDEX `idx_ops_task_template_deleted_at` (`deleted_at`),INDEX `idx_ops_task_template_pid` (`pid`),CONSTRAINT `fk_ops_task_template_project` FOREIGN KEY (`pid`) REFERENCES `ops_project`(`id`))
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[32.279ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.921ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[69.577ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_task_record' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[55.744ms] [34;1m[rows:0][0m CREATE TABLE `ops_task_record` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`task_name` varchar(20) COMMENT '  最长20字符',`template_id` bigint unsigned COMMENT ' 对应模板id',`operator_id` bigint unsigned COMMENT ' 操作人ID',`status` tinyint unsigned COMMENT ' 状态(0: 待审核 1: 待执行 2: 执行成功 3: 执行失败 4: 审核中 5: 已驳回)',`response` longtext COMMENT ' 返回值',`args` longtext COMMENT ' 参数展示',`ssh_json` longtext COMMENT ' 包含ssh信息',`sftp_json` longtext COMMENT ' 包含sftp信息',`non_approver` longtext COMMENT ' 待批准的审核员',PRIMARY KEY (`id`),INDEX `idx_ops_task_record_deleted_at` (`deleted_at`),INDEX `idx_ops_task_record_task_name` (`task_name`),CONSTRAINT `fk_ops_task_record_user` FOREIGN KEY (`operator_id`) REFERENCES `ops_user`(`id`),CONSTRAINT `fk_ops_task_template_task_record` FOREIGN KEY (`template_id`) REFERENCES `ops_task_template`(`id`))
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.213ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.480ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.930ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_auditor_task' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[46.518ms] [34;1m[rows:0][0m CREATE TABLE `ops_auditor_task` (`task_record_id` bigint unsigned,`user_id` bigint unsigned,PRIMARY KEY (`task_record_id`,`user_id`),CONSTRAINT `fk_ops_auditor_task_task_record` FOREIGN KEY (`task_record_id`) REFERENCES `ops_task_record`(`id`),CONSTRAINT `fk_ops_auditor_task_user` FOREIGN KEY (`user_id`) REFERENCES `ops_user`(`id`))
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.508ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.415ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.211ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_host' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[46.732ms] [34;1m[rows:0][0m CREATE TABLE `ops_host` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`ipv4`  varchar(30) COMMENT ' 如: 11.129.212.42',`ipv6`  varchar(100) COMMENT ' 如: 241d:c000:2022:601c:0:91aa:274c:e7ac/64',`name`  varchar(30) COMMENT ' 服务器名',`user`  varchar(20),`password`  blob COMMENT ' 服务器密码加密后的字符串，一般机器都会禁止密码登录',`port`  varchar(10) COMMENT ' SSH端口',`zone`  varchar(100) COMMENT ' 服务器所在地区,用英文小写，如guangzhou',`zone_time` tinyint COMMENT ' 时区',`cost` float COMMENT ' 下次续费金额, 人民币为单位',`cloud` longtext COMMENT ' 云平台所属，用中文',`system`  varchar(30),`iops` int unsigned COMMENT ' 服务器IOPS',`mbps` int unsigned COMMENT ' 带宽, 单位为M',`type` tinyint unsigned COMMENT ' 1 单服机器, 2 中央服机器, 3 CDN机器, 4 业务服机器  ...后续有需要再加',`cores` smallint unsigned,`system_disk` int unsigned COMMENT ' 系统盘, 单位为G',`data_disk` int unsigned COMMENT ' 数据盘, 单位为G',`mem` bigint unsigned COMMENT ' 单位为M',`curr_system_disk` float,`curr_data_disk` float,`curr_mem` float,`curr_iowait` float,`curr_idle` float,`curr_load` float,PRIMARY KEY (`id`),INDEX `idx_ops_host_deleted_at` (`deleted_at`),INDEX `idx_ops_host_ipv4` (`ipv4`))
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.527ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.499ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.835ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_template_host' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[41.772ms] [34;1m[rows:0][0m CREATE TABLE `ops_template_host` (`host_id` bigint unsigned,`task_template_id` bigint unsigned,PRIMARY KEY (`host_id`,`task_template_id`),CONSTRAINT `fk_ops_template_host_host` FOREIGN KEY (`host_id`) REFERENCES `ops_host`(`id`),CONSTRAINT `fk_ops_template_host_task_template` FOREIGN KEY (`task_template_id`) REFERENCES `ops_task_template`(`id`))
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.523ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:28 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.331ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.304ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_domain' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[41.700ms] [34;1m[rows:0][0m CREATE TABLE `ops_domain` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`value`  varchar(255),PRIMARY KEY (`id`),INDEX `idx_ops_domain_deleted_at` (`deleted_at`))
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.780ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.723ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[62.390ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_host_domain' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[40.747ms] [34;1m[rows:0][0m CREATE TABLE `ops_host_domain` (`host_id` bigint unsigned,`domain_id` bigint unsigned,PRIMARY KEY (`host_id`,`domain_id`),CONSTRAINT `fk_ops_host_domain_host` FOREIGN KEY (`host_id`) REFERENCES `ops_host`(`id`),CONSTRAINT `fk_ops_host_domain_domain` FOREIGN KEY (`domain_id`) REFERENCES `ops_domain`(`id`))
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[30.536ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[64.175ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.085ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_project_host' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[40.515ms] [34;1m[rows:0][0m CREATE TABLE `ops_project_host` (`host_id` bigint unsigned,`project_id` bigint unsigned,PRIMARY KEY (`host_id`,`project_id`),CONSTRAINT `fk_ops_project_host_host` FOREIGN KEY (`host_id`) REFERENCES `ops_host`(`id`),CONSTRAINT `fk_ops_project_host_project` FOREIGN KEY (`project_id`) REFERENCES `ops_project`(`id`))
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[30.639ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[64.125ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.797ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_server_record' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[48.783ms] [34;1m[rows:0][0m CREATE TABLE `ops_server_record` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`flag` varchar(20) COMMENT '单服标识',`path` varchar(30) COMMENT '单服目录',`server_name` varchar(30) COMMENT '单服名',`host_id` bigint unsigned COMMENT ' 对应服务器id',`project_id` bigint unsigned COMMENT ' 对应项目id',PRIMARY KEY (`id`),INDEX `idx_ops_server_record_deleted_at` (`deleted_at`),INDEX `idx_ops_server_record_flag` (`flag`),INDEX `idx_ops_server_record_server_name` (`server_name`),CONSTRAINT `fk_ops_server_record_server_host` FOREIGN KEY (`host_id`) REFERENCES `ops_host`(`id`),CONSTRAINT `fk_ops_server_record_server_project` FOREIGN KEY (`project_id`) REFERENCES `ops_project`(`id`))
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[31.513ms] [34;1m[rows:-][0m SELECT DATABASE()
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[66.909ms] [34;1m[rows:1][0m SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE 'ops%' ORDER BY SCHEMA_NAME='ops' DESC,SCHEMA_NAME limit 1
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[63.660ms] [34;1m[rows:-][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ops' AND table_name = 'ops_git_webhook_record' AND table_type = 'BASE TABLE'
+
+2024/02/22 14:11:29 [32mD:/fqhWeb/server/cmd/main.go:20
+[0m[33m[46.528ms] [34;1m[rows:0][0m CREATE TABLE `ops_git_webhook_record` (`id` bigint unsigned AUTO_INCREMENT,`created_at` datetime(3) NULL,`updated_at` datetime(3) NULL,`deleted_at` datetime(3) NULL,`full_name` longtext COMMENT ' 完整仓库名',`project_id` bigint unsigned COMMENT ' 对应项目id',`host_id` bigint unsigned COMMENT ' 对应服务器id',`status` tinyint unsigned COMMENT ' 状态(0: 获取hook 1: 拉取包成功 2: 编译成功 3: 测试成功 4: 推送包到存储机器成功 5: 失败执行)',`git_webhook_update_at` datetime(3) NULL COMMENT ' 仓库接收对应信号的更新时间',`ssh_url` text COMMENT 'git的ssh_url',`rec_data` mediumblob COMMENT '由于webhook数据太多, 不同仓库也有不同返回, 此处包含接收的几乎所有信息',`err_response` text COMMENT '错误返回',PRIMARY KEY (`id`),INDEX `idx_ops_git_webhook_record_deleted_at` (`deleted_at`),CONSTRAINT `fk_ops_git_webhook_record_project` FOREIGN KEY (`project_id`) REFERENCES `ops_project`(`id`),CONSTRAINT `fk_ops_git_webhook_record_host` FOREIGN KEY (`host_id`) REFERENCES `ops_host`(`id`))

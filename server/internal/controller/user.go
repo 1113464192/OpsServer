@@ -6,7 +6,7 @@ import (
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
 	"fqhWeb/pkg/util"
-	"fqhWeb/pkg/util/jwt"
+	"fqhWeb/pkg/util/auth"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -248,7 +248,7 @@ func UpdateSelfPasswd(c *gin.Context) {
 	var passwd api.PasswordReq
 	var err error
 	cClaims, _ := c.Get("claims")
-	claims, ok := cClaims.(*jwt.CustomClaims)
+	claims, ok := cClaims.(*auth.CustomClaims)
 	if !ok {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
@@ -329,7 +329,7 @@ func UpdateStatus(c *gin.Context) {
 // @Router /api/v1/user/self-user [get]
 func GetSelfInfo(c *gin.Context) {
 	cClaims, _ := c.Get("claims")
-	claims, ok := cClaims.(*jwt.CustomClaims)
+	claims, ok := cClaims.(*auth.CustomClaims)
 	if !ok {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
@@ -398,7 +398,7 @@ func GetAssGroup(c *gin.Context) {
 // @Router /api/v1/user/self-ass-group [get]
 func GetSelfAssGroup(c *gin.Context) {
 	cClaims, _ := c.Get("claims")
-	claims, ok := cClaims.(*jwt.CustomClaims)
+	claims, ok := cClaims.(*auth.CustomClaims)
 	if !ok {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
@@ -505,7 +505,7 @@ func UpdateKeyFileContext(c *gin.Context) {
 	}
 	passphrase := c.PostForm("Passphrase")
 	cClaims, _ := c.Get("claims")
-	claims, ok := cClaims.(*jwt.CustomClaims)
+	claims, ok := cClaims.(*auth.CustomClaims)
 	if !ok {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
@@ -543,7 +543,7 @@ func UpdateKeyContext(c *gin.Context) {
 	keyStr := c.PostForm("keyStr")
 	passphrase := c.PostForm("Passphrase")
 	cClaims, _ := c.Get("claims")
-	claims, ok := cClaims.(*jwt.CustomClaims)
+	claims, ok := cClaims.(*auth.CustomClaims)
 	if !ok {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()

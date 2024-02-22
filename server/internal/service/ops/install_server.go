@@ -217,52 +217,61 @@ func (s *OpsService) writeHostTable(insName string, project *model.Project, insC
 	}
 	switch project.Cloud {
 	case "腾讯云":
-		insInfo, ok := insInfoInterface.(tencentCloud.HostResponse)
-		if !ok {
-			return fmt.Errorf("断言云服务器信息失败: %v", err)
-		}
-		// 默认root用户并不提供密码
-		hostZone := insInfo.CloudHostResponse.InstanceSet[0].Placement.Zone
-		zone := strings.Split(hostZone, "-")[1]
-		// 获取时区
-		var zoneTime int8
-		switch zone {
-		case "guangzhou", "shanghai", "beijing", "hongkong", "taipei":
-			zoneTime = consts.Guangzhou
-		case "newyork":
-			zoneTime = consts.NewYork
-		case "london":
-			zoneTime = consts.London
-		case "seoul":
-			zoneTime = consts.Seoul
-		case "tokyo":
-			zoneTime = consts.Tokyo
-		default:
-			return errors.New("未知的时区,请联系运维添加")
-		}
-		hostReq := api.UpdateHostReq{
-			Ipv4:       insInfo.CloudHostResponse.InstanceSet[0].PrivateIpAddresses[0],
-			Ipv6:       insInfo.CloudHostResponse.InstanceSet[0].IPv6Addresses[0],
-			Name:       insName,
-			User:       consts.DefaultHostUsername,
-			Password:   []byte(consts.DefaultHostPassword),
-			Port:       consts.DefaultHostPort,
-			Zone:       zone,
-			ZoneTime:   zoneTime,
-			Cloud:      project.Cloud,
-			System:     insInfo.CloudHostResponse.InstanceSet[0].OsName,
-			Mbps:       uint32(insConfig.InternetMaxBandwidthOut),
-			Type:       1,
-			Cores:      uint16(insInfo.CloudHostResponse.InstanceSet[0].CPU),
-			SystemDisk: uint32(insInfo.CloudHostResponse.InstanceSet[0].SystemDisk.DiskSize),
-			DataDisk:   uint32(insInfo.CloudHostResponse.InstanceSet[0].DataDisks[0].DiskSize),
-			Mem:        uint32(insInfo.CloudHostResponse.InstanceSet[0].Memory),
-		}
-		if _, err = service.Host().UpdateHost(&hostReq); err != nil {
-			return fmt.Errorf("创建host表数据失败: %v", err)
+		if err = s.writeTencentCloudHostTable(insName, project.Cloud, insInfoInterface, insConfig); err != nil {
+			return fmt.Errorf("写入host表失败: %v", err)
 		}
 	default:
 		return fmt.Errorf("不支持的云服务器类型: %v", project.Cloud)
+	}
+	return err
+}
+
+// 腾讯云实例写入host表
+func (s *OpsService) writeTencentCloudHostTable(insName string, cloudStr string, insInfoInterface any, insConfig *model.CloudInstanceConfig) (err error) {
+	insInfo, ok := insInfoInterface.(tencentCloud.HostResponse)
+	if !ok {
+		return fmt.Errorf("断言云服务器信息失败: %v", err)
+	}
+
+	// 默认root用户并不提供密码
+	hostZone := insInfo.CloudHostResponse.InstanceSet[0].Placement.Zone
+	zone := strings.Split(hostZone, "-")[1]
+	// 获取时区
+	var zoneTime int8
+	switch zone {
+	case "guangzhou", "shanghai", "beijing", "hongkong", "taipei":
+		zoneTime = consts.Guangzhou
+	case "newYork":
+		zoneTime = consts.NewYork
+	case "london":
+		zoneTime = consts.London
+	case "seoul":
+		zoneTime = consts.Seoul
+	case "tokyo":
+		zoneTime = consts.Tokyo
+	default:
+		return errors.New("未知的时区,请联系运维添加")
+	}
+	hostReq := api.UpdateHostReq{
+		Ipv4:       insInfo.CloudHostResponse.InstanceSet[0].PrivateIpAddresses[0],
+		Ipv6:       insInfo.CloudHostResponse.InstanceSet[0].IPv6Addresses[0],
+		Name:       insName,
+		User:       consts.DefaultHostUsername,
+		Password:   []byte(consts.DefaultHostPassword),
+		Port:       consts.DefaultHostPort,
+		Zone:       zone,
+		ZoneTime:   zoneTime,
+		Cloud:      cloudStr,
+		System:     insInfo.CloudHostResponse.InstanceSet[0].OsName,
+		Mbps:       uint32(insConfig.InternetMaxBandwidthOut),
+		Type:       1,
+		Cores:      uint16(insInfo.CloudHostResponse.InstanceSet[0].CPU),
+		SystemDisk: uint32(insInfo.CloudHostResponse.InstanceSet[0].SystemDisk.DiskSize),
+		DataDisk:   uint32(insInfo.CloudHostResponse.InstanceSet[0].DataDisks[0].DiskSize),
+		Mem:        uint32(insInfo.CloudHostResponse.InstanceSet[0].Memory),
+	}
+	if _, err = service.Host().UpdateHost(&hostReq); err != nil {
+		return fmt.Errorf("创建host表数据失败: %v", err)
 	}
 	return err
 }

@@ -3,7 +3,7 @@ package middleware
 import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
-	"fqhWeb/pkg/util/jwt"
+	"fqhWeb/pkg/util/auth"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +26,7 @@ func CasbinHandler() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		claims, ok := cClaims.(*jwt.CustomClaims)
+		claims, ok := cClaims.(*auth.CustomClaims)
 		if !ok {
 			c.JSON(401, api.Err("token携带的claims不合法", nil))
 			c.Abort()

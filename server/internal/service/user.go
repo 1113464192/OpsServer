@@ -8,7 +8,7 @@ import (
 	"fqhWeb/internal/service/dbOper"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/util"
-	"fqhWeb/pkg/util/jwt"
+	"fqhWeb/pkg/util/auth"
 	"fqhWeb/pkg/util2"
 	"io"
 	"mime/multipart"
@@ -243,7 +243,7 @@ func (s *UserService) Login(u *model.User) (userInfo *api.AuthLoginRes, err erro
 	}
 
 	// 设置JWT-token
-	token, err := jwt.GenToken(user)
+	token, err := auth.GenToken(user)
 	if err != nil {
 		return userInfo, err
 	}

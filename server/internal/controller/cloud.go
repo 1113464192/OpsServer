@@ -197,7 +197,7 @@ func UpdateCloudInstanceConfig(c *gin.Context) {
 // @Summary 获取云项目的实例配置
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query IdReq true "输入项目ID(不是云项目ID)"
+// @Param data query api.IdReq true "输入项目ID(不是云项目ID)"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -230,7 +230,7 @@ func GetCloudInstanceConfig(c *gin.Context) {
 // @Summary 获取云实例的详细信息
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetCloudInsInfoReq true ""
+// @Param data query api.GetCloudInsInfoReq true "按对应云的API文档填写"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -368,7 +368,7 @@ func GetCloudSecurityGroupId(c *gin.Context) {
 // @Summary 获取ProjectId
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetCloudProjectIdReq true ""
+// @Param data query api.GetCloudProjectIdReq true "按对应云的API文档填写"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -403,7 +403,7 @@ func GetCloudProjectId(c *gin.Context) {
 // @Summary 获取instance-type
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetCloudInstanceTypeListReq true ""
+// @Param data query api.GetCloudInstanceTypeListReq true "按对应云的API文档填写"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"

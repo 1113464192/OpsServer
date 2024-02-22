@@ -57,10 +57,6 @@ securityVars:
   # Client Req md5 Key
   clientReqMd5Key: "5a9042bc95e4d56d940"
 
-# 项目的根目录
-projectWeb: 
-  rootPath: "/data/ops"
-
 # 腾讯云AKSK
 cloud:
   allowConsecutiveCreateTimes: 3

@@ -5,7 +5,7 @@ import (
 	"fqhWeb/internal/service"
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/util/jwt"
+	"fqhWeb/pkg/util/auth"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -39,7 +39,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 		// 判断token是否已过期
-		claims, err := jwt.ParseToken(parts[1])
+		claims, err := auth.ParseToken(parts[1])
 		// mc 里面包含对应登录账号，签发人（Issuer） 过期时间（ExpiresAt）
 		if err != nil {
 			//已过期，把token拉到黑名单

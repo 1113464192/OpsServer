@@ -353,6 +353,727 @@ paths:
       summary: 刷新casbin缓存
       tags:
       - Api相关
+  /api/v1/cloud/create-instance:
+    post:
+      description: '返回是否成功创建，P.S: 一般不需要使用，由装服判断自动创建就好'
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: formData
+        name: cloud_type
+        required: true
+        type: string
+      - in: formData
+        name: data_disk_size
+        required: true
+        type: integer
+      - in: formData
+        name: data_disk_type
+        required: true
+        type: string
+      - in: formData
+        name: host_name
+        required: true
+        type: string
+      - in: formData
+        name: image_id
+        required: true
+        type: string
+      - in: formData
+        name: instance_charge_type
+        required: true
+        type: string
+      - in: formData
+        name: instance_name
+        required: true
+        type: string
+      - in: formData
+        name: instance_type
+        required: true
+        type: string
+      - in: formData
+        name: internet_charge_type
+        required: true
+        type: string
+      - in: formData
+        name: internet_max_bandwidth_out
+        required: true
+        type: integer
+      - in: formData
+        name: period
+        required: true
+        type: integer
+      - in: formData
+        name: project_id
+        required: true
+        type: integer
+      - in: formData
+        name: region
+        required: true
+        type: string
+      - in: formData
+        name: renew_flag
+        required: true
+        type: string
+      - in: formData
+        name: security_group_id
+        required: true
+        type: string
+      - in: formData
+        name: subnet_id
+        required: true
+        type: string
+      - in: formData
+        name: system_disk_size
+        required: true
+        type: integer
+      - in: formData
+        name: system_disk_type
+        required: true
+        type: string
+      - in: formData
+        name: vpc_id
+        required: true
+        type: string
+      - in: formData
+        name: zone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 创建云服务器
+      tags:
+      - 云平台相关
+  /api/v1/cloud/host-in-subnet-sum:
+    get:
+      description: 返回子网包含IP总数(<=255)
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: query
+        name: cloud_type
+        required: true
+        type: string
+      - in: query
+        name: region
+        required: true
+        type: string
+      - in: query
+        name: subnet_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 项目机器占指定VPCSubnet总数
+      tags:
+      - 云平台相关
+  /api/v1/cloud/instance:
+    get:
+      description: '返回云实例的详细信息，P.S: 可选输入云项目ID(不是项目ID)'
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: cloud_pid
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: query
+        name: cloud_type
+        required: true
+        type: string
+      - in: query
+        name: ins_name
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: offset
+        type: integer
+      - in: query
+        name: public_ipv4
+        type: string
+      - in: query
+        name: public_ipv6
+        type: string
+      - in: query
+        name: region
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取云实例的详细信息
+      tags:
+      - 云平台相关
+  /api/v1/cloud/instance-config:
+    get:
+      description: '返回指定云项目的实例配置，P.S: 输入项目ID(不是云项目ID)'
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取云项目的实例配置
+      tags:
+      - 云平台相关
+    put:
+      description: 返回新的项目指定创建实例的配置Json
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: formData
+        name: cloud_type
+        required: true
+        type: string
+      - in: formData
+        name: region
+        required: true
+        type: string
+      - in: formData
+        name: subnet_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 创建/更新云项目的实例配置
+      tags:
+      - 云平台相关
+  /api/v1/cloud/instance-type:
+    get:
+      description: 返回instance-type及对应zone
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: query
+        name: cloud_type
+        required: true
+        type: string
+      - in: query
+        name: cpu_cores
+        required: true
+        type: integer
+      - in: query
+        name: fpga
+        required: true
+        type: integer
+      - in: query
+        name: gpu_cores
+        required: true
+        type: integer
+      - in: query
+        name: instance_family
+        required: true
+        type: string
+      - in: query
+        name: memory_size
+        required: true
+        type: integer
+      - in: query
+        name: region
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取instance-type
+      tags:
+      - 云平台相关
+  /api/v1/cloud/project-id:
+    get:
+      description: 返回ProjectId
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: query
+        name: cloud_type
+        required: true
+        type: string
+      - in: query
+        name: project_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取ProjectId
+      tags:
+      - 云平台相关
+  /api/v1/cloud/return-instance:
+    post:
+      description: 返回是否成功退还
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: formData
+        name: cloud_type
+        required: true
+        type: string
+      - in: formData
+        name: instance_id
+        required: true
+        type: string
+      - in: formData
+        name: region
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 退还云服务器
+      tags:
+      - 云平台相关
+  /api/v1/cloud/security-group:
+    post:
+      description: 返回创建是否成功
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: formData
+        name: cloud_type
+        required: true
+        type: string
+      - in: formData
+        name: group_description
+        required: true
+        type: string
+      - in: formData
+        name: group_name
+        required: true
+        type: string
+      - in: formData
+        name: project_name
+        required: true
+        type: string
+      - in: formData
+        name: region
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 创建项目安全组
+      tags:
+      - 云平台相关
+  /api/v1/cloud/security-group-id:
+    get:
+      description: 返回安全组ID
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: query
+        name: cloud_type
+        required: true
+        type: string
+      - in: query
+        name: region
+        required: true
+        type: string
+      - in: query
+        name: security_group_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取安全组ID
+      tags:
+      - 云平台相关
+  /api/v1/cloud/vpc:
+    post:
+      description: 返回创建是否成功
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: formData
+        name: cidr_block
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: formData
+        name: cloud_type
+        required: true
+        type: string
+      - in: formData
+        name: region
+        required: true
+        type: string
+      - description: VpcName与项目同名
+        in: formData
+        name: vpc_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 创建项目VPC
+      tags:
+      - 云平台相关
+  /api/v1/cloud/vpc-id:
+    get:
+      description: 返回VpcId
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: query
+        name: cloud_type
+        required: true
+        type: string
+      - in: query
+        name: region
+        required: true
+        type: string
+      - description: VpcName与项目同名
+        in: query
+        name: vpc_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取VpcId
+      tags:
+      - 云平台相关
+  /api/v1/cloud/vpc-subnet:
+    post:
+      description: 返回创建是否成功
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: formData
+        name: cloud_type
+        required: true
+        type: string
+      - in: formData
+        name: region
+        required: true
+        type: string
+      - in: formData
+        name: subnet_cidr_block
+        required: true
+        type: string
+      - in: formData
+        name: subnet_name
+        required: true
+        type: string
+      - in: formData
+        name: vpc_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 创建项目VPCSubnet
+      tags:
+      - 云平台相关
+  /api/v1/cloud/vpc-subnet-id:
+    get:
+      description: 返回VpcSubnetId
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: query
+        name: cloud_type
+        required: true
+        type: string
+      - in: query
+        name: region
+        required: true
+        type: string
+      - in: query
+        name: subnet_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取VpcSubnetId
+      tags:
+      - 云平台相关
   /api/v1/domain/ass-host:
     get:
       description: 返回服务器切片
@@ -709,7 +1430,7 @@ paths:
         name: id
         required: true
         type: integer
-      - description: 状态值
+      - description: '状态(0: 待审核 1: 待执行 2: 执行成功 3: 执行失败 4: 审核中 5: 已驳回)'
         in: formData
         name: status
         required: true
@@ -1236,11 +1957,6 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加
-        in: formData
-        name: billing
-        required: true
-        type: integer
       - in: formData
         name: cloud
         required: true
@@ -1250,7 +1966,8 @@ paths:
         name: cores
         required: true
         type: integer
-      - description: 下次续费金额, 人民币为单位
+      - description: BillingType uint8   `form:"billing" json:"billing" binding:"required"`     //
+          1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加
         in: formData
         name: cost
         type: number
@@ -1261,10 +1978,6 @@ paths:
         type: integer
       - in: formData
         name: id
-        type: integer
-      - in: formData
-        name: iops
-        required: true
         type: integer
       - in: formData
         name: ipv4
@@ -1282,6 +1995,10 @@ paths:
         name: mem
         required: true
         type: integer
+      - in: formData
+        name: name
+        required: true
+        type: string
       - collectionFormat: csv
         in: formData
         items:
@@ -1310,7 +2027,7 @@ paths:
         name: user
         required: true
         type: string
-      - description: 所在地
+      - description: 所在地，用英文小写，如guangzhou
         in: formData
         name: zone
         required: true
@@ -1583,7 +2300,7 @@ paths:
         name: id
         required: true
         type: integer
-      - description: 1:通过 4:驳回
+      - description: 1:通过 5:驳回
         in: formData
         name: status
         required: true
@@ -1678,6 +2395,46 @@ paths:
           schema:
             $ref: '#/definitions/api.Response'
       summary: 提取SSH执行参数
+      tags:
+      - Ops相关
+  /api/v1/ops/status:
+    put:
+      description: 传入工单的ID与status码
+      parameters:
+      - description: '格式为: 发送机的IP.运维密钥(.不作加密, 两个字符串相连) 再由md5加密'
+        in: header
+        name: ClientAuthSign
+        required: true
+        type: string
+      - in: formData
+        name: id
+        required: true
+        type: integer
+      - description: 1:通过 5:驳回
+        in: formData
+        name: status
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 客户机更改工单状态
       tags:
       - Ops相关
   /api/v1/ops/submit-task:
@@ -1909,6 +2666,37 @@ paths:
       summary: 关联服务器
       tags:
       - 项目相关
+  /api/v1/project/cloud-type-set:
+    get:
+      description: 返回云商map
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取可填写的云商
+      tags:
+      - 项目相关
   /api/v1/project/project:
     delete:
       description: 返回success
@@ -1998,6 +2786,11 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: 云平台所属，用中文
+        in: formData
+        name: cloud
+        required: true
+        type: string
       - description: 关联组ID
         in: formData
         name: group_id
@@ -2007,7 +2800,7 @@ paths:
         in: formData
         name: id
         type: integer
-      - description: 项目名
+      - description: 项目名, 不允许修改
         in: formData
         name: name
         required: true

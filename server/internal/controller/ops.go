@@ -5,9 +5,7 @@ import (
 	"fqhWeb/pkg/api"
 	apiOps "fqhWeb/pkg/api/ops"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/util"
-	"fqhWeb/pkg/util/jwt"
-
+	"fqhWeb/pkg/util/auth"
 	"github.com/gin-gonic/gin"
 )
 
@@ -131,7 +129,7 @@ func GetSSHExecParam(c *gin.Context) {
 // @Router /api/v1/ops/approve-task [put]
 func ApproveTask(c *gin.Context) {
 	cClaims, _ := c.Get("claims")
-	claims, ok := cClaims.(*jwt.CustomClaims)
+	claims, ok := cClaims.(*auth.CustomClaims)
 	if !ok {
 		c.JSON(401, api.Err("token携带的claims不合法", nil))
 		c.Abort()
@@ -171,7 +169,7 @@ func ApproveTask(c *gin.Context) {
 // @Router /api/v1/ops/status [put]
 func UpdateTaskStatus(c *gin.Context) {
 	// 判断是否运维给的签名
-	if err := util.CheckClientReqAuth(c.Request.Header.Get("ClientAuthSign"), c.ClientIP()); err != nil {
+	if err := auth.CheckClientReqAuth(c.Request.Header.Get("ClientAuthSign"), c.ClientIP()); err != nil {
 		c.JSON(403, api.ErrorResponse(err))
 		return
 	}

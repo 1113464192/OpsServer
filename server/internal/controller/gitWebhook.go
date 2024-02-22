@@ -5,7 +5,7 @@ import (
 	"fqhWeb/pkg/api"
 	"fqhWeb/pkg/api/gitWebhook"
 	"fqhWeb/pkg/logger"
-	"fqhWeb/pkg/util"
+	"fqhWeb/pkg/util/auth"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -98,7 +98,7 @@ func HandleGitlabWebhook(c *gin.Context) {
 // @Router /api/v1/git-gitWebhook/project-update-status [patch]
 func UpdateGitWebhookStatus(c *gin.Context) {
 	// 判断是否运维给的签名
-	if err := util.CheckClientReqAuth(c.Request.Header.Get("ClientAuthSign"), c.ClientIP()); err != nil {
+	if err := auth.CheckClientReqAuth(c.Request.Header.Get("ClientAuthSign"), c.ClientIP()); err != nil {
 		c.JSON(403, api.ErrorResponse(err))
 		return
 	}
