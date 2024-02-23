@@ -40,7 +40,7 @@ func main() {
 
 	r := controller.NewRoute()
 
-	err := r.Run(":9081")
+	err := r.Run(":9080")
 	if err != nil {
 		log.Fatalf("启动报错: \n%v", err)
 		return
