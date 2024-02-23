@@ -25,7 +25,7 @@ shellScript下脚本给予755权限
 >
 > 云平台部分未测试(要烧钱)，都是根据官方文档结合本代码作改动，注释后功能正常运行
 
-基本的RBAC，运维部份涵盖从CI到CD的全流程，结合了CD支持ssh模式或cs模式，以及webssh
+基本的RBAC，运维部份涵盖从CI到CD的全流程，结合了CD支持ssh模式或cs模式，以及webssh(实现了openssh agent forwarding自动代理转发，也就是可以无限跳转有权限的机器，始终指向本机ssh签名的socket)
 
 ### CI
 
