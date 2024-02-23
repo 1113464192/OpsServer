@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"fqhWeb/internal/model"
@@ -10,6 +11,7 @@ import (
 	"fqhWeb/pkg/logger"
 	utilssh "fqhWeb/pkg/util/ssh"
 	"os"
+	"strings"
 	"sync"
 
 	"golang.org/x/crypto/ssh"
@@ -65,7 +67,7 @@ func (s *SSHService) TestSSH(param api.TestSSHReq) (result *[]api.SSHResultRes, 
 	return result, err
 }
 
-type clientGroup struct {
+type sshClientGroup struct {
 	clientMap      map[string]*ssh.Client
 	clientMapMutex sync.Mutex
 }
@@ -75,7 +77,7 @@ func (s *SSHService) RunSSHCmdAsync(param *[]api.SSHExecReq) (*[]api.SSHResultRe
 		return nil, err
 	}
 
-	insClientGroup := clientGroup{
+	insClientGroup := sshClientGroup{
 		clientMap:      make(map[string]*ssh.Client),
 		clientMapMutex: sync.Mutex{},
 	}
@@ -99,7 +101,7 @@ func (s *SSHService) RunSSHCmdAsync(param *[]api.SSHExecReq) (*[]api.SSHResultRe
 	return &result, err
 }
 
-func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
+func (s *SSHService) RunSSHCmd(param *api.SSHExecReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *sshClientGroup) {
 	defer func() {
 		if r := recover(); r != nil {
 			logger.Log().Error("Groutine", "RunSSHCmd执行失败", r)
@@ -177,20 +179,23 @@ func (s *SSHService) CheckSSHParam(param *[]api.SSHExecReq) error {
 	return nil
 }
 
-func (s *SSHService) RunSFTPAsync(param *[]api.SFTPExecReq) (*[]api.SSHResultRes, error) {
+// func (s *SSHService) RunSFTPAsync(param *[]api.SFTPExecReq) (*[]api.SSHResultRes, error) {
+func (s *SSHService) RunSFTPAsync(param *[]api.SFTPExecReq, args *string) (*[]api.CSCmdRes, error) {
 	if err := s.CheckSFTPParam(param); err != nil {
 		return nil, err
 	}
 
-	insClientGroup := clientGroup{
+	insClientGroup := sshClientGroup{
 		clientMap:      make(map[string]*ssh.Client),
 		clientMapMutex: sync.Mutex{},
 	}
 
-	channel := make(chan *api.SSHResultRes, len(*param))
+	//channel := make(chan *api.SSHResultRes, len(*param))
+	channel := make(chan *api.CSCmdRes, len(*param))
 	wg := sync.WaitGroup{}
 	var err error
-	var result []api.SSHResultRes
+	//var result []api.SSHResultRes
+	var result []api.CSCmdRes
 	// data := make(map[string]string)
 	for i := 0; i < len(*param); i++ {
 		if err = globalFunc.Sem.Acquire(context.Background(), 1); err != nil {
@@ -201,18 +206,29 @@ func (s *SSHService) RunSFTPAsync(param *[]api.SFTPExecReq) (*[]api.SSHResultRes
 	}
 	wg.Wait()
 	close(channel)
+	var argsMap map[string][]string
+	if err = json.Unmarshal([]byte(*args), &argsMap); err != nil {
+		return nil, fmt.Errorf("参数解析失败: %v", err)
+	}
+	// 返回结果格式化
 	for res := range channel {
+		for _, path := range argsMap["path"] {
+			if strings.Contains(res.Response, path) {
+				res.ServerDir = path
+			}
+		}
 		result = append(result, *res)
 	}
+
 	return &result, err
 }
 
-func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHResultRes, wg *sync.WaitGroup, insClientGroup *clientGroup) {
+func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.CSCmdRes, wg *sync.WaitGroup, insClientGroup *sshClientGroup) {
 	defer func() {
 		if r := recover(); r != nil {
 			logger.Log().Error("Groutine", "RunSFTPTransfer执行失败", r)
 			fmt.Println("Groutine", "\n", "RunSFTPTransfer执行失败", "\n", r)
-			result := &api.SSHResultRes{
+			result := &api.CSCmdRes{
 				HostIp:   param.HostIp,
 				Status:   9999,
 				Response: fmt.Sprintf("触发了recover(): %v", r),
@@ -222,7 +238,7 @@ func (s *SSHService) RunSFTPTransfer(param *api.SFTPExecReq, ch chan *api.SSHRes
 			globalFunc.Sem.Release(1)
 		}
 	}()
-	result := &api.SSHResultRes{
+	result := &api.CSCmdRes{
 		HostIp: param.HostIp,
 		Status: 0,
 	}
@@ -301,7 +317,7 @@ func (s *SSHService) CheckSFTPParam(param *[]api.SFTPExecReq) error {
 	return nil
 }
 
-func (s *SSHService) getSSHClient(hostIp string, username string, param any, insClientGroup *clientGroup) (client *ssh.Client, err error) {
+func (s *SSHService) getSSHClient(hostIp string, username string, param any, insClientGroup *sshClientGroup) (client *ssh.Client, err error) {
 	insClientGroup.clientMapMutex.Lock()
 	defer insClientGroup.clientMapMutex.Unlock()
 	var ok bool

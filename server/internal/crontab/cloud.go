@@ -53,7 +53,7 @@ func CronCheckCloudProject() {
 		}
 	}
 	if err = cronCheckTencentCloudProject(&tencentProjectNames, &cloudProjectNames); err != nil {
-		logger.Log().Error("CronCheckCloudProject", "腾讯云", err)
+		logger.Log().Error("Cloud", "腾讯云", err)
 		// 接入微信小程序之类的请求, 向运维发送获取腾讯云项目失败的问题
 		fmt.Println("微信小程序=====向运维发送处理获取腾讯云项目失败的问题")
 		return

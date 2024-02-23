@@ -10,5 +10,6 @@ func Cron() {
 	c.AddFunc("0 */30 * * * *", CronWrittenHostInfo)
 	c.AddFunc("0 * * * * *", CronExistCheckIdKey)
 	c.AddFunc("0 0 5 * * *", CronCheckCloudProject)
+	c.AddFunc("0 0 5 * * *", CronRemoveExpiredLogFile)
 	c.Start()
 }

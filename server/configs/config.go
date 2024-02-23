@@ -4,6 +4,7 @@ type Config struct {
 	Mysql        Mysql        `json:"mysql"`
 	Logger       Logger       `json:"logger"`
 	SshConfig    SshConfig    `json:"ssh_timeout"`
+	ClientSide   ClientSide   `json:"client_side"`
 	Webssh       Webssh       `json:"webssh"`
 	System       System       `json:"system"`
 	Concurrency  Concurrency  `json:"concurrency"`
@@ -19,11 +20,17 @@ type Mysql struct {
 }
 
 type Logger struct {
-	Level string
+	Level      string
+	ExpiredDay int
 }
 
 type SshConfig struct {
 	SshClientTimeout string
+}
+
+type ClientSide struct {
+	IsSSL string
+	Port  string
 }
 
 type Webssh struct {

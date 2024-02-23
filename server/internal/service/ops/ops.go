@@ -281,7 +281,8 @@ func (s *OpsService) getNonApprover(id uint) (nonApproverSlice []uint, err error
 }
 
 // 写入工单操作后的结果入库
-func (s *OpsService) execTaskResultWriteDB(status uint8, tid uint, data *map[string][]api.SSHResultRes) (err error) {
+// func (s *OpsService) execTaskResultWriteDB(status uint8, tid uint, data *map[string][]api.SSHResultRes) (err error) {
+func (s *OpsService) execTaskResultWriteDB(status uint8, tid uint, data *map[string][]api.CSCmdRes) (err error) {
 	var task model.TaskRecord
 	var res []byte
 	if res, err = json.Marshal(*data); err != nil {
@@ -327,8 +328,10 @@ func (s *OpsService) recordServerList(data *string, pid uint) (err error) {
 }
 
 // 执行工单操作
-func (s *OpsService) OpsExecSSHTask(id uint) (map[string][]api.SSHResultRes, error) {
-	var result *[]api.SSHResultRes
+// func (s *OpsService) OpsExecSSHTask(id uint) (map[string][]api.SSHResultRes, error) {
+func (s *OpsService) OpsExecSSHTask(id uint) (map[string][]api.CSCmdRes, error) {
+	//var result *[]api.SSHResultRes
+	var result *[]api.CSCmdRes
 	var err error
 	var task model.TaskRecord
 	if err = model.DB.Preload("Template").First(&task, id).Error; err != nil {
@@ -338,29 +341,46 @@ func (s *OpsService) OpsExecSSHTask(id uint) (map[string][]api.SSHResultRes, err
 		return nil, errors.New("当前工单状态不可执行")
 	}
 
-	data := make(map[string][]api.SSHResultRes)
+	//data := make(map[string][]api.SSHResultRes)
+	data := make(map[string][]api.CSCmdRes)
 	sshReq, sftpReq, err := s.GetSSHExecParam(id)
 	if err != nil {
 		return nil, fmt.Errorf("获取执行参数失败: %v", err)
 	}
+	// ssh模式
+	//if len(*sshReq) != 0 {
+	//	result, err = service.SSH().RunSSHCmdAsync(sshReq)
+	//	data["sftp"] = *result
+	//	if err != nil {
+	//		err2 := s.execTaskResultWriteDB(3, id, &data)
+	//		return nil, fmt.Errorf("SSH执行失败: %v。%v", err, err2)
+	//	}
+	//}
+	// c/s模式
 	if len(*sshReq) != 0 {
-		result, err = service.SSH().RunSSHCmdAsync(sshReq)
-		data["sftp"] = *result
+		result, err = service.CSOper().RunCSCmdAsync(sshReq, &task.Args)
+		data["cmd"] = *result
 		if err != nil {
 			err2 := s.execTaskResultWriteDB(3, id, &data)
 			return nil, fmt.Errorf("SSH执行失败: %v。%v", err, err2)
 		}
 	}
 	if len(*sftpReq) != 0 {
-		result, err = service.SSH().RunSFTPAsync(sftpReq)
-		data["ssh"] = *result
+		result, err = service.SSH().RunSFTPAsync(sftpReq, &task.Args)
+		data["sftp"] = *result
 		if err != nil {
 			err2 := s.execTaskResultWriteDB(3, id, &data)
 			return nil, fmt.Errorf("SFTP执行失败: %v。%v", err, err2)
 		}
 	}
-	if len(data) == 0 {
-		return nil, errors.New("没有获取到任务结果")
+	//if len(data["ssh"]) == 0 {
+	//	return nil, errors.New("没有获取到任务结果")
+	//}
+	if len(data["sftp"]) == 0 {
+		return nil, errors.New("没有获取到sftp任务结果")
+	}
+	if len(data["cmd"]) == 0 || len(data["sftp"]) == 0 {
+		return nil, errors.New("没有获取到cmd任务结果")
 	}
 	if err = s.execTaskResultWriteDB(2, id, &data); err != nil {
 		return nil, err

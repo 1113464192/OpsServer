@@ -65,14 +65,14 @@ func CommonLog(service string, msg string) bool {
 	}
 
 	if !IsDir(dirPath) {
-		if err := os.Mkdir(dirPath, 0775); err != nil {
+		if err := os.MkdirAll(dirPath, 0775); err != nil {
 			tmpBool := tmpLogWrite(time.Now().Local().Format("2006-01-02 15:04:05") + "mkdir failed！ " + err.Error())
 			if !tmpBool {
 				panic(fmt.Errorf("临时日志文件写入失败"))
 			}
 		}
 	}
-	logFile, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0755)
+	logFile, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0664)
 	if err != nil {
 		tmpBool := tmpLogWrite(time.Now().Local().Format("2006-01-02 15:04:05") + "打开日志文件失败！ " + err.Error())
 		if !tmpBool {
