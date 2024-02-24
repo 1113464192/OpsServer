@@ -429,6 +429,39 @@ func GetCloudInstanceTypeList(c *gin.Context) {
 	})
 }
 
+// GetCloudInsRenewPrice
+// @Tags 云平台相关
+// @title 获取实例续费价格
+// @description 返回实例续费价格
+// @Summary 获取实例续费价格
+// @Produce  application/json
+// @Param Authorization header string true "格式为：Bearer 用户令牌"
+// @Param data query api.GetCloudInsRenewPriceReq true ""
+// @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
+// @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Failure 500 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
+// @Router /api/v1/cloud/instance-renew-price [get]
+func GetCloudInsRenewPrice(c *gin.Context) {
+	var param api.GetCloudInsRenewPriceReq
+	if err := c.ShouldBind(&param); err != nil {
+		c.JSON(500, api.ErrorResponse(err))
+		return
+	}
+	res, err := service.Cloud().GetCloudInsRenewPrice(param.CloudType, param.Hid, param.Pid)
+	if err != nil {
+		logger.Log().Error("Cloud", "获取instance-type失败", err)
+		c.JSON(500, api.Err("获取instance-type失败", err))
+		return
+	}
+	c.JSON(200, api.Response{
+		Data: res,
+		Meta: api.Meta{
+			Msg: "Success",
+		},
+	})
+}
+
 // CreateCloudInstance
 // @Tags 云平台相关
 // @title 创建云服务器

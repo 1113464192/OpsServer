@@ -110,10 +110,10 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 	if err = tx.Find(&projects, ids).Error; err != nil {
 		return errors.New("查询项目信息失败")
 	}
-	if err = tx.Model(&projects).Association("Hosts").Clear(); err != nil {
-		tx.Rollback()
-		return errors.New("清除表信息 项目与服务器关联 失败")
-	}
+	//if err = tx.Model(&projects).Association("Hosts").Clear(); err != nil {
+	//	tx.Rollback()
+	//	return errors.New("清除表信息 项目与服务器关联 失败")
+	//}
 	if err = tx.Where("id IN (?)", ids).Delete(&model.Project{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除项目失败")
@@ -137,7 +137,7 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 // 项目关联服务器
 func (s *ProjectService) UpdateHostAss(param *api.UpdateProjectAssHostReq) (err error) {
 	var project model.Project
-	var host []model.Host
+	var hosts []model.Host
 	// 判断所有服务器是否都存在
 	if err = util2.CheckIdsExists(model.Host{}, param.Hids); err != nil {
 		return err
@@ -147,14 +147,19 @@ func (s *ProjectService) UpdateHostAss(param *api.UpdateProjectAssHostReq) (err 
 		return errors.New("项目ID不存在")
 	}
 
-	if err = model.DB.Find(&host, param.Hids).Error; err != nil {
+	if err = model.DB.Find(&hosts, param.Hids).Error; err != nil {
 		return errors.New("服务器数据库查询操作失败")
 	}
 	if err = model.DB.First(&project, param.Pid).Error; err != nil {
 		return errors.New("项目数据库查询操作失败")
 	}
-	if err = model.DB.Model(&project).Association("Hosts").Replace(&host); err != nil {
-		return errors.New("项目与服务器数据库关联操作失败")
+	// host切片所有表Pid改为project.Id
+	for _, h := range hosts {
+		h.Pid = project.ID
+		if err = model.DB.Save(&h).Error; err != nil {
+			return fmt.Errorf("保存服务器失败: %v", err)
+		}
+
 	}
 	if err != nil {
 		return err
@@ -208,20 +213,20 @@ func (s *ProjectService) GetHostAss(param *api.GetPagingMustByIdReq) (hostInfo a
 	if err = model.DB.Find(&project, param.Id).Error; err != nil {
 		return nil, 0, errors.New("查询项目报错")
 	}
-	if total = model.DB.Model(&project).Association("Hosts").Count(); total == 0 {
-		return "没有关联数据", 0, nil
+	// host表中所有pid为project.Id的个数
+	if err = model.DB.Model(&model.Host{}).Where("pid = ?", project.ID).Count(&total).Error; err != nil {
+		return nil, 0, errors.New("查询关联服务器个数报错")
 	}
 
 	// 取出关联数据
 	var hosts []model.Host
-	if err = model.DB.Model(&project).Order("id asc").Association("Hosts").Find(&hosts); err != nil {
-		return &hosts, total, fmt.Errorf("获取关联的数据失败: %v", err)
+	offset := (param.PageInfo.Page - 1) * param.PageInfo.PageSize
+	if err = model.DB.Where("pid = ?", project.ID).Find(&hosts).Offset(offset).Limit(param.PageInfo.PageSize).Error; err != nil {
+		return nil, 0, errors.New("查询关联服务器报错")
+
 	}
 
 	// 分页
-	if err = dbOper.DbOper().PaginateModels(&hosts, param.PageInfo); err != nil {
-		return nil, 0, err
-	}
 	var result *[]api.HostRes
 	if result, err = Host().GetResults(&hosts); err != nil {
 		return nil, total, err

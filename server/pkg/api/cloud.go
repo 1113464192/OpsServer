@@ -127,3 +127,9 @@ type GetCloudInsInfoReq struct {
 	Offset     int64  `json:"offset" form:"offset"`
 	Limit      int64  `json:"limit" form:"limit"`
 }
+
+type GetCloudInsRenewPriceReq struct {
+	CloudType string `json:"cloud_type" form:"cloud_type"  binding:"required"` // 如: 腾讯云、阿里云
+	Hid       uint   `json:"hid" form:"hid"  binding:"required"`               // 服务器ID
+	Pid       uint   `json:"pid" form:"pid"  binding:"required"`               // 项目ID
+}

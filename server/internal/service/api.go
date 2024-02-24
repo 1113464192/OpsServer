@@ -61,7 +61,7 @@ func (s *ApiService) UpdateApi(param *api.UpdateApiReq) (apiInter model.Api, err
 	} else {
 		// 新增
 		count := int64(0)
-		model.DB.Model(&model.Api{}).Where("path = ?", param.Path).Count(&count)
+		model.DB.Model(&model.Api{}).Where("path = ? and method = ?", param.Path, param.Method).Count(&count)
 		if count > 0 {
 			return apiInter, errors.New("api已存在")
 		}
@@ -83,7 +83,16 @@ func (s *ApiService) UpdateApi(param *api.UpdateApiReq) (apiInter model.Api, err
 // @param ids []uint
 // @return:  err error
 func (s *ApiService) DeleteApi(ids []uint) (err error) {
-	err = model.DB.Where("id IN (?)", ids).Delete(&model.Api{}).Error
+	var count int64
+	if err = model.DB.Model(&model.Api{}).Where("id IN (?)", ids).Count(&count).Error; err != nil {
+		return err
+	}
+	if count == 0 {
+		return errors.New("api不存在")
+	}
+	if err = model.DB.Where("id IN (?)", ids).Delete(&model.Api{}).Error; err != nil {
+		return err
+	}
 	return err
 }
 

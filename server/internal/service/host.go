@@ -48,6 +48,7 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		if param.Ipv6 != "" {
 			host.Ipv6 = sql.NullString{String: param.Ipv6, Valid: true}
 		}
+		host.Pid = param.Pid
 		host.Name = param.Name
 		host.User = param.User
 		host.Password, err = util.EncryptAESCBC(param.Password, []byte(configs.Conf.SecurityVars.AesKey), []byte(configs.Conf.SecurityVars.AesIv))
@@ -90,6 +91,7 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 		}
 		host = &model.Host{
 			Ipv4:     sql.NullString{String: param.Ipv4, Valid: true},
+			Pid:      param.Pid,
 			Name:     param.Name,
 			User:     param.User,
 			Password: aesPassword,
@@ -161,10 +163,10 @@ func (s *HostService) DeleteHost(ids []uint) (err error) {
 		tx.Rollback()
 		return errors.New("清除表信息 服务器与域名关联 失败")
 	}
-	if err = tx.Model(&host).Association("Projects").Clear(); err != nil {
-		tx.Rollback()
-		return errors.New("清除表信息 服务器与项目关联 失败")
-	}
+	//if err = tx.Model(&host).Association("Projects").Clear(); err != nil {
+	//	tx.Rollback()
+	//	return errors.New("清除表信息 服务器与项目关联 失败")
+	//}
 	if err = tx.Model(&host).Association("TaskTemplate").Clear(); err != nil {
 		tx.Rollback()
 		return errors.New("清除表信息 服务器与任务模板关联 失败")
@@ -411,6 +413,7 @@ func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 				ID:       host.ID,
 				Ipv4:     host.Ipv4.String,
 				Ipv6:     host.Ipv6.String,
+				Pid:      host.Pid,
 				Name:     host.Name,
 				Port:     host.Port,
 				Zone:     host.Zone,
@@ -441,6 +444,7 @@ func (s *HostService) GetResults(hostInfo any) (*[]api.HostRes, error) {
 			ID:       host.ID,
 			Ipv4:     host.Ipv4.String,
 			Ipv6:     host.Ipv6.String,
+			Pid:      host.Pid,
 			Name:     host.Name,
 			Port:     host.Port,
 			Zone:     host.Zone,

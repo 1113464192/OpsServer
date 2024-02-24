@@ -293,3 +293,33 @@ func (s *CloudService) ReturnCloudInstance(cloudType string, region string, inst
 		return fmt.Errorf("%s 云商字符串有误，通知运维检查", cloudType)
 	}
 }
+
+func (s *CloudService) GetCloudInsRenewPrice(cloudType string, hid uint, pid uint) (string, error) {
+	var (
+		err     error
+		host    model.Host
+		project model.Project
+	)
+	if err = model.DB.First(&host, hid).Error; err != nil {
+		return "", fmt.Errorf("查询服务器失败: %v", err)
+	}
+	if err = model.DB.Preload("CloudInstanceConfig").First(&project, pid).Error; err != nil {
+		return "", fmt.Errorf("查询项目失败: %v", err)
+	}
+	switch cloudType {
+	case "腾讯云":
+		var res *tencentCloud.HostResponse
+		if res, err = tencentCloud.TencentCloud().GetCloudInsInfo(project.CloudInstanceConfig.Region, host.Ipv4.String, "", "", "", 1, 1); err != nil {
+			return "", err
+		}
+		cost, err := tencentCloud.TencentCloud().GetCloudInsRenewPrice(res.CloudHostResponse.InstanceSet[0].InstanceId, &project.CloudInstanceConfig)
+		if err != nil {
+			return "", err
+		}
+		return cost, err
+	case "火山云":
+		return "", fmt.Errorf("%s 云商暂未加入平台，请通知运维加入", cloudType)
+	default:
+		return "", fmt.Errorf("%s 云商字符串有误，通知运维检查", cloudType)
+	}
+}

@@ -217,7 +217,7 @@ func (s *OpsService) writeHostTable(insName string, project *model.Project, insC
 	}
 	switch project.Cloud {
 	case "腾讯云":
-		if err = s.writeTencentCloudHostTable(insName, project.Cloud, insInfoInterface, insConfig); err != nil {
+		if err = s.writeTencentCloudHostTable(insName, project.ID, project.Cloud, insInfoInterface, insConfig); err != nil {
 			return fmt.Errorf("写入host表失败: %v", err)
 		}
 	default:
@@ -227,7 +227,7 @@ func (s *OpsService) writeHostTable(insName string, project *model.Project, insC
 }
 
 // 腾讯云实例写入host表
-func (s *OpsService) writeTencentCloudHostTable(insName string, cloudStr string, insInfoInterface any, insConfig *model.CloudInstanceConfig) (err error) {
+func (s *OpsService) writeTencentCloudHostTable(insName string, projectId uint, cloudStr string, insInfoInterface any, insConfig *model.CloudInstanceConfig) (err error) {
 	insInfo, ok := insInfoInterface.(tencentCloud.HostResponse)
 	if !ok {
 		return fmt.Errorf("断言云服务器信息失败: %v", err)
@@ -255,6 +255,7 @@ func (s *OpsService) writeTencentCloudHostTable(insName string, cloudStr string,
 	hostReq := api.UpdateHostReq{
 		Ipv4:       insInfo.CloudHostResponse.InstanceSet[0].PrivateIpAddresses[0],
 		Ipv6:       insInfo.CloudHostResponse.InstanceSet[0].IPv6Addresses[0],
+		Pid:        projectId,
 		Name:       insName,
 		User:       consts.DefaultHostUsername,
 		Password:   []byte(consts.DefaultHostPassword),
