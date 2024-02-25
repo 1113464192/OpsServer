@@ -649,22 +649,230 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "如: 腾讯云、阿里云",
-                        "name": "cloud_type",
+                        "type": "integer",
+                        "description": "如：4",
+                        "name": "cpu_cores",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "如：200",
+                        "name": "data_disk_size",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
+                        "description": "如：CLOUD_BASIC",
+                        "name": "data_disk_type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "如：0",
+                        "name": "fpga",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "如：0",
+                        "name": "gpu_cores",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "如：xhxmj",
+                        "name": "host_name_prefix",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "如：img-8toqc6s3",
+                        "name": "image_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "如：PREPAID",
+                        "name": "instance_charge_type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "如：SA5",
+                        "name": "instance_family",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "如：xhxmj",
+                        "name": "instance_name_prefix",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "如：TRAFFIC_POSTPAID_BY_HOUR",
+                        "name": "internet_charge_type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "如：200",
+                        "name": "internet_max_bandwidth_out",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "如：16，单位GB",
+                        "name": "memory_size",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "如：1",
+                        "name": "period",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "通过GetCloudProjectId接口，提供projectName(一般为项目名)获取值，值如：1308247",
+                        "name": "project_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "如：ap-guangzhou",
                         "name": "region",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "name": "subnet_name",
+                        "description": "如：NOTIFY_AND_AUTO_RENEW",
+                        "name": "renew_flag",
                         "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "通过GetCloudSecurityGroupId接口，提供SecurityGroupName(一般为项目名)获取值，值如：sg-0t8v2z9w",
+                        "name": "security_group_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "通过GetCloudVpcSubnetId接口，提供通过subnetname(一般为项目名)获取值，值如：subnet-0t8v2z9w",
+                        "name": "subnet_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "如：40",
+                        "name": "system_disk_size",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "如：CLOUD_BASIC",
+                        "name": "system_disk_type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "通过GetCloudVpcId接口，提供vpcname(一般为项目名)获取值，值如：vpc-0t8v2z9w",
+                        "name": "vpc_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"data\":{},\"meta\":{msg\":\"Success\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"data\":{}, \"meta\":{\"msg\":\"错误信息\", \"error\":\"错误格式输出(如存在)\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/api.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cloud/instance-renew-price": {
+            "get": {
+                "description": "返回实例续费价格",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "云平台相关"
+                ],
+                "summary": "获取实例续费价格",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "格式为：Bearer 用户令牌",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "如: 腾讯云、阿里云",
+                        "name": "cloud_type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "服务器ID",
+                        "name": "hid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "pid",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -2617,6 +2825,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "如：腾讯云",
                         "name": "cloud",
                         "in": "formData",
                         "required": true
@@ -2630,7 +2839,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "number",
-                        "description": "BillingType uint8   ` + "`" + `form:\"billing\" json:\"billing\" binding:\"required\"` + "`" + `     // 1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加",
+                        "description": "下次续费金额, 人民币为单位",
                         "name": "cost",
                         "in": "formData"
                     },
@@ -2659,6 +2868,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "如：带宽",
                         "name": "mbps",
                         "in": "formData",
                         "required": true
@@ -2672,6 +2882,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "fqh-1",
                         "name": "name",
                         "in": "formData",
                         "required": true
@@ -2686,6 +2897,13 @@ const docTemplate = `{
                         "in": "formData"
                     },
                     {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "pid",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
                         "type": "string",
                         "name": "port",
                         "in": "formData",
@@ -2693,6 +2911,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "如：Centos7",
                         "name": "system",
                         "in": "formData",
                         "required": true
@@ -3863,6 +4082,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "云平台所属，用中文",
                         "name": "cloud",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "云平台默认配置ID",
+                        "name": "cloud_instance_config_id",
                         "in": "formData",
                         "required": true
                     },

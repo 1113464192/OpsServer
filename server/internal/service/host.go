@@ -118,7 +118,7 @@ func (s *HostService) UpdateHost(param *api.UpdateHostReq) (hostInfo any, err er
 			host.Ipv6 = sql.NullString{String: param.Ipv6, Valid: true}
 		}
 		if err = model.DB.Create(host).Error; err != nil {
-			return host, errors.New("创建服务器失败")
+			return host, fmt.Errorf("服务器创建失败%v", err)
 		}
 		var result *[]api.HostRes
 		if result, err = s.GetResults(host); err != nil {

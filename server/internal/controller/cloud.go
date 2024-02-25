@@ -164,7 +164,7 @@ func GetCloudHostInVpcSubnetSum(c *gin.Context) {
 // @Summary 创建/更新云项目的实例配置
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data formData api.GetCloudHostInVpcSubnetSumReq true "按对应云的API文档填写"
+// @Param data formData api.UpdateCloudInstanceConfigReq true "按对应云的API文档填写"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
@@ -436,7 +436,7 @@ func GetCloudInstanceTypeList(c *gin.Context) {
 // @Summary 获取实例续费价格
 // @Produce  application/json
 // @Param Authorization header string true "格式为：Bearer 用户令牌"
-// @Param data query api.GetCloudInsRenewPriceReq true ""
+// @Param data query api.GetCloudInsRenewPriceReq true "输入中文云商、host表hostID、project表项目ID"
 // @Success 200 {object} api.Response "{"data":{},"meta":{msg":"Success"}}"
 // @Failure 401 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"
 // @Failure 403 {object} api.Response "{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}"

@@ -39,8 +39,8 @@ type UpdateCloudInstanceConfigReq struct {
 	InstanceFamily          string `json:"instance_family" form:"instance_family"  binding:"required"`                       // 如：SA5
 	CpuCores                int    `json:"cpu_cores" form:"cpu_cores"  binding:"required"`                                   // 如：4
 	MemorySize              int    `json:"memory_size" form:"memory_size"  binding:"required"`                               // 如：16，单位GB
-	Fpga                    int    `json:"fpga" form:"fpga"  binding:"required"`                                             // 如：0
-	GpuCores                int    `json:"gpu_cores" form:"gpu_cores"  binding:"required"`                                   // 如：0
+	Fpga                    int    `json:"fpga" form:"fpga"`                                                                 // 如：0
+	GpuCores                int    `json:"gpu_cores" form:"gpu_cores"`                                                       // 如：0
 	ImageId                 string `json:"image_id" form:"image_id"  binding:"required"`                                     // 如：img-8toqc6s3
 	SystemDiskType          string `json:"system_disk_type" form:"system_disk_type"  binding:"required"`                     // 如：CLOUD_BASIC
 	SystemDiskSize          int64  `json:"system_disk_size" form:"system_disk_size"  binding:"required"`                     // 如：40

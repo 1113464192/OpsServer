@@ -633,17 +633,117 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: '如: 腾讯云、阿里云'
+      - description: 如：4
         in: formData
-        name: cloud_type
+        name: cpu_cores
+        required: true
+        type: integer
+      - description: 如：200
+        in: formData
+        name: data_disk_size
+        required: true
+        type: integer
+      - description: 如：CLOUD_BASIC
+        in: formData
+        name: data_disk_type
+        required: true
+        type: string
+      - description: 如：0
+        in: formData
+        name: fpga
+        required: true
+        type: integer
+      - description: 如：0
+        in: formData
+        name: gpu_cores
+        required: true
+        type: integer
+      - description: 如：xhxmj
+        in: formData
+        name: host_name_prefix
         required: true
         type: string
       - in: formData
+        name: id
+        type: integer
+      - description: 如：img-8toqc6s3
+        in: formData
+        name: image_id
+        required: true
+        type: string
+      - description: 如：PREPAID
+        in: formData
+        name: instance_charge_type
+        required: true
+        type: string
+      - description: 如：SA5
+        in: formData
+        name: instance_family
+        required: true
+        type: string
+      - description: 如：xhxmj
+        in: formData
+        name: instance_name_prefix
+        required: true
+        type: string
+      - description: 如：TRAFFIC_POSTPAID_BY_HOUR
+        in: formData
+        name: internet_charge_type
+        required: true
+        type: string
+      - description: 如：200
+        in: formData
+        name: internet_max_bandwidth_out
+        required: true
+        type: integer
+      - description: 如：16，单位GB
+        in: formData
+        name: memory_size
+        required: true
+        type: integer
+      - description: 如：1
+        in: formData
+        name: period
+        required: true
+        type: integer
+      - description: 通过GetCloudProjectId接口，提供projectName(一般为项目名)获取值，值如：1308247
+        in: formData
+        name: project_id
+        required: true
+        type: integer
+      - description: 如：ap-guangzhou
+        in: formData
         name: region
         required: true
         type: string
-      - in: formData
-        name: subnet_name
+      - description: 如：NOTIFY_AND_AUTO_RENEW
+        in: formData
+        name: renew_flag
+        required: true
+        type: string
+      - description: 通过GetCloudSecurityGroupId接口，提供SecurityGroupName(一般为项目名)获取值，值如：sg-0t8v2z9w
+        in: formData
+        name: security_group_id
+        required: true
+        type: string
+      - description: 通过GetCloudVpcSubnetId接口，提供通过subnetname(一般为项目名)获取值，值如：subnet-0t8v2z9w
+        in: formData
+        name: subnet_id
+        required: true
+        type: string
+      - description: 如：40
+        in: formData
+        name: system_disk_size
+        required: true
+        type: integer
+      - description: 如：CLOUD_BASIC
+        in: formData
+        name: system_disk_type
+        required: true
+        type: string
+      - description: 通过GetCloudVpcId接口，提供vpcname(一般为项目名)获取值，值如：vpc-0t8v2z9w
+        in: formData
+        name: vpc_id
         required: true
         type: string
       produces:
@@ -666,6 +766,52 @@ paths:
           schema:
             $ref: '#/definitions/api.Response'
       summary: 创建/更新云项目的实例配置
+      tags:
+      - 云平台相关
+  /api/v1/cloud/instance-renew-price:
+    get:
+      description: 返回实例续费价格
+      parameters:
+      - description: 格式为：Bearer 用户令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: '如: 腾讯云、阿里云'
+        in: query
+        name: cloud_type
+        required: true
+        type: string
+      - description: 服务器ID
+        in: query
+        name: hid
+        required: true
+        type: integer
+      - description: 项目ID
+        in: query
+        name: pid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"data":{},"meta":{msg":"Success"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "401":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "403":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+        "500":
+          description: '{"data":{}, "meta":{"msg":"错误信息", "error":"错误格式输出(如存在)"}}'
+          schema:
+            $ref: '#/definitions/api.Response'
+      summary: 获取实例续费价格
       tags:
       - 云平台相关
   /api/v1/cloud/instance-type:
@@ -1976,7 +2122,8 @@ paths:
         name: Authorization
         required: true
         type: string
-      - in: formData
+      - description: 如：腾讯云
+        in: formData
         name: cloud
         required: true
         type: string
@@ -1985,8 +2132,7 @@ paths:
         name: cores
         required: true
         type: integer
-      - description: BillingType uint8   `form:"billing" json:"billing" binding:"required"`     //
-          1 按量收费, 2 包月收费, 3 包年收费 ...后续有需要再加
+      - description: 下次续费金额, 人民币为单位
         in: formData
         name: cost
         type: number
@@ -2005,7 +2151,8 @@ paths:
       - in: formData
         name: ipv6
         type: string
-      - in: formData
+      - description: 如：带宽
+        in: formData
         name: mbps
         required: true
         type: integer
@@ -2014,7 +2161,8 @@ paths:
         name: mem
         required: true
         type: integer
-      - in: formData
+      - description: fqh-1
+        in: formData
         name: name
         required: true
         type: string
@@ -2024,11 +2172,17 @@ paths:
           type: integer
         name: password
         type: array
+      - description: 项目ID
+        in: formData
+        name: pid
+        required: true
+        type: integer
       - in: formData
         name: port
         required: true
         type: string
-      - in: formData
+      - description: 如：Centos7
+        in: formData
         name: system
         required: true
         type: string
@@ -2807,6 +2961,11 @@ paths:
         name: cloud
         required: true
         type: string
+      - description: 云平台默认配置ID
+        in: formData
+        name: cloud_instance_config_id
+        required: true
+        type: integer
       - description: 关联组ID
         in: formData
         name: group_id

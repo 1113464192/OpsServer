@@ -66,6 +66,7 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		project.Status = param.Status
 		project.UserId = param.UserId
 		project.GroupId = param.GroupId
+		project.CloudInstanceConfigId = param.CloudInstanceConfigId
 		if err = model.DB.Save(&project).Error; err != nil {
 			return project, fmt.Errorf("数据保存失败: %v", err)
 		}
@@ -76,11 +77,12 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		return result, err
 	} else {
 		project = model.Project{
-			Name:    param.Name,
-			Cloud:   param.Cloud,
-			Status:  param.Status,
-			UserId:  param.UserId,
-			GroupId: param.GroupId,
+			Name:                  param.Name,
+			Cloud:                 param.Cloud,
+			Status:                param.Status,
+			UserId:                param.UserId,
+			GroupId:               param.GroupId,
+			CloudInstanceConfigId: param.CloudInstanceConfigId,
 		}
 
 		// 创建云平台项目
@@ -89,7 +91,7 @@ func (s *ProjectService) UpdateProject(param *api.UpdateProjectReq) (projectInfo
 		}
 
 		if err = model.DB.Create(&project).Error; err != nil {
-			logger.Log().Error("project", "创建项目失败", err)
+			logger.Log().Error("Project", "创建项目失败", err)
 			return project, errors.New("创建项目失败")
 		}
 		var result *[]api.ProjectRes
@@ -110,10 +112,10 @@ func (s *ProjectService) DeleteProject(ids []uint) (err error) {
 	if err = tx.Find(&projects, ids).Error; err != nil {
 		return errors.New("查询项目信息失败")
 	}
-	//if err = tx.Model(&projects).Association("Hosts").Clear(); err != nil {
-	//	tx.Rollback()
-	//	return errors.New("清除表信息 项目与服务器关联 失败")
-	//}
+	if err = tx.Model(&projects).Association("Hosts").Clear(); err != nil {
+		tx.Rollback()
+		return errors.New("清除表信息 项目与服务器关联 失败")
+	}
 	if err = tx.Where("id IN (?)", ids).Delete(&model.Project{}).Error; err != nil {
 		tx.Rollback()
 		return errors.New("删除项目失败")
@@ -242,12 +244,13 @@ func (s *ProjectService) GetResults(projectInfo any) (*[]api.ProjectRes, error) 
 	if projects, ok := projectInfo.(*[]model.Project); ok {
 		for _, project := range *projects {
 			res = api.ProjectRes{
-				ID:      project.ID,
-				Name:    project.Name,
-				Cloud:   project.Cloud,
-				Status:  project.Status,
-				UserId:  project.UserId,
-				GroupId: project.GroupId,
+				ID:                    project.ID,
+				Name:                  project.Name,
+				Cloud:                 project.Cloud,
+				Status:                project.Status,
+				UserId:                project.UserId,
+				GroupId:               project.GroupId,
+				CloudInstanceConfigId: project.CloudInstanceConfigId,
 			}
 			result = append(result, res)
 		}
@@ -255,12 +258,13 @@ func (s *ProjectService) GetResults(projectInfo any) (*[]api.ProjectRes, error) 
 	}
 	if project, ok := projectInfo.(*model.Project); ok {
 		res = api.ProjectRes{
-			ID:      project.ID,
-			Name:    project.Name,
-			Cloud:   project.Cloud,
-			Status:  project.Status,
-			UserId:  project.UserId,
-			GroupId: project.GroupId,
+			ID:                    project.ID,
+			Name:                  project.Name,
+			Cloud:                 project.Cloud,
+			Status:                project.Status,
+			UserId:                project.UserId,
+			GroupId:               project.GroupId,
+			CloudInstanceConfigId: project.CloudInstanceConfigId,
 		}
 		result = append(result, res)
 		return &result, err
