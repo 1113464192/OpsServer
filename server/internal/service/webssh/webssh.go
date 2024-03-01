@@ -118,7 +118,7 @@ func (s *WebSshService) generateLocalSSHAgentSocket(sockPath string, uid uint, m
 		fmt.Sprintf("id_key_path=%s", id_key_path),
 		fmt.Sprintf("id_key_passphrase=%s", string(passphrase)),
 	}
-	cmdStr := fmt.Sprintf("cd %s/server/shellScript && ./ssh_agent.sh", util.GetRootPath())
+	cmdStr := fmt.Sprintf(consts.WebsshGenerateLocalSSHAgentSocket, util.GetRootPath())
 	localShellParam = append(localShellParam, opsApi.RunLocalShellReq{
 		CmdStr: cmdStr,
 		Env:    env,
